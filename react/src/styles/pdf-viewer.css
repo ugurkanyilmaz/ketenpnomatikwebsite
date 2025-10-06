@@ -1,0 +1,148 @@
+/* PDF Viewer Custom Styles */
+
+.pdf-viewer.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+}
+
+.book-container {
+  perspective: 1500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flipbook {
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.page {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 1px solid #e9ecef;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(0,0,0,0.03) 50%, 
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.pdf-page canvas {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.thumbnail-page canvas {
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* Page flip animations */
+.flipbook .stf__parent {
+  transform-style: preserve-3d;
+}
+
+.flipbook .stf__item {
+  backface-visibility: hidden;
+}
+
+/* Loading states */
+.page.loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, transparent 37%, #f0f0f0 63%);
+  background-size: 400% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Enhanced page shadows for realistic book effect */
+.flipbook .stf__item.--left {
+  box-shadow: inset -7px 0 30px -7px rgba(0, 0, 0, 0.4);
+}
+
+.flipbook .stf__item.--right {
+  box-shadow: inset 7px 0 30px -7px rgba(0, 0, 0, 0.4);
+}
+
+/* Page corner effects */
+.page {
+  position: relative;
+}
+
+.page::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(-45deg, transparent 50%, rgba(0,0,0,0.1) 50%);
+  pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .book-container {
+    padding: 10px;
+  }
+  
+  .flipbook {
+    max-width: 100%;
+  }
+  
+  .page {
+    font-size: 12px;
+  }
+}
+
+/* Smooth transitions */
+.page, .flipbook {
+  transition: all 0.3s ease;
+}
+
+/* Custom scrollbar for thumbnails */
+.thumbnail-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+.thumbnail-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.thumbnail-sidebar::-webkit-scrollbar-track {
+  background: #f7fafc;
+}
+
+.thumbnail-sidebar::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+}
+
+.thumbnail-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}

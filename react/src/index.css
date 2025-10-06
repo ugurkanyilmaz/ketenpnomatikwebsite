@@ -1,0 +1,378 @@
+@import "tailwindcss";
+@plugin "daisyui" ;
+
+/* Base layout */
+*, *::before, *::after { box-sizing: border-box; }
+html, body, #root { 
+  height: 100%; 
+  background-color: #f5f6f8; /* Light gray background */
+  color: #1f2937; /* Dark text */
+}
+body { margin: 0; font-family: Inter, system-ui, sans-serif; }
+
+/* Custom orange-grey theme for DaisyUI */
+:root[data-theme="keten"], [data-theme="keten"] {
+  color-scheme: light;
+  
+  /* Base surfaces - light */
+  --b1: #ffffff; /* Main background */
+  --b2: #f7f7f7; /* Card background */
+  --b3: #efefef; /* Elevated surface */
+  --bc: #1f2937; /* Base content (text) */
+  
+  /* Primary - orange */
+  --p: #ff8c42; /* Main orange */
+  --pf: #e6753a; /* Focus orange */
+  --pc: #ffffff; /* Text on orange */
+  
+  /* Secondary - gray */
+  --s: #6b7280;
+  --sf: #4b5563;
+  --sc: #ffffff;
+  
+  /* Accent - deeper orange */
+  --a: #e6753a;
+  --af: #cc6632;
+  --ac: #ffffff;
+  
+  /* Neutral */
+  --n: #e5e7eb;
+  --nc: #1f2937;
+  
+  /* Status colors */
+  --in: #2563eb;
+  --su: #16a34a;
+  --wa: #d97706;
+  --er: #dc2626;
+
+  /* Unified radii (DaisyUI variables) */
+  --rounded-box: 0.75rem;  /* ~12px for cards/surfaces */
+  --rounded-btn: 0.625rem; /* ~10px for buttons */
+  --rounded-badge: 1rem;   /* badges/pills */
+
+  /* Tailwind ring variables to match DaisyUI focus color */
+  --tw-ring-color: rgba(255,140,66,0.6);
+  --tw-ring-opacity: 1;
+  --tw-ring-offset-color: #ffffff;
+  --tw-ring-offset-width: 0px;
+}
+
+/* Global overrides */
+[data-theme="keten"] {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+}
+
+[data-theme="keten"] .bg-base-100 { background-color: inherit !important; }
+[data-theme="keten"] .text-base-content { color: #1f2937 !important; }
+
+/* Buttons */
+[data-theme="keten"] .btn-primary {
+  background-color: #ff8c42 !important;
+  border-color: #e6753a !important;
+  color: #ffffff !important;
+}
+
+[data-theme="keten"] .btn-primary:hover {
+  background-color: #e6753a !important;
+  border-color: #cc6632 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 140, 66, 0.4);
+}
+
+[data-theme="keten"] .btn {
+  border-radius: var(--rounded-btn) !important;
+  font-weight: 600 !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+[data-theme="keten"] .btn:hover {
+  transform: translateY(-1px);
+}
+
+[data-theme="keten"] .btn.btn-outline {
+  color: #ff8c42 !important;
+  border-color: #ff8c42 !important;
+  background-color: transparent !important;
+}
+
+[data-theme="keten"] .btn.btn-outline:hover {
+  background-color: rgba(255, 140, 66, 0.1) !important;
+  border-color: #e6753a !important;
+  color: #ff8c42 !important;
+}
+
+[data-theme="keten"] .btn {
+  transition: all 0.2s ease;
+}
+
+/* Links */
+[data-theme="keten"] a:not(.btn):not(.rounded-box),
+[data-theme="keten"] .link,
+[data-theme="keten"] .text-primary {
+  color: #ff8c42 !important;
+}
+
+[data-theme="keten"] a:not(.btn):not(.rounded-box):hover,
+[data-theme="keten"] .link:hover {
+  color: #e6753a !important;
+}
+
+[data-theme="keten"] a:not(.btn):not(.rounded-box):visited {
+  color: #ff8c42 !important;
+}
+
+/* Header nav: No default translation */
+@media (min-width: 1024px) {
+  .navbar-center .menu > li > a,
+  .navbar-center .menu > li > .scroll-to-top-link,
+  .navbar-start .menu > li > a,
+  .navbar-start .menu > li > .scroll-to-top-link {
+    transform: none;
+    display: inline-block;
+  }
+
+  .dropdown .menu li a,
+  .dropdown .menu li .scroll-to-top-link {
+    transform: none;
+    display: inline-block;
+  }
+}
+
+/* Header link and button emphasis */
+[data-theme="keten"] .navbar-center .menu > li > a,
+[data-theme="keten"] .navbar-start .menu > li > a,
+[data-theme="keten"] .dropdown .menu li a,
+[data-theme="keten"] .navbar-center .menu > li > .scroll-to-top-link,
+[data-theme="keten"] .navbar-start .menu > li > .scroll-to-top-link,
+[data-theme="keten"] .dropdown .menu li .scroll-to-top-link {
+  font-size: 0.98rem;
+  font-weight: 600;
+  padding: 0.45rem 0.9rem;
+  border-radius: 0.5rem;
+  background-color: rgba(128, 128, 128, 0.15) !important;
+  border: none !important;
+  color: #ffffff !important;
+  transition: all 0.25s ease !important;
+  transform: translateY(0) scale(1);
+}
+
+[data-theme="keten"] .navbar-center .menu > li > a:hover,
+[data-theme="keten"] .dropdown .menu li a:hover,
+[data-theme="keten"] .navbar-center .menu > li > .scroll-to-top-link:hover,
+[data-theme="keten"] .navbar-start .menu > li > .scroll-to-top-link:hover,
+[data-theme="keten"] .dropdown .menu li .scroll-to-top-link:hover {
+  background-color: rgba(128, 128, 128, 0.5) !important;
+  transform: translateY(2px) scale(1.05) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+[data-theme="keten"] .navbar-end .btn {
+  font-size: 0.98rem;
+  font-weight: 700;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.32);
+}
+
+[data-theme="keten"] .navbar-end .btn.btn-ghost {
+  background-color: transparent !important;
+  border: 1px solid rgba(255,255,255,0.03) !important;
+}
+
+/* Slightly lift primary CTA on hover to draw attention */
+[data-theme="keten"] .navbar-end .btn.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.36);
+}
+
+/* 3D pop-out effect: add perspective on nav and simulate Z translation */
+.navbar, .navbar > div {
+  transform-style: preserve-3d;
+  perspective: 800px;
+}
+
+[data-theme="keten"] .navbar-end .btn:hover {
+  transform: translateY(-6px) scale(1.04) rotateX(6deg);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+}
+
+/* subtle active/press state to push back */
+[data-theme="keten"] .navbar-end .btn:active {
+  transform: translateY(-2px) scale(0.995) rotateX(2deg);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.28);
+}
+
+[data-theme="keten"] .navbar-center .menu > li > a:active,
+[data-theme="keten"] .dropdown .menu li a:active {
+  transform: translateY(3px) scale(1.02) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Badges */
+[data-theme="keten"] .badge-primary {
+  background-color: #ff8c42 !important;
+  color: #ffffff !important;
+  border-color: #e6753a !important;
+}
+
+/* Cards and surfaces */
+[data-theme="keten"] .card {
+  background-color: #ffffff !important;
+  border-color: #e5e7eb !important;
+  border-radius: var(--rounded-box) !important;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-theme="keten"] .card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+[data-theme="keten"] .rounded-box {
+  border-radius: var(--rounded-box) !important;
+}
+
+[data-theme="keten"] .card > figure {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  overflow: hidden;
+}
+
+/* Inputs */
+[data-theme="keten"] .input {
+  background-color: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #1f2937 !important;
+}
+
+[data-theme="keten"] .input:focus {
+  border-color: #ff8c42 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(255, 140, 66, 0.2) !important;
+}
+
+/* Text areas */
+[data-theme="keten"] .textarea {
+  background-color: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #1f2937 !important;
+}
+
+[data-theme="keten"] .textarea:focus {
+  border-color: #ff8c42 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(255, 140, 66, 0.2) !important;
+}
+
+/* Select */
+[data-theme="keten"] .select {
+  background-color: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #1f2937 !important;
+}
+
+/* Shadows */
+[data-theme="keten"] .shadow,
+[data-theme="keten"] .shadow-sm,
+[data-theme="keten"] .shadow-md,
+[data-theme="keten"] .shadow-lg {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Hero animation */
+@keyframes heroTextIn {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-hero-text {
+  animation: heroTextIn 450ms ease-out;
+}
+
+/* CRITICAL FIX: Remove ALL focus rings and blue glow - NUCLEAR OPTION */
+/* Global reset for all focusable elements */
+*,
+*::before,
+*::after {
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+*:focus,
+*:focus-visible,
+*:active,
+*:focus-within {
+  outline: 0 !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  outline-color: transparent !important;
+  box-shadow: 0 0 0 0 transparent !important;
+  -webkit-box-shadow: 0 0 0 0 transparent !important;
+  -moz-box-shadow: 0 0 0 0 transparent !important;
+  --tw-ring-shadow: 0 0 0 0 transparent !important;
+  --tw-ring-offset-shadow: 0 0 0 0 transparent !important;
+  --tw-shadow: 0 0 0 0 transparent !important;
+  --tw-shadow-colored: 0 0 0 0 transparent !important;
+}
+
+/* Specifically target buttons, links, and interactive elements */
+button,
+a,
+.btn,
+[role="button"],
+[tabindex] {
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+button:focus,
+button:focus-visible,
+button:active,
+a:focus,
+a:focus-visible,
+a:active,
+.btn:focus,
+.btn:focus-visible,
+.btn:active,
+[role="button"]:focus,
+[role="button"]:focus-visible,
+[role="button"]:active {
+  outline: none !important;
+  box-shadow: none !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-offset-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+
+/* Keep minimal focus styles only for form inputs (accessibility) */
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible {
+  outline: 2px solid rgba(255, 140, 66, 0.5) !important;
+  outline-offset: 2px !important;
+  box-shadow: none !important;
+}
+
+/* Override Tailwind focus utilities */
+.focus\:ring:focus,
+.focus\:ring-2:focus,
+.focus\:ring-4:focus,
+.focus-visible\:ring:focus-visible,
+.focus-visible\:ring-2:focus-visible {
+  --tw-ring-shadow: none !important;
+  box-shadow: none !important;
+}
+
+/* Override DaisyUI focus states */
+.btn:focus-visible,
+.btn.btn-primary:focus-visible,
+.btn.btn-outline:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Links */

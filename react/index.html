@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" data-theme="keten">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React + TS</title>
+    <style>
+      /* Emergency inline styles to kill all focus rings and shadows */
+      * { 
+        -webkit-tap-highlight-color: transparent !important; 
+      }
+      *:focus, *:focus-visible, *:active, *:hover { 
+        outline: none !important; 
+        box-shadow: none !important; 
+        -webkit-box-shadow: none !important;
+        -moz-box-shadow: none !important;
+      }
+      button, a, .btn, [role="button"] { 
+        outline: none !important; 
+        box-shadow: none !important; 
+      }
+      button:focus, button:focus-visible, button:active,
+      a:focus, a:focus-visible, a:active,
+      .btn:focus, .btn:focus-visible, .btn:active { 
+        outline: 0 !important; 
+        box-shadow: 0 0 0 0 transparent !important; 
+        -webkit-box-shadow: 0 0 0 0 transparent !important;
+        border: none !important;
+      }
+      /* Kill framer-motion's hover shadow */
+      [data-projection-id] { box-shadow: none !important; }
+      [data-projection-id]:hover { box-shadow: none !important; }
+      [data-projection-id]:focus { box-shadow: none !important; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
