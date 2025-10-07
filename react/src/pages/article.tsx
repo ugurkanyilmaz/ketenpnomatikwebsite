@@ -1,4 +1,13 @@
 import { Link, useParams } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { fetchCategoryRows } from '../api'
+import { getUniqueCategoriesFromAreas } from '../data/usableAreasMapping'
+import { Car, Factory, Settings, Cpu, HardHat, Armchair, Plane, Wrench, PartyPopper, Home, Package, Hammer } from 'lucide-react'
+
+// Icon mapping
+const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  Car, Factory, Settings, Cpu, HardHat, Armchair, Plane, Wrench, PartyPopper, Home, Package, Hammer
+}
 
 const seriesInfo: Record<
   string,
@@ -37,9 +46,30 @@ const seriesInfo: Record<
 }
 
 export default function Article() {
-  const { seriesId } = useParams()
+  const { seriesId, tier, categoryId } = useParams()
+  const [catRows, setCatRows] = useState<any[] | null>(null)
+
   const key = typeof seriesId === 'string' && seriesId.length ? seriesId : 'seri-impactx'
   const info = seriesInfo[key] ?? seriesInfo['seri-impactx']
+
+  useEffect(() => {
+    if (!tier || !categoryId || !seriesId) return
+    console.log('[Article] Fetching data with params:', { parent: tier, child: categoryId, subchild: seriesId })
+    fetchCategoryRows({ parent: tier, child: categoryId, subchild: seriesId })
+      .then((res) => { 
+        console.log('[Article] Received data:', res)
+        setCatRows(res.items) 
+      })
+      .catch((err) => {
+        console.error('[Article] Failed to fetch:', err)
+      })
+  }, [tier, categoryId, seriesId])
+
+  const cat = useMemo(() => {
+    const result = (catRows && catRows[0]) || null
+    console.log('[Article] Current cat data:', result)
+    return result
+  }, [catRows])
 
   if (!info) {
     return (
@@ -75,15 +105,15 @@ export default function Article() {
         {/* Hero Banner */}
         <div className="hero rounded-box overflow-hidden shadow mb-10">
           <img
-            src={`https://picsum.photos/seed/${seriesId}/1200/400`}
-            alt={info.title}
+            src={cat?.main_image && cat.main_image.trim() !== '' ? cat.main_image : `https://picsum.photos/seed/${seriesId}/1200/400`}
+            alt={cat?.title || info.title}
             className="h-64 w-full object-cover"
           />
           <div className="hero-overlay bg-black/50" />
           <div className="hero-content text-neutral-content text-center">
             <div className="max-w-2xl">
-              <h1 className="text-4xl font-bold">{info.title}</h1>
-              <p className="mt-4">{info.description}</p>
+              <h1 className="text-4xl font-bold">{cat?.title || info.title}</h1>
+              <p className="mt-4">{cat?.title_subtext || info.description}</p>
             </div>
           </div>
         </div>
@@ -92,17 +122,16 @@ export default function Article() {
           {/* Main column: spans 2 on large screens */}
           <main className="lg:col-span-3">
             <article className="prose max-w-none">
-              <h2 className="text-2xl font-bold mb-4">{info.title} Hakkında:</h2>
-              <p>
-                Bu seri; profesyonel kullanımlar için test edilmiş, dayanıklı malzeme yapısı ve
-                ergonomik tasarımı ile öne çıkar.
-              </p>
+              <h2 className="text-2xl font-bold mb-4">{cat?.title || info.title} Hakkında:</h2>
+              <div className="whitespace-pre-line">
+                {(cat?.about || 'Bu seri; profesyonel kullanımlar için test edilmiş, dayanıklı malzeme yapısı ve ergonomik tasarımı ile öne çıkar.')}
+              </div>
             </article>
 
             {/* Ekstra Görsel + Callout */}
             <div className="mt-8 grid md:grid-cols-2 gap-6 items-center">
               <img
-                src={`https://picsum.photos/seed/${seriesId}-hero/600/400`}
+                src={cat?.img1 && cat.img1.trim() !== '' ? cat.img1 : `https://picsum.photos/seed/${seriesId}-hero/600/400`}
                 alt="Ürün görseli"
                 className="rounded-box shadow"
               />
@@ -114,15 +143,24 @@ export default function Article() {
                   </svg>
                 </div>
 
-                {/* Filled feature card (dark gray) */}
-                <div className="card bg-black text-white shadow-2xl overflow-hidden" style={{ backgroundColor: '#000000', border: '3px solid #00FF00' }}>
-                  <div className="card-body p-6" style={{ backgroundColor: '#4B4B4B', color: '#ffffff' }}>
+                {/* Filled feature card using blackwood1.jpg as background with dark overlay */}
+                <div className="card relative overflow-hidden shadow-2xl" style={{ border: '3px solid #00FF00' }}>
+                  {/* Background image */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      backgroundImage: "url('/blackwood1.jpg')",
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    }}
+                  />
+
+                  <div className="card-body p-6 relative" style={{ color: '#ffffff', textShadow: '0 2px 6px rgba(0,0,0,0.7)' }}>
                     <h3 className="card-title">Öne Çıkan Özellikler</h3>
-                    <ul className="list-disc pl-5 mt-2 text-sm">
-                      <li>Uzun ömürlü ve dayanıklı malzeme</li>
-                      <li>Düşük titreşim, yüksek tork</li>
-                      <li>Profesyonel kullanım için ideal</li>
-                    </ul>
+                    <div className="text-sm whitespace-pre-line mt-2">
+                      {cat?.featured || 'Uzun ömürlü ve dayanıklı malzeme\nDüşük titreşim, yüksek tork\nProfesyonel kullanım için ideal'}
+                    </div>
                   </div>
                 </div>
                 {/* Independent decorative block below the card (orange) */}
@@ -139,24 +177,18 @@ export default function Article() {
               {/* Sol: Tablo */}
               <div className="lg:col-span-2">
                 {/* Seri Bilgileri: ayrı bir kart içinde bullet list olarak göster */}
+                {cat?.info && (
                 <div className="card bg-base-200 shadow mb-6">
                   <div className="card-body">
                     <h3 className="card-title">Seri Bilgileri</h3>
                     <ul className="list-disc pl-5 mt-2 text-sm text-black/80">
-                      <li><strong>Seri:</strong> {info.title}</li>
-                      <li><strong>Kısa Açıklama:</strong> {info.description}</li>
-                      <li><strong>Model Sayısı:</strong> {info.table.length}</li>
-                      <li>
-                        <strong>Modeller:</strong>
-                        <ul className="list-disc pl-5 mt-1 text-sm">
-                          {info.table.map((r) => (
-                            <li key={r.model}>{r.model} — {r.torque}</li>
-                          ))}
-                        </ul>
-                      </li>
+                      {cat.info.split('\n').filter((line: string) => line.trim()).map((line: string, idx: number) => (
+                        <li key={idx}>{line.trim()}</li>
+                      ))}
                     </ul>
                   </div>
                 </div>
+                )}
 
                 <h2 className="text-2xl font-bold mb-4">Teknik Özellikler</h2>
                 <div className="overflow-x-auto rounded-box border border-base-200 shadow">
@@ -192,10 +224,18 @@ export default function Article() {
                 <div className="card bg-base-200 shadow">
                   <div className="card-body text-black">
                     <h3 className="card-title">Seri Özeti</h3>
-                    <ul className="list-disc pl-5 text-sm text-black/80">
-                      <li>Yüksek tork ve verimlilik</li>
-                      <li>Düşük titreşim ve gürültü</li>
-                      <li>Ergonomik ve dayanıklı gövde</li>
+                    <ul className="list-disc pl-5 mt-2 text-sm text-black/80">
+                      {cat?.summary ? (
+                        cat.summary.split(';').filter((item: string) => item.trim()).map((item: string, idx: number) => (
+                          <li key={idx}>{item.trim()}</li>
+                        ))
+                      ) : (
+                        <>
+                          <li>Yüksek tork ve verimlilik</li>
+                          <li>Düşük titreşim ve gürültü</li>
+                          <li>Ergonomik ve dayanıklı gövde</li>
+                        </>
+                      )}
                     </ul>
                   </div>
                 </div>
@@ -215,60 +255,68 @@ export default function Article() {
             </div>
 
             {/* 3 - Uygulama Alanları */}
+            {cat?.usable_areas && (
             <div className="mt-12">
               <h2 className="text-2xl font-bold mb-4">Nerelerde Kullanılır?</h2>
-
-              {/* Responsive grid: auto-fit columns with minmax so any number of items fits and cards grow */}
-              {/**
-               * We use an inline style for gridTemplateColumns because Tailwind doesn't provide
-               * a utility for repeat(auto-fit, minmax(...)). The min width is increased so cards
-               * appear larger; change `minmax(16rem, 1fr)` to adjust sizing.
-               */}
               <div
                 className="grid gap-6"
                 style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(16rem, 1fr))' }}
               >
-                {(
-                  [
-                    {
-                      title: 'Otomotiv Servisleri',
-                      desc: 'Lastik sökme-takma, motor montajı ve bakım işlemlerinde yaygın kullanım.',
-                    },
-                    {
-                      title: 'Endüstriyel Üretim',
-                      desc: 'Ağır montaj hatlarında yüksek tork gerektiren işler için ideal çözüm.',
-                    },
-                    {
-                      title: 'Gemi Bakım & Tamiri',
-                      desc: 'Gemi gövde, makina ve hat bakımları için dayanıklı ve güvenilir çözümler sunar.',
-                    },
-                    {
-                      title: 'Uçak Bakım & Tamiri',
-                      desc: 'Hassas tolerans ve yüksek güvenlik gerektiren havacılık bakım uygulamaları için uygundur.',
-                    },
-                  ]
-                ).map((loc) => (
-                  <div key={loc.title} className="card bg-base-200 shadow">
-                    <div className="card-body p-4">
-                      <h3 className="card-title text-lg font-semibold m-0">{loc.title}</h3>
-                      <p className="text-sm text-black/70 mt-2">{loc.desc}</p>
+                {getUniqueCategoriesFromAreas(cat.usable_areas).map((category) => {
+                  const IconComponent = iconMap[category.icon]
+                  return (
+                    <div key={category.id} className="card bg-gradient-to-br from-primary/10 to-primary/5 shadow-lg hover:shadow-xl transition-shadow">
+                      <div className="card-body p-6 text-center">
+                        <div className="flex justify-center mb-3">
+                          {IconComponent && <IconComponent size={48} className="text-primary" />}
+                        </div>
+                        <h3 className="font-bold text-lg text-black">{category.title}</h3>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
+            )}
 
             {/* Nasıl Kullanılır? */}
             <div className="mt-12">
               <h2 className="text-2xl font-bold mb-4">Nasıl Kullanılır?</h2>
-              <div className="aspect-video rounded-box overflow-hidden shadow">
-                <iframe
-                  className="w-full h-full"
-                  src="https://www.youtube.com/embed/DRAvzJPUBCY"
-                  title="Çalışma Videosu"
-                  allowFullScreen
-                ></iframe>
-              </div>
+              {cat?.video_url && cat.video_url.trim() !== '' ? (
+                <div className="aspect-video rounded-box overflow-hidden shadow">
+                  <iframe
+                    className="w-full h-full"
+                    src={cat.video_url}
+                    title="Çalışma Videosu"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              ) : (
+                <div className="card bg-gradient-to-br from-warning/10 to-warning/5 shadow-lg border-2 border-warning/20">
+                  <div className="card-body text-center">
+                    <div className="flex justify-center mb-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-bold mb-2">Çalışma Videosu Yakında Eklenecek</h3>
+                    <p className="text-base-content/70 mb-4">
+                      Bu ürünün çalışma videosunu izlemek ve daha fazla bilgi almak için bizimle iletişime geçebilirsiniz.
+                    </p>
+                    <div className="flex gap-3 justify-center flex-wrap">
+                      <Link to="/iletisim" className="btn btn-warning">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        İletişime Geç
+                      </Link>
+                      <Link to="/demo-talep" className="btn btn-outline btn-warning">
+                        Demo Talep Et
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Demo Talep bölümü */}
@@ -276,10 +324,11 @@ export default function Article() {
               <h2 className="text-2xl font-bold mb-4">Demo Talep</h2>
               <div className="card bg-base-200 shadow">
                 <div className="card-body">
-                    <p className="text-base text-black/80">
-                    Türkiye'nin her yerindeki uzman satış temsilcilerimizden demo talep edin, ürünlerimizi kendi çalışma alanınızda, tamamen size özel bir sunumla, uygulamalı olarak deneyimleyin.<br />
-                    Aklınızdaki tüm soruları yanıtlayacak, size özel çözümleri keşfetmenize rehberlik edecek ve ürünlerimizin gerçek potansiyelini ilk elden görmenizi sağlayacağız.
-                    </p>
+                    <div className="text-base text-black/80 whitespace-pre-line">
+                    Türkiye'nin her yerindeki uzman satış temsilcilerimizden demo talep edin, ürünlerimizi kendi çalışma alanınızda, tamamen size özel bir sunumla, uygulamalı olarak deneyimleyin.
+
+Aklınızdaki tüm soruları yanıtlayacak, size özel çözümleri keşfetmenize rehberlik edecek ve ürünlerimizin gerçek potansiyelini ilk elden görmenizi sağlayacağız.
+                    </div>
                   <div className="mt-4 w-full flex justify-center">
                     <Link to="/demo-talep" className="btn btn-primary">Demo Talep Et</Link>
                   </div>

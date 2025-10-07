@@ -1,6 +1,6 @@
 import Header from './components/Header'
 import Footer from './components/Footer'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import HomePage from './pages/home_page'
 import Categories_page from './pages/categories_page'
 import Subcategories from './pages/subcategories'
@@ -20,14 +20,34 @@ import Hiyoki from './pages/distributorluk/Hiyoki'
 import Apac from './pages/distributorluk/Apac'
 import Blog from './pages/Blog'
 import BlogDetail from './pages/BlogDetail'
+import NotFound from './pages/NotFound'
+
+// Admin Pages
+import AdminLayout from './pages/admin/AdminLayout'
+import Dashboard from './pages/admin/Dashboard'
+import CategoryManagement from './pages/admin/CategoryManagement'
+import CategoryPhotos from './pages/admin/CategoryPhotos'
+import ProductManagement from './pages/admin/ProductManagement'
 
 
 function App() {
+  const location = useLocation()
+  const isAdminRoute = location.pathname.startsWith('/admin')
+
   return (
     <div data-theme="keten" className="min-h-dvh flex flex-col bg-base-100 text-base-content">
-      <Header />
+      {!isAdminRoute && <Header />}
       <main className="flex-1">
         <Routes>
+          {/* Admin Routes - No Header/Footer */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="kategoriler" element={<CategoryManagement />} />
+            <Route path="kategori-fotograflari" element={<CategoryPhotos />} />
+            <Route path="urunler" element={<ProductManagement />} />
+          </Route>
+
+          {/* Public Routes */}
           <Route path="/" element={<HomePage />} />
           <Route path="/hakkimizda" element={<Hakkimizda />}>
             <Route index element={<DistributorlukIndex />} />
@@ -53,9 +73,12 @@ function App() {
           {/* <Route path="/katalog" element={<PdfViewer />} /> */}
           {/* <Route path="/pdf" element={<PdfViewer />} /> */}
           {/* <Route path="/simple-pdf" element={<SimplePdfViewer />} /> */}
+          
+          {/* 404 - Catch all unmatched routes */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      <Footer />
+      {!isAdminRoute && <Footer />}
     </div>
   )
 }

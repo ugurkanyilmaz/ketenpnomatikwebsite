@@ -8,7 +8,7 @@ export default function Categories_page() {
     { id: 'profesyonel', title: 'Profesyonel', desc: 'Atölye ve servisler için', img: '/proffesional_cat_pic.jpg' },
   ]
 
-  const auxiliaryTier = { id: 'yardimci', title: 'Yardımcı Ürünler', desc: 'Aksesuarlar ve yedek parçalar', img: '/technical_service_banner.png' }
+  const auxiliaryTier = { id: 'yardimci-ekipmanlar', title: 'Yardımcı Ürünler', desc: 'Aksesuarlar ve yedek parçalar', img: '/technical_service_banner.png' }
 
   return (
     <section className="bg-base-100">

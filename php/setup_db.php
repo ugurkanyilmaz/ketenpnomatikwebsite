@@ -32,7 +32,7 @@ try {
             title TEXT,
             title_subtext TEXT,
             about TEXT,
-            featured INTEGER DEFAULT 0,
+            featured TEXT,
             info TEXT,
             summary TEXT,
             usable_areas TEXT,
@@ -42,10 +42,13 @@ try {
             meta_keywords TEXT,
             main_image TEXT,
             img1 TEXT,
+            video_url TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME
         );"
     );
+    // Unique index for upsert semantics (parent+child+subchild defines a node)
+    $pdo->exec("CREATE UNIQUE INDEX IF NOT EXISTS ux_categories_path ON categories(parent, child, subchild);");
 
     // skeleton tables for series, products, ftop
     $pdo->exec(
@@ -83,8 +86,24 @@ try {
         );"
     );
 
+    // category_photos: stores photos for parent+child (subcategory) combinations
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS category_photos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            parent TEXT NOT NULL,
+            child TEXT NOT NULL,
+            photo_url TEXT NOT NULL,
+            alt_text TEXT,
+            display_order INTEGER DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME
+        );"
+    );
+    // Unique index for parent+child+photo_url to prevent duplicates
+    $pdo->exec("CREATE UNIQUE INDEX IF NOT EXISTS ux_category_photos_path ON category_photos(parent, child, photo_url);");
+
     echo "Database ready at: $dbFile\n";
-    echo "Ensured tables: users, categories, series, products, ftop\n";
+    echo "Ensured tables: users, categories, series, products, ftop, category_photos\n";
 
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
@@ -107,20 +126,6 @@ if ((int)$existing->fetchColumn() === 0) {
         ':role' => 'admin'
     ]);
     echo "Seeded admin user: admin@example.com (password: admin123)\n";
-}
-
-// Seed categories minimal demo data if table is empty
-$cnt = (int)$pdo->query('SELECT COUNT(*) FROM categories')->fetchColumn();
-if ($cnt === 0) {
-    $ins = $pdo->prepare('INSERT INTO categories (parent, child, subchild, title, title_subtext, about, featured, info, summary, usable_areas, meta_title, meta_desc, schema_desc, meta_keywords, main_image, img1) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
-    $seed = [
-        ['endustriyel','darbeli-somun-sokme','seri-apac','APAC Serisi','Yüksek performans','APAC hakkında',1,'Bilgi','Özet','Atölye, üretim','APAC Meta','APAC Desc','APAC Schema','apac, seri','', ''],
-        ['endustriyel','darbeli-somun-sokme','impactx','ImpactX Serisi','Darbeli güç','ImpactX hakkında',0,'Bilgi','Özet','Endüstri','ImpactX Meta','ImpactX Desc','ImpactX Schema','impactx, seri','', ''],
-        ['endustriyel','kompresorler','apac-komp','APAC Kompresör','Sessiz verimlilik','APAC Kompresör',0,'Bilgi','Özet','Fabrikalar','Meta','Desc','Schema','kompresör','', ''],
-        ['profesyonel','kompresorler','pro-komp-100','Pro Kompresör 100','Kompakt güç','Pro Kompresör 100',0,'Bilgi','Özet','Servis','Meta','Desc','Schema','pro, komp','', ''],
-    ];
-    foreach ($seed as $r) { $ins->execute($r); }
-    echo "Seeded sample categories (4 rows)\n";
 }
 
 ?>
