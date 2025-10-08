@@ -30,8 +30,8 @@ export default function CategoryPhotosManagement() {
 
   const loadCategories = async () => {
     try {
-      // Get all categories from database to match exactly with saved photos
-      const res = await fetch('/php/api/categories_find.php')
+      // Get all articles from database to match exactly with saved photos
+      const res = await fetch('/php/api/articles_find.php')
       const data = await res.json()
       
       const parentSet = new Set<string>()
@@ -43,7 +43,7 @@ export default function CategoryPhotosManagement() {
       setParents(Array.from(parentSet).sort())
       console.log('🏷️ Available parents:', Array.from(parentSet))
     } catch (err) {
-      console.error('Failed to load categories:', err)
+      console.error('Failed to load articles:', err)
     }
   }
 
@@ -64,7 +64,7 @@ export default function CategoryPhotosManagement() {
   const loadChildrenForParent = async (parent: string) => {
     try {
       // Get children from database to match exactly with saved photos
-      const res = await fetch('/php/api/categories_find.php')
+      const res = await fetch('/php/api/articles_find.php')
       const data = await res.json()
       
       const childSet = new Set<string>()
@@ -511,7 +511,7 @@ function PhotoModal({
   const loadChildrenForParent = async (parent: string) => {
     try {
       // Get children from database to match exactly
-      const res = await fetch('/php/api/categories_find.php')
+      const res = await fetch('/php/api/articles_find.php')
       const data = await res.json()
       
       const childSet = new Set<string>()

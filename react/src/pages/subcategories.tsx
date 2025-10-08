@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
-import { fetchTiers, type Tier } from '../api'
+import { fetchTiers, type Tier } from '../utils/api'
 
 interface CategoryPhoto {
   id: number
@@ -78,7 +78,8 @@ export default function Subcategories() {
               <div className="group relative block rounded-box overflow-hidden shadow hover:shadow-lg transition-shadow">
                 <img
                   src={imageUrl}
-                  alt={photo?.alt_text || s.title}
+                  alt={`${s.title} - Alt Kategori Görseli`}
+                  title={s.title}
                   className="h-48 w-full object-cover"
                   loading="lazy"
                   onError={(e) => {

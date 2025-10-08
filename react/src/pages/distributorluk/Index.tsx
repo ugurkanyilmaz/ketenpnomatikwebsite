@@ -18,9 +18,12 @@ export default function DistributorlukIndex() {
           <div className="text-left">
             <div className="badge badge-primary mb-3">Yetkili Distribütör</div>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Kolver</h2>
-            <p className="mt-4 text-gray-700">
-              Yüksek hassasiyetli elektrikli tork çözümleri ile montaj hatlarında kalite standartlarını yükseltir.
-              Kurulum, eğitim ve satış sonrası destekle uçtan uca hizmet sağlıyoruz.
+            <p className="mt-4 text-gray-700 leading-relaxed">
+              İtalyan marka Kolver, elektrikli tork kontrol sistemleri ile otomotiv, havacılık ve elektronik sektörlerinde 
+              hassas montaj çözümleri sunar. ±%1 tork hassasiyeti ve Industry 4.0 uyumlu sistemleri ile üretim hatlarınızda 
+              sıfır hata hedefine ulaşmanızı sağlar. MES ve ERP entegrasyonu, Poka-Yoke hata önleme sistemleri ve detaylı 
+              raporlama özellikleri ile kalite kontrol süreçlerinizi dijitalleştirir. Kurulum aşamasından operatör eğitimlerine, 
+              periyodik bakımdan yedek parça teminne kadar tüm süreçlerde profesyonel destek sunuyoruz.
             </p>
             <div className="mt-6 flex justify-start">
               <ScrollToTopLink to="/hakkimizda/kolver" className="btn btn-primary">Detay</ScrollToTopLink>
@@ -31,8 +34,9 @@ export default function DistributorlukIndex() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
+            className="flex items-center"
           >
-            <img src="/professional_banner.png" alt="Kolver" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src="/professional_banner.png" alt="Kolver Elektrikli Tork Sistemleri" className="rounded-box shadow-xl w-full object-contain" loading="lazy" />
           </motion.div>
         </motion.section>
       </div>
@@ -52,14 +56,20 @@ export default function DistributorlukIndex() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
+            className="flex items-center"
           >
-            <img src="/keten_banner.jpg" alt="APAC" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src="/keten_banner.jpg" alt="APAC Pnömatik El Aletleri" className="rounded-box shadow-xl w-full object-contain" loading="lazy" />
           </motion.div>
           <div className="text-right">
             <div className="badge badge-primary mb-3">Yetkili Distribütör</div>
             <h2 className="text-2xl md:text-3xl font-bold text-white">APAC</h2>
-            <p className="mt-4 text-gray-300">
-              Geniş ürün yelpazesi ve rekabetçi teslim süreleriyle endüstriyel uygulamalar için güvenilir çözümler.
+            <p className="mt-4 text-gray-300 leading-relaxed">
+              Tayvanlı marka APAC, 40 yılı aşkın tecrübesi ile pnömatik el aletleri ve endüstriyel güç aletlerinde 
+              dünya çapında tanınan bir üreticidir. Havalı vidalama, taşlama, delme, zımparalama ve kesme uygulamaları 
+              için 500'den fazla model ile geniş bir ürün portföyü sunar. Otomotiv, elektronik, mobilya ve metal işleme 
+              sektörlerinde yüksek dayanıklılık, ergonomik tasarım ve düşük bakım maliyeti ile öne çıkar. ISO 9001 
+              kalite yönetim sistemi sertifikasına sahip olan APAC ürünleri, 7/24 endüstriyel kullanıma uygun olarak 
+              tasarlanmıştır ve 80'den fazla ülkede güvenle kullanılmaktadır.
             </p>
             <div className="mt-6 flex justify-end">
               <ScrollToTopLink to="/hakkimizda/apac" className="btn btn-primary">Detay</ScrollToTopLink>
@@ -81,9 +91,10 @@ export default function DistributorlukIndex() {
           <div className="text-left">
             <div className="badge badge-secondary mb-3">Yetkili Distribütör</div>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Hiyoki</h2>
-            <p className="mt-4 text-gray-700">
-              Elektriksel ölçüm ve test çözümleri ile üretim ve Ar-Ge süreçlerinde güvenilir sonuçlar.
-              Uygulamanıza uygun ürün seçiminden devreye almaya kadar yanınızdayız.
+            <p className="mt-4 text-gray-700 leading-relaxed">
+              Hiyoki, elektrikli ölçüm ve test cihazları konusunda geniş ürün yelpazesi ile profesyonel çözümler sunar. 
+              Hassas ölçüm gerektiren tüm uygulamalarınız için güvenilir bir iş ortağı. Laboratuvar, üretim hattı ve 
+              saha uygulamalarında yüksek performans sağlayan cihazlar ile kalite kontrol süreçlerinizi destekliyoruz.
             </p>
             <div className="mt-6 flex justify-start">
               <ScrollToTopLink to="/hakkimizda/hiyoki" className="btn btn-primary">Detay</ScrollToTopLink>
@@ -94,8 +105,9 @@ export default function DistributorlukIndex() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
+            className="flex items-center"
           >
-            <img src="/endus.jpg" alt="Hioki" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src="/endus.jpg" alt="Hiyoki Ölçüm Cihazları" className="rounded-box shadow-xl w-full object-contain" loading="lazy" />
           </motion.div>
         </motion.section>
       </div>
@@ -144,13 +156,13 @@ export default function DistributorlukIndex() {
             </div>
           </div>
           <motion.div
-            className="order-1 lg:order-2"
+            className="order-1 lg:order-2 flex items-center"
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <img src="/technical_service_banner.png" alt="Keten Pnömatik" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src="/technical_service_banner.png" alt="Keten Pnömatik Teknik Servis" className="rounded-box shadow-xl w-full object-contain" loading="lazy" />
           </motion.div>
         </motion.section>
       </div>
@@ -190,19 +202,19 @@ export default function DistributorlukIndex() {
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="rounded-2xl border border-base-300 bg-base-100 p-6 text-center">
-              <div className="text-3xl font-extrabold text-gray-900">10+ </div>
+              <div className="text-3xl font-extrabold text-gray-900">28+ </div>
               <div className="text-sm text-gray-500">Yıl Tecrübe</div>
             </div>
             <div className="rounded-2xl border border-base-300 bg-base-100 p-6 text-center">
-              <div className="text-3xl font-extrabold text-gray-900">250+ </div>
+              <div className="text-3xl font-extrabold text-gray-900">1000+ </div>
               <div className="text-sm text-gray-500">Proje</div>
             </div>
             <div className="rounded-2xl border border-base-300 bg-base-100 p-6 text-center">
-              <div className="text-3xl font-extrabold text-gray-900">150+ </div>
+              <div className="text-3xl font-extrabold text-gray-900">5000+ </div>
               <div className="text-sm text-gray-500">Müşteri</div>
             </div>
             <div className="rounded-2xl border border-base-300 bg-base-100 p-6 text-center">
-              <div className="text-3xl font-extrabold text-gray-900">5000+ </div>
+              <div className="text-3xl font-extrabold text-gray-900">10000+ </div>
               <div className="text-sm text-gray-500">Stok Ürün</div>
             </div>
           </div>

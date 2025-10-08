@@ -4,10 +4,20 @@ import Newsletter from '../components/Newsletter'
 import { motion, useScroll, useSpring } from 'framer-motion'
 import DistributorSections from '../components/DistributorSections'
 import SectionHeader from '../components/SectionHeader'
+import { useSiteImage } from '../hooks/useSiteImages'
 
 export default function HomePage() {
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, mass: 0.2 })
+  
+  // Fetch dynamic images
+  const { image: electricImg } = useSiteImage('home_electric')
+  const { image: batteryImg } = useSiteImage('home_battery')
+  const { image: pneumaticImg } = useSiteImage('home_pneumatic')
+  const { image: process1Img } = useSiteImage('home_process_1')
+  const { image: process2Img } = useSiteImage('home_process_2')
+  const { image: process3Img } = useSiteImage('home_process_3')
+  const { image: process4Img } = useSiteImage('home_process_4')
   return (
     <>
       {/* Scroll Progress Bar */}
@@ -35,7 +45,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <img src="/professional_banner.png" alt="Elektrikli ürünler"
+            <img src={electricImg?.image_path || "/professional_banner.png"} alt="Elektrikli ürünler"
                  className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </motion.div>
           <div>
@@ -172,7 +182,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <img src="/professional_banner.png" alt="Akülü ürünler"
+            <img src={batteryImg?.image_path || "/professional_banner.png"} alt="Akülü ürünler"
                  className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </motion.div>
         </div>
@@ -193,7 +203,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <img src="/endus.jpg" alt="Havalı ürünler"
+            <img src={pneumaticImg?.image_path || "/endus.jpg"} alt="Havalı ürünler"
                  className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </motion.div>
           <div className="text-right">
@@ -319,7 +329,7 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <img src="/technical_service_banner.png" alt="İhtiyaç analizi"
+                <img src={process1Img?.image_path || "/technical_service_banner.png"} alt="İhtiyaç analizi"
                      className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
               </motion.div>
               <div>
@@ -361,7 +371,7 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <img src="/keten_banner.jpg" alt="Ürün/Seri seçimi"
+                <img src={process2Img?.image_path || "/keten_banner.jpg"} alt="Ürün/Seri seçimi"
                      className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
               </motion.div>
             </div>
@@ -384,7 +394,7 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <img src="/technical_service_banner.png" alt="Kurulum ve eğitim"
+                <img src={process3Img?.image_path || "/technical_service_banner.png"} alt="Kurulum ve eğitim"
                      className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
               </motion.div>
               <div>
@@ -452,7 +462,4 @@ export default function HomePage() {
         transition={{ duration: 0.6, delay: 0.1 }}
       >
         <Newsletter />
-      </motion.div>
-    </>
-  )
-}
+      </m

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useSiteImage } from '../hooks/useSiteImages'
 
 type Slide = {
   image: string
@@ -51,23 +52,28 @@ function OverlapImages({
 }
 
 export default function Hero() {
+  // Fetch hero images from API
+  const { image: hero1 } = useSiteImage('home_hero_1')
+  const { image: hero2 } = useSiteImage('home_hero_2')
+  const { image: hero3 } = useSiteImage('home_hero_3')
+
   const slides: Slide[] = [
     {
-      image: '/keten_banner.jpg',
+      image: hero1?.image_path || '/keten_banner.jpg',
       title: 'Keten  Pnömatik',
       subtitle: 'Endüstriyel pnömatik çözümler ve ekipmanlar',
       ctaPrimary: { label: 'Ürünleri Keşfet', href: '/kategoriler' },
       ctaSecondary: { label: 'Demo Talep Et', href: '/demo-talebi' },
     },
     {
-      image: '/endus.jpg',
+      image: hero2?.image_path || '/endus.jpg',
       title: 'Endüstriyel Seri',
       subtitle: 'Ağır hizmet için yüksek dayanım ve verimlilik',
       ctaPrimary: { label: 'Endüstriyel Seriye Git', href: '/kategoriler/endustriyel' },
       ctaSecondary: { label: 'Teknik Servis', href: '/teknik-servis' },
     },
     {
-      image: '/professional_banner.png',
+      image: hero3?.image_path || '/professional_banner.png',
       title: 'Profesyonel Seri',
       subtitle: 'Usta kullanıcılar için hafif ve güçlü çözümler',
       ctaPrimary: { label: 'Profesyonel Seriye Git', href: '/kategoriler/profesyonel' },

@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
-import { useEffect, useMemo, useState } from 'react'
-import { fetchCategoryRows } from '../api'
+import { useEffect, useState, useMemo } from 'react'
+import { fetchArticleRows } from '../utils/api'
+import { buildArticleSEO, applySEOToHead, type ArticleSEOData } from '../utils/article_seo'
 import { getUniqueCategoriesFromAreas } from '../data/usableAreasMapping'
 import { Car, Factory, Settings, Cpu, HardHat, Armchair, Plane, Wrench, PartyPopper, Home, Package, Hammer } from 'lucide-react'
 
@@ -9,59 +10,106 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   Car, Factory, Settings, Cpu, HardHat, Armchair, Plane, Wrench, PartyPopper, Home, Package, Hammer
 }
 
-const seriesInfo: Record<
-  string,
-  {
-    title: string
-    description: string
-    table: {
-      model: string
-      torque: string
-      air: string
-      weight: string
-      productId: string
-    }[]
-  }
-> = {
-  'seri-apac': {
-    title: 'APAC Serisi',
-    description:
-      'APAC serisi; dayanıklılık ve verimlilik odaklı, endüstriyel uygulamalarda yüksek performans sağlar.',
-    table: [
-      { model: 'APAC-200', torque: '200 Nm', air: '90 L/dk', weight: '1.4 kg', productId: 'apac-200' },
-      { model: 'APAC-400', torque: '400 Nm', air: '140 L/dk', weight: '1.7 kg', productId: 'apac-400' },
-      { model: 'APAC-600', torque: '600 Nm', air: '190 L/dk', weight: '2.0 kg', productId: 'apac-600' },
-    ],
-  },
-  'seri-impactx': {
-    title: 'ImpactX Darbeli Somun Sökme Serisi',
-    description:
-      'Ağır hizmet endüstriyel kullanım için yüksek tork, dayanıklı gövde ve düşük titreşim. Uzun ömürlü performans için tasarlandı.',
-    table: [
-      { model: 'ImpactX-500', torque: '500 Nm', air: '120 L/dk', weight: '1.6 kg', productId: 'impactx-500' },
-      { model: 'ImpactX-800', torque: '800 Nm', air: '180 L/dk', weight: '1.9 kg', productId: 'impactx-800' },
-      { model: 'ImpactX-1000', torque: '1000 Nm', air: '220 L/dk', weight: '2.2 kg', productId: 'impactx-1000' },
-    ],
-  },
+interface Product {
+  id: number
+  url: string
+  parent: string
+  child: string
+  subchild: string
+  title: string
+  sku: string
+  paragraph: string
+  description: string
+  brand: string
+  feature1: string
+  feature2: string
+  feature3: string
+  feature4: string
+  feature5: string
+  feature6: string
+  feature7: string
+  feature8: string
+  feature9: string
+  feature10: string
+  feature11: string
+  main_img: string
+  p_img1: string
+  p_img2: string
+  p_img3: string
+  p_img4: string
+  p_img5: string
+  p_img6: string
+  p_img7: string
+  meta_description: string
+  meta_title: string
+  schema_description: string
+  keywords: string
 }
 
 export default function Article() {
   const { seriesId, tier, categoryId } = useParams()
   const [catRows, setCatRows] = useState<any[] | null>(null)
-
-  const key = typeof seriesId === 'string' && seriesId.length ? seriesId : 'seri-impactx'
-  const info = seriesInfo[key] ?? seriesInfo['seri-impactx']
+  const [loading, setLoading] = useState(true)
+  const [products, setProducts] = useState<Product[]>([])
+  const [productsLoading, setProductsLoading] = useState(false)
+  const [relatedSeries, setRelatedSeries] = useState<any[]>([])
 
   useEffect(() => {
-    if (!tier || !categoryId || !seriesId) return
+    if (!tier || !categoryId || !seriesId) {
+      setLoading(false)
+      return
+    }
+    
+    setLoading(true)
     console.log('[Article] Fetching data with params:', { parent: tier, child: categoryId, subchild: seriesId })
-    fetchCategoryRows({ parent: tier, child: categoryId, subchild: seriesId })
+    
+    fetchArticleRows({ parent: tier, child: categoryId, subchild: seriesId })
       .then((res) => { 
         console.log('[Article] Received data:', res)
-        setCatRows(res.items) 
+        setCatRows(res.items)
+        setLoading(false)
       })
       .catch((err) => {
         console.error('[Article] Failed to fetch:', err)
+        setLoading(false)
+      })
+  }, [tier, categoryId, seriesId])
+
+  // Fetch products with same subcategory
+  useEffect(() => {
+    if (!seriesId) return
+    
+    setProductsLoading(true)
+    fetch(`/php/api/products.php?subchild=${encodeURIComponent(seriesId)}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log('[Article] Products fetched:', data)
+        if (data.success && data.products) {
+          setProducts(data.products)
+        }
+        setProductsLoading(false)
+      })
+      .catch(err => {
+        console.error('[Article] Failed to fetch products:', err)
+        setProductsLoading(false)
+      })
+  }, [seriesId])
+
+  // Fetch related series (other subchildren in the same child category)
+  useEffect(() => {
+    if (!tier || !categoryId) return
+    
+    fetchArticleRows({ parent: tier, child: categoryId })
+      .then((res) => {
+        console.log('[Article] Related series fetched:', res)
+        // Filter out current series and limit to 6
+        const filtered = res.items
+          .filter((item: any) => item.subchild_id !== seriesId)
+          .slice(0, 6)
+        setRelatedSeries(filtered)
+      })
+      .catch((err) => {
+        console.error('[Article] Failed to fetch related series:', err)
       })
   }, [tier, categoryId, seriesId])
 
@@ -71,19 +119,57 @@ export default function Article() {
     return result
   }, [catRows])
 
-  if (!info) {
+  // Apply SEO when category data is available
+  useEffect(() => {
+    if (!cat) return
+
+    const seoData: ArticleSEOData = {
+      id: cat.id || 0,
+      tier: tier || 'parent',
+      parent_id: tier,
+      child_id: categoryId,
+      subchild_id: seriesId,
+      title: cat.title || 'Kategori',
+      meta_title: cat.meta_title,
+      meta_description: cat.meta_desc,  // Database field: meta_desc
+      schema_description: cat.schema_desc,  // Database field: schema_desc
+      keywords: cat.meta_keywords,  // Database field: meta_keywords
+      main_img: cat.main_image,
+      created_at: cat.created_at,
+      updated_at: cat.updated_at
+    }
+
+    const seo = buildArticleSEO(seoData)
+    applySEOToHead(seo)
+  }, [cat, tier, categoryId, seriesId])
+
+  // Show loading state
+  if (loading) {
     return (
       <section className="bg-base-100">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4 py-20">
+          <div className="flex justify-center items-center">
+            <span className="loading loading-spinner loading-lg"></span>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  // Show error if no data
+  if (!cat) {
+    return (
+      <section className="bg-base-100">
+        <div className="max-w-7xl mx-auto px-4 py-20">
           <div className="breadcrumbs text-sm py-4">
             <ul>
               <li><Link to="/">Ana sayfa</Link></li>
               <li><Link to="/kategoriler">Kategoriler</Link></li>
-              <li>Seri bulunamadı</li>
+              <li>Bulunamadı</li>
             </ul>
           </div>
           <div className="alert alert-warning">
-            Bu seri bulunamadı. Lütfen <Link to="/kategoriler" className="link">kategorilere</Link> geri dönün.
+            Bu kategori bulunamadı. Lütfen <Link to="/kategoriler" className="link">kategorilere</Link> geri dönün.
           </div>
         </div>
       </section>
@@ -105,15 +191,16 @@ export default function Article() {
         {/* Hero Banner */}
         <div className="hero rounded-box overflow-hidden shadow mb-10">
           <img
-            src={cat?.main_image && cat.main_image.trim() !== '' ? cat.main_image : `https://picsum.photos/seed/${seriesId}/1200/400`}
-            alt={cat?.title || info.title}
+            src={cat.main_image && cat.main_image.trim() !== '' ? cat.main_image : `https://picsum.photos/seed/${seriesId}/1200/400`}
+            alt={`${cat.title} - Kategori Görseli`}
+            title={cat.title}
             className="h-64 w-full object-cover"
           />
           <div className="hero-overlay bg-black/50" />
           <div className="hero-content text-neutral-content text-center">
             <div className="max-w-2xl">
-              <h1 className="text-4xl font-bold">{cat?.title || info.title}</h1>
-              <p className="mt-4">{cat?.title_subtext || info.description}</p>
+              <h1 className="text-4xl font-bold">{cat.title}</h1>
+              <p className="mt-4">{cat.title_subtext || 'Kategori detayları'}</p>
             </div>
           </div>
         </div>
@@ -122,9 +209,9 @@ export default function Article() {
           {/* Main column: spans 2 on large screens */}
           <main className="lg:col-span-3">
             <article className="prose max-w-none">
-              <h2 className="text-2xl font-bold mb-4">{cat?.title || info.title} Hakkında:</h2>
+              <h2 className="text-2xl font-bold mb-4">{cat.title} Hakkında:</h2>
               <div className="whitespace-pre-line">
-                {(cat?.about || 'Bu seri; profesyonel kullanımlar için test edilmiş, dayanıklı malzeme yapısı ve ergonomik tasarımı ile öne çıkar.')}
+                {cat.about || 'Bu kategori; profesyonel kullanımlar için test edilmiş, dayanıklı malzeme yapısı ve ergonomik tasarımı ile öne çıkar.'}
               </div>
             </article>
 
@@ -132,7 +219,8 @@ export default function Article() {
             <div className="mt-8 grid md:grid-cols-2 gap-6 items-center">
               <img
                 src={cat?.img1 && cat.img1.trim() !== '' ? cat.img1 : `https://picsum.photos/seed/${seriesId}-hero/600/400`}
-                alt="Ürün görseli"
+                alt={`${cat.title} - Ürün Detay Görseli`}
+                title={cat.title}
                 className="rounded-box shadow"
               />
               <div className="flex flex-col items-stretch gap-4 w-full">
@@ -191,32 +279,100 @@ export default function Article() {
                 )}
 
                 <h2 className="text-2xl font-bold mb-4">Teknik Özellikler</h2>
-                <div className="overflow-x-auto rounded-box border border-base-200 shadow">
-                  <table className="table">
-                    <thead className="bg-base-200">
-                      <tr>
-                        <th>Model</th>
-                        <th>Maks. Tork</th>
-                        <th>Hava Tüketimi</th>
-                        <th>Ağırlık</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {info.table.map((row) => (
-                        <tr key={row.model}>
-                          <td className="font-medium">{row.model}</td>
-                          <td>{row.torque}</td>
-                          <td>{row.air}</td>
-                          <td>{row.weight}</td>
-                          <td>
-                            <Link to={`/urun/${row.productId}`} className="btn btn-primary btn-xs">Ürün Detayı</Link>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                {productsLoading ? (
+                  <div className="flex justify-center py-8">
+                    <span className="loading loading-spinner loading-md"></span>
+                  </div>
+                ) : products.length > 0 ? (
+                  (() => {
+                    // Count visible columns
+                    const visibleFeatures = Array.from({ length: 11 }, (_, i) => i + 1).filter((num) => {
+                      return products.some(p => {
+                        const val = p[`feature${num}` as keyof Product]
+                        return val && String(val).trim() !== '' && String(val).toUpperCase() !== 'NULL'
+                      })
+                    })
+                    const totalColumns = visibleFeatures.length + 2 // +2 for SKU and Detay columns
+                    
+                    // Dynamic font size based on column count
+                    let textSize = 'text-sm'
+                    if (totalColumns > 8) textSize = 'text-xs'
+                    if (totalColumns > 10) textSize = 'text-[10px]'
+                    
+                    return (
+                      <div className="rounded-lg shadow-xl overflow-hidden border border-base-300 w-full">
+                        <div className="w-full">
+                          <table className={`w-full ${textSize}`} style={{ tableLayout: 'auto' }}>
+                            <thead>
+                              <tr className="bg-neutral text-neutral-content">
+                                <th className="font-bold px-1 py-3 text-left" style={{ minWidth: '80px' }}>Model (SKU)</th>
+                                {Array.from({ length: 11 }, (_, i) => i + 1).map((num) => {
+                              // Check if at least one product has this feature filled
+                              const hasFeature = products.some(p => {
+                                const featureValue = p[`feature${num}` as keyof Product]
+                                return featureValue && String(featureValue).trim() !== '' && String(featureValue).toUpperCase() !== 'NULL'
+                              })
+                              
+                              if (!hasFeature) return null
+                              
+                              // Get the feature name (text before ":")
+                              const firstProduct = products.find(p => {
+                                const val = p[`feature${num}` as keyof Product]
+                                return val && String(val).trim() !== '' && String(val).toUpperCase() !== 'NULL'
+                              })
+                              const featureText = firstProduct?.[`feature${num}` as keyof Product] as string || ''
+                              const featureName = featureText.includes(':') 
+                                ? featureText.split(':')[0].trim() 
+                                : `Özellik ${num}`
+                              
+                              return <th key={num} className="font-bold px-1 py-3 text-left">{featureName}</th>
+                            })}
+                            <th className="px-1 py-3"></th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-base-100">
+                          {products.map((product, idx) => (
+                            <tr key={product.id} className={`hover:bg-primary/5 transition-colors border-b border-base-200 ${idx % 2 === 0 ? 'bg-base-50' : 'bg-white'}`}>
+                              <td className="font-semibold px-1 py-3 text-primary">{product.sku}</td>
+                              {Array.from({ length: 11 }, (_, i) => i + 1).map((num) => {
+                                const hasFeature = products.some(p => {
+                                  const val = p[`feature${num}` as keyof Product]
+                                  return val && String(val).trim() !== '' && String(val).toUpperCase() !== 'NULL'
+                                })
+                                
+                                if (!hasFeature) return null
+                                
+                                const featureValue = product[`feature${num}` as keyof Product] as string || ''
+                                // Extract value part (text after ":")
+                                const displayValue = featureValue.includes(':')
+                                  ? featureValue.split(':').slice(1).join(':').trim()
+                                  : featureValue
+                                
+                                return (
+                                  <td key={num} className="px-1 py-3 text-base-content/80">{displayValue || '-'}</td>
+                                )
+                              })}
+                              <td className="px-1 py-3">
+                                <Link to={`/urun/${product.sku}`} className="btn btn-primary btn-xs whitespace-nowrap shadow-sm hover:shadow-md transition-shadow">
+                                  Detay
+                                </Link>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                    )
+                  })()
+                ) : (
+                  <div className="alert alert-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Bu seri için henüz ürün eklenmemiş.</span>
+                  </div>
+                )}
               </div>
 
               {/* Sağ: Seri Özeti + Destek */}
@@ -346,42 +502,71 @@ Aklınızdaki tüm soruları yanıtlayacak, size özel çözümleri keşfetmeniz
               </div>
             </div>
 
-            {/* İlgili Seriler / Önerilen Ürünler */}
-            <div className="mt-12">
-              <h2 className="text-2xl font-bold mb-4">İlgili Seriler</h2>
-              <div className="grid md:grid-cols-3 gap-6">
-                <div className="card bg-base-200 shadow">
-                  <figure>
-                    <img src="https://picsum.photos/seed/apac/400/200" alt="APAC Serisi" />
-                  </figure>
-                  <div className="card-body">
-                    <h3 className="card-title">APAC Serisi</h3>
-                    <Link to="/seri/seri-apac" className="btn btn-primary btn-sm">İncele</Link>
-                  </div>
-                </div>
-                <div className="card bg-base-200 shadow">
-                  <figure>
-                    <img src="https://picsum.photos/seed/impactx/400/200" alt="ImpactX Serisi" />
-                  </figure>
-                  <div className="card-body">
-                    <h3 className="card-title">ImpactX Serisi</h3>
-                    <Link to="/seri/seri-impactx" className="btn btn-primary btn-sm">İncele</Link>
-                  </div>
-                </div>
-                <div className="card bg-base-200 shadow">
-                  <figure>
-                    <img src="https://picsum.photos/seed/placeholder/400/200" alt="Yeni Seri" />
-                  </figure>
-                  <div className="card-body">
-                    <h3 className="card-title">Yakında</h3>
-                    <button className="btn btn-disabled btn-sm">Çok Yakında</button>
+            {/* İlgili Seriler */}
+            {relatedSeries.length > 0 && (
+              <div className="mt-12">
+                <h2 className="text-2xl md:text-3xl font-bold mb-6">
+                  Aynı Kategorideki Diğer Seriler
+                  {categoryId && <span className="text-lg font-normal text-base-content/60 ml-2">({categoryId})</span>}
+                </h2>
+                <div className="overflow-x-auto scrollbar-hide">
+                  <div className="flex gap-4 pb-4">
+                    {relatedSeries.map((series) => (
+                      <Link
+                        key={series.id}
+                        to={`/kategoriler/${tier}/${categoryId}/${series.subchild_id}`}
+                        className="card bg-base-200 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 flex-shrink-0 w-80"
+                      >
+                        <figure className="aspect-video bg-base-300">
+                          {series.main_image && series.main_image.trim() !== '' ? (
+                            <img
+                              src={series.main_image}
+                              alt={`${series.title} - Seri Görseli`}
+                              title={series.title}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.src = `https://picsum.photos/seed/${series.subchild_id}/400/200`
+                              }}
+                            />
+                          ) : (
+                            <img
+                              src={`https://picsum.photos/seed/${series.subchild_id}/400/200`}
+                              alt={`${series.title} - Seri Görseli`}
+                              title={series.title}
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                        </figure>
+                        <div className="card-body">
+                          <h3 className="card-title text-lg">{series.title}</h3>
+                          {series.paragraph && (
+                            <p className="text-sm text-base-content/70 line-clamp-2">
+                              {series.paragraph}
+                            </p>
+                          )}
+                          <div className="card-actions justify-end mt-2">
+                            <button className="btn btn-primary btn-sm">İncele</button>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </main>
         </div>
       </div>
+
+      <style>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </section>
   )
 }

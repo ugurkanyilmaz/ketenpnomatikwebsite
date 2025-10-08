@@ -23,7 +23,8 @@ export default function Categories_page() {
             <Link key={t.id} to={`/kategoriler/${t.id}`} className="group relative block rounded-box overflow-hidden shadow hover:shadow-lg transition-shadow">
               <img
                 src={t.img}
-                alt={t.title}
+                alt={`${t.title} - ${t.desc}`}
+                title={t.title}
                 className="h-48 w-full object-cover"
                 loading="lazy"
               />
@@ -42,7 +43,8 @@ export default function Categories_page() {
           <Link to={`/kategoriler/${auxiliaryTier.id}`} className="group relative block rounded-box overflow-hidden shadow hover:shadow-lg transition-shadow w-full sm:w-2/3 lg:w-1/2">
             <img
               src={auxiliaryTier.img}
-              alt={auxiliaryTier.title}
+              alt={`${auxiliaryTier.title} - ${auxiliaryTier.desc}`}
+              title={auxiliaryTier.title}
               className="h-48 w-full object-cover"
               loading="lazy"
             />

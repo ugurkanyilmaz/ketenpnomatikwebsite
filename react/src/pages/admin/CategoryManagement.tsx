@@ -39,7 +39,7 @@ export default function CategoryManagement() {
 
   const loadCategories = async () => {
     try {
-      const res = await fetch('/php/api/categories_find.php')
+      const res = await fetch('/php/api/articles_find.php')
       const data = await res.json()
       setCategories(data.items || [])
     } catch (err) {
@@ -53,7 +53,7 @@ export default function CategoryManagement() {
     if (!confirm('Bu kategoriyi silmek istediğinizden emin misiniz?')) return
     
     try {
-      const res = await fetch('/php/api/categories_delete.php', {
+      const res = await fetch('/php/api/articles_delete.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         body: JSON.stringify({ id })
@@ -76,7 +76,7 @@ export default function CategoryManagement() {
   const handleSave = async (category: Partial<Category>) => {
     try {
       // Use bulk upload endpoint for single item
-      const res = await fetch('/php/api/categories_bulk_upload_json.php', {
+      const res = await fetch('/php/api/articles_bulk_upload_json.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         body: JSON.stringify([category])
@@ -99,7 +99,7 @@ export default function CategoryManagement() {
       const text = await file.text()
       const data = JSON.parse(text)
       
-      const res = await fetch('/php/api/categories_bulk_upload_json.php', {
+      const res = await fetch('/php/api/articles_bulk_upload_json.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         body: JSON.stringify(data)

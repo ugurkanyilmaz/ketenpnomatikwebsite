@@ -12,6 +12,7 @@ export default function AdminLayout() {
     { path: '/admin', icon: LayoutDashboard, label: 'Dashboard', exact: true },
     { path: '/admin/kategoriler', icon: FileText, label: 'Kategoriler' },
     { path: '/admin/kategori-fotograflari', icon: Image, label: 'Kategori Fotoğrafları' },
+    { path: '/admin/site-gorselleri', icon: Image, label: 'Site Görselleri' },
     { path: '/admin/urunler', icon: Package, label: 'Ürünler' },
   ]
 

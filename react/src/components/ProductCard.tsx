@@ -9,7 +9,13 @@ export default function ProductCard({ product }: Props) {
   return (
     <div className="card card-compact bg-base-100 border border-base-200 rounded-box overflow-hidden shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md group">
       <figure className="aspect-square overflow-hidden bg-base-200">
-        <img src={image} alt={name} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+        <img 
+          src={image} 
+          alt={`${name} - Ürün Görseli`}
+          title={name}
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" 
+          loading="lazy" 
+        />
       </figure>
       <div className="card-body gap-2">
         <div className="flex items-start justify-between">

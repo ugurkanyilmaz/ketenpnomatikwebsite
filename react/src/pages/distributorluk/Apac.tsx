@@ -15,10 +15,21 @@ export default function Apac() {
         <div className="max-w-7xl mx-auto px-4 py-14 grid lg:grid-cols-2 gap-10 items-center">
           <div>
             <div className="badge badge-primary mb-3">Yetkili Distribütör</div>
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">APAC Endüstriyel Çözümler</h1>
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">APAC - Tayvan</h1>
             <p className="mt-4 text-gray-300 max-w-3xl">
-              Geniş ürün gamı, rekabetçi teslim ve güvenilir servis ile uygulamanıza uygun, sürdürülebilir çözümler.
+              1978 yılında Tayvan'da kurulan APAC, pnömatik el aletleri ve endüstriyel güç aletleri konusunda dünya çapında lider bir üreticidir. 
+              40 yılı aşkın deneyimi ile otomotiv, elektronik, mobilya ve metal işleme sektörlerinde yüksek kaliteli, dayanıklı ve ergonomik ürünler sunmaktadır.
             </p>
+            <div className="mt-6">
+              <h3 className="text-white font-semibold mb-2">Ürün Kategorileri:</h3>
+              <div className="flex flex-wrap gap-2">
+                <span className="badge badge-outline text-white border-white/30">Pnömatik Vidalama</span>
+                <span className="badge badge-outline text-white border-white/30">Havalı Taşlama</span>
+                <span className="badge badge-outline text-white border-white/30">Hava Şarjörleri</span>
+                <span className="badge badge-outline text-white border-white/30">Orbital Zımparalar</span>
+                <span className="badge badge-outline text-white border-white/30">Havalı Matkap</span>
+              </div>
+            </div>
             <div className="mt-6 flex flex-wrap gap-3">
               <ScrollToTopLink to="/iletisim" className="btn btn-primary">Teklif Al</ScrollToTopLink>
               <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost text-white">Demo Talebi</ScrollToTopLink>
@@ -38,22 +49,80 @@ export default function Apac() {
         transition={{ duration: 0.5 }}
         className="max-w-7xl mx-auto px-4"
       >
+        <div className="prose max-w-none mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">APAC Hakkında</h2>
+          <div className="grid lg:grid-cols-2 gap-8">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">📍 Küresel Varlık</h3>
+              <p className="text-gray-700">
+                APAC ürünleri 80'den fazla ülkede distribütör ağı ile satılmaktadır. ISO 9001 kalite yönetim sistemi 
+                sertifikasına sahip olan firma, dünya çapında güvenilir ve kaliteli ürünler sunmaktadır.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">🔧 Teknik Mükemmellik</h3>
+              <p className="text-gray-700">
+                APAC'ın Ar-Ge departmanı sürekli ürün geliştirme ve inovasyon çalışmaları yapmaktadır. 
+                Ergonomik tasarım, düşük titreşim, yüksek performans ve uzun ömür markanın temel değerleridir.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           <div>
-            <img src="/professional_banner.png" alt="APAC hızlı tedarik" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src="/professional_banner.png" alt="APAC Pnömatik Aletler" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
           <div>
-            <h3 className="text-xl md:text-2xl font-bold text-gray-900">Hızlı ve Şeffaf Tedarik</h3>
-            <p className="mt-3 text-gray-700">Yetkili stoklar ve net teslim süreleri ile operasyonlarınız kesintisiz sürsün.</p>
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900">Endüstriyel Dayanıklılık</h3>
+            <p className="mt-3 text-gray-700">
+              APAC ürünleri, ağır sanayi koşullarında uzun süreli kullanım için tasarlanmıştır. 
+              Yüksek kaliteli malzemeler ve hassas üretim teknikleri ile her ürün maksimum performans sunar.
+            </p>
+            <ul className="mt-4 space-y-2">
+              <li className="flex items-center gap-2">
+                <span className="text-primary">✓</span>
+                <span className="text-gray-700">7/24 endüstriyel kullanıma uygun</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-primary">✓</span>
+                <span className="text-gray-700">Düşük bakım maliyeti</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-primary">✓</span>
+                <span className="text-gray-700">Yüksek verimlilik</span>
+              </li>
+            </ul>
           </div>
         </div>
         <div className="grid lg:grid-cols-2 gap-8 items-center mt-10">
           <div className="order-1 lg:order-none">
-            <h3 className="text-xl md:text-2xl font-bold text-gray-900">Geniş Ürün Yelpazesi</h3>
-            <p className="mt-3 text-gray-700">Birçok uygulama için doğru alternatifi birlikte belirleyelim; kurulum ve eğitim desteği ile tamamlayalım.</p>
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900">Geniş Ürün Portföyü</h3>
+            <p className="mt-3 text-gray-700">
+              Vidalama, delme, taşlama, zımparalama ve kesme uygulamaları için kapsamlı çözümler. 
+              Her sektörün ihtiyacına özel tasarlanmış 500'den fazla model ile yanınızdayız.
+            </p>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="bg-base-200 p-4 rounded-lg">
+                <div className="text-2xl font-bold text-primary">500+</div>
+                <div className="text-sm text-gray-600">Farklı Model</div>
+              </div>
+              <div className="bg-base-200 p-4 rounded-lg">
+                <div className="text-2xl font-bold text-primary">80+</div>
+                <div className="text-sm text-gray-600">Ülkede Satış</div>
+              </div>
+              <div className="bg-base-200 p-4 rounded-lg">
+                <div className="text-2xl font-bold text-primary">40+</div>
+                <div className="text-sm text-gray-600">Yıllık Tecrübe</div>
+              </div>
+              <div className="bg-base-200 p-4 rounded-lg">
+                <div className="text-2xl font-bold text-primary">ISO 9001</div>
+                <div className="text-sm text-gray-600">Sertifikalı</div>
+              </div>
+            </div>
           </div>
           <div>
-            <img src="/endus.jpg" alt="APAC saha desteği" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src="/endus.jpg" alt="APAC Endüstriyel Uygulamalar" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
         </div>
       </motion.section>

@@ -15,11 +15,22 @@ export default function Kolver() {
         <div className="max-w-7xl mx-auto px-4 py-14 grid lg:grid-cols-2 gap-10 items-center">
           <div>
             <div className="badge badge-primary mb-3">Yetkili Distribütör</div>
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">Kolver Elektrikli Tork Çözümleri</h1>
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">Kolver - İtalya</h1>
             <p className="mt-4 text-gray-300 max-w-3xl">
-              Montaj hatlarında yüksek hassasiyet, tekrar edilebilirlik ve tam izlenebilirlik için tasarlandı. ERP/MES entegrasyonlarına uygun,
-              proses güvenliği sağlayan ileri seviye tork kontrol sistemleri.
+              1989 yılında İtalya'da kurulan Kolver, elektrikli tork kontrol sistemleri ve montaj aletleri konusunda dünya lideridir. 
+              30 yılı aşkın deneyimi ile otomotiv, havacılık, elektronik ve beyaz eşya sektörlerinde hassas montaj çözümleri sunmaktadır. 
+              Industry 4.0 uyumlu sistemleri ile üretim kalitesini ve izlenebilirliği maksimize eder.
             </p>
+            <div className="mt-6">
+              <h3 className="text-white font-semibold mb-2">Ürün Kategorileri:</h3>
+              <div className="flex flex-wrap gap-2">
+                <span className="badge badge-outline text-white border-white/30">Elektrikli Torque Vidalama</span>
+                <span className="badge badge-outline text-white border-white/30">Tork Kontrol Ünitesi</span>
+                <span className="badge badge-outline text-white border-white/30">Otomasyon Sistemleri</span>
+                <span className="badge badge-outline text-white border-white/30">MES Entegrasyonu</span>
+                <span className="badge badge-outline text-white border-white/30">Hata Önleme (Poka-Yoke)</span>
+              </div>
+            </div>
             <div className="mt-6 flex flex-wrap gap-3">
               <ScrollToTopLink to="/iletisim" className="btn btn-primary">Teklif Al</ScrollToTopLink>
               <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost text-white">Demo Talebi</ScrollToTopLink>
@@ -44,7 +55,7 @@ export default function Kolver() {
         </div>
       </motion.section>
 
-      {/* Öne çıkan özellikler */}
+      {/* Kolver Hakkında */}
       <motion.section
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -52,20 +63,40 @@ export default function Kolver() {
         transition={{ duration: 0.5 }}
         className="max-w-7xl mx-auto px-4"
       >
+        <div className="prose max-w-none mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">Kolver Hakkında</h2>
+          <div className="grid lg:grid-cols-2 gap-8">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">🏭 İtalyan Mühendislik Mükemmelliği</h3>
+              <p className="text-gray-700">
+                Kolver, İtalya'nın Lombardia bölgesinde üretim yapan, küresel çapta tanınan bir tork kontrol sistemleri üreticisidir. 
+                Ürünleri BMW, Bosch, Siemens, Airbus gibi dünya devlerinin üretim hatlarında kullanılmaktadır.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">🎯 Sıfır Hata Felsefesi</h3>
+              <p className="text-gray-700">
+                Kolver sistemleri, montaj hatlarında "sıfır hata" hedefine ulaşmak için geliştirilmiştir. 
+                Poka-Yoke (hata önleme) sistemleri, her vidalama işlemini kayıt altına alır ve hatalı montajı önler.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Neden Kolver?</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
             {
-              title: 'Hassas Tork Kontrolü',
-              desc: 'Hatalı sıkma risklerini azaltan, izlenebilir ve raporlanabilir proses kontrolü.',
+              title: '±%1 Tork Hassasiyeti',
+              desc: 'Sertifikalı tork kontrolü ile hatalı sıkma risklerini minimize eder. Her işlem kayıt altında.',
             },
             {
-              title: 'Ergonomik ve Hızlı',
-              desc: 'Operatör konforu ve çevrim süresi hedefleri için optimize edilmiş tasarım.',
+              title: 'Industry 4.0 Uyumlu',
+              desc: 'MES, ERP ve SCADA sistemlerine kolayca entegre edilir. Gerçek zamanlı veri toplama ve raporlama.',
             },
             {
               title: 'Uçtan Uca Destek',
-              desc: 'Kurulum, eğitim, yedek parça ve yetkili servis ile tam destek.',
+              desc: 'Kurulum, eğitim, yedek parça ve yetkili servis ile tam destek. Türkiye\'de yerel teknik ekip.',
             },
           ].map((f, i) => (
             <motion.div
@@ -100,27 +131,59 @@ export default function Kolver() {
       >
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           <div>
-            <img src="/keten_banner.jpg" alt="Kolver ergonomi" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src="/keten_banner.jpg" alt="Kolver Ergonomik Tasarım" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
           <div>
             <h3 className="text-xl md:text-2xl font-bold text-gray-900">Ergonomi ve Verimlilik</h3>
             <p className="mt-3 text-gray-700">
-              Uzun vardiyalarda dahi operatör yorgunluğunu azaltır, hat içi akışı hızlandırır. Uygulamanıza özel aparat ve askı sistemleri ile
-              esnek çözümler sunarız.
+              Kolver vidalama aletleri, operatör konforu için özel olarak tasarlanmıştır. Düşük ağırlık, dengeli yapı ve 
+              anti-vibrasyon teknolojisi ile uzun çalışma saatlerinde bile yorgunluk minimize edilir.
             </p>
+            <ul className="mt-4 space-y-2">
+              <li className="flex items-center gap-2">
+                <span className="text-primary">✓</span>
+                <span className="text-gray-700">Hafif ve dengeli gövde tasarımı</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-primary">✓</span>
+                <span className="text-gray-700">Anti-vibrasyon sistemi</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-primary">✓</span>
+                <span className="text-gray-700">Esnek askı sistemleri</span>
+              </li>
+            </ul>
           </div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 items-center mt-10">
           <div className="order-1 lg:order-none">
-            <h3 className="text-xl md:text-2xl font-bold text-gray-900">Kurulum, Eğitim ve Destek</h3>
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900">Uygulama Alanları</h3>
             <p className="mt-3 text-gray-700">
-              Saha devreye alma, operatör eğitimleri ve hızlı yedek parça temini ile kullanım süresini maksimize ederiz. Garanti kapsamında yetkili
-              servis desteği sunuyoruz.
+              Otomotiv yan sanayi, beyaz eşya, elektronik montaj, havacılık ve savunma sanayinde kritik montaj işlemleri için 
+              ideal çözümler. Her sektörün özel gereksinimlerine uygun konfigürasyonlar.
             </p>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="bg-base-200 p-4 rounded-lg">
+                <div className="text-2xl font-bold text-primary">25+</div>
+                <div className="text-sm text-gray-600">Yıllık Tecrübe</div>
+              </div>
+              <div className="bg-base-200 p-4 rounded-lg">
+                <div className="text-2xl font-bold text-primary">100+</div>
+                <div className="text-sm text-gray-600">Ülkede Kullanım</div>
+              </div>
+              <div className="bg-base-200 p-4 rounded-lg">
+                <div className="text-2xl font-bold text-primary">ISO</div>
+                <div className="text-sm text-gray-600">9001 Sertifikalı</div>
+              </div>
+              <div className="bg-base-200 p-4 rounded-lg">
+                <div className="text-2xl font-bold text-primary">24/7</div>
+                <div className="text-sm text-gray-600">Teknik Destek</div>
+              </div>
+            </div>
           </div>
           <div>
-            <img src="/endus.jpg" alt="Kolver satış sonrası destek" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src="/endus.jpg" alt="Kolver Endüstriyel Uygulamalar" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
         </div>
       </motion.section>

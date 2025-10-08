@@ -15,8 +15,11 @@ export default function Hiyoki() {
         <div className="max-w-7xl mx-auto px-4 py-14 grid lg:grid-cols-2 gap-10 items-center">
           <div>
             <div className="badge badge-secondary mb-3">Yetkili Distribütör</div>
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">Hiyoki Ölçüm ve Test Çözümleri</h1>
-            <p className="mt-4 text-gray-300 max-w-3xl">Üretim ve Ar-Ge süreçleri için güvenilir, hassas ve tekrarlanabilir ölçüm.</p>
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">Hiyoki Ölçüm Cihazları</h1>
+            <p className="mt-4 text-gray-300 max-w-3xl">
+              Hiyoki, elektrikli ölçüm cihazları ve test ekipmanlarında güvenilir çözümler sunar. 
+              Elektronik, otomotiv ve endüstriyel sektörlerde hassas ölçüm ihtiyaçları için geniş ürün yelpazesi bulundurur.
+            </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <ScrollToTopLink to="/iletisim" className="btn btn-primary">Teklif Al</ScrollToTopLink>
               <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost text-white">Demo Talebi</ScrollToTopLink>
@@ -36,22 +39,35 @@ export default function Hiyoki() {
         transition={{ duration: 0.5 }}
         className="max-w-7xl mx-auto px-4"
       >
-        <div className="grid lg:grid-cols-2 gap-8 items-center">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Güvenilir Ölçüm Çözümleri</h2>
+        <p className="text-gray-700 mb-8 max-w-4xl">
+          Hiyoki ölçüm cihazları, hassas test ve analiz gerektiren uygulamalar için profesyonel çözümler sunar. 
+          Multimetreler, osiloskoplar, güç analizörleri ve LCR metreler ile kalite kontrol süreçlerinizi destekler.
+        </p>
+
+        <div className="grid lg:grid-cols-2 gap-8 items-center mb-10">
           <div>
-            <img src="/professional_banner.png" alt="Hiyoki uygulama" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src="/professional_banner.png" alt="Hiyoki Ölçüm Sistemleri" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
           <div>
-            <h3 className="text-xl md:text-2xl font-bold text-gray-900">Uygulama Danışmanlığı</h3>
-            <p className="mt-3 text-gray-700">Test yöntemleri, cihaz seçimi ve entegrasyonlarda yol haritası sunuyoruz.</p>
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900">Geniş Ürün Yelpazesi</h3>
+            <p className="mt-3 text-gray-700">
+              Elektronik devre testinden endüstriyel güç ölçümlerine kadar farklı ihtiyaçlar için uygun modeller. 
+              Laboratuvar, üretim hattı ve saha uygulamaları için dayanıklı ve hassas cihazlar.
+            </p>
           </div>
         </div>
-        <div className="grid lg:grid-cols-2 gap-8 items-center mt-10">
+
+        <div className="grid lg:grid-cols-2 gap-8 items-center">
           <div className="order-1 lg:order-none">
-            <h3 className="text-xl md:text-2xl font-bold text-gray-900">Devreye Alma ve Eğitim</h3>
-            <p className="mt-3 text-gray-700">Saha kurulumları ve eğitimlerle doğru kullanım ve sürdürülebilir kalite sağlayın.</p>
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900">Satış Sonrası Destek</h3>
+            <p className="mt-3 text-gray-700">
+              Hiyoki ürünleri için teknik destek, eğitim ve kalibrasyon hizmetleri sunuyoruz. 
+              Doğru kullanım ve düzenli bakım ile cihazlarınızın ömrünü uzatın.
+            </p>
           </div>
           <div>
-            <img src="/keten_banner.jpg" alt="Hiyoki eğitim ve destek" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src="/keten_banner.jpg" alt="Hiyoki Teknik Destek" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
         </div>
       </motion.section>

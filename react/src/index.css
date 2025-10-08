@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui" ;
+@import "./styles/pdf-viewer.css";
 
 /* Base layout */
 *, *::before, *::after { box-sizing: border-box; }

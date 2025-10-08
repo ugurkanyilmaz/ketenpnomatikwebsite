@@ -1,5 +1,6 @@
 import Header from './components/Header'
 import Footer from './components/Footer'
+import ScrollToTop from './components/ScrollToTop'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import HomePage from './pages/home_page'
 import Categories_page from './pages/categories_page'
@@ -22,11 +23,13 @@ import Blog from './pages/Blog'
 import BlogDetail from './pages/BlogDetail'
 import NotFound from './pages/NotFound'
 
+
 // Admin Pages
 import AdminLayout from './pages/admin/AdminLayout'
 import Dashboard from './pages/admin/Dashboard'
 import CategoryManagement from './pages/admin/CategoryManagement'
 import CategoryPhotos from './pages/admin/CategoryPhotos'
+import SiteImagesAdmin from './pages/admin/SiteImagesAdmin'
 import ProductManagement from './pages/admin/ProductManagement'
 
 
@@ -36,6 +39,7 @@ function App() {
 
   return (
     <div data-theme="keten" className="min-h-dvh flex flex-col bg-base-100 text-base-content">
+      <ScrollToTop />
       {!isAdminRoute && <Header />}
       <main className="flex-1">
         <Routes>
@@ -44,6 +48,7 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="kategoriler" element={<CategoryManagement />} />
             <Route path="kategori-fotograflari" element={<CategoryPhotos />} />
+            <Route path="site-gorselleri" element={<SiteImagesAdmin />} />
             <Route path="urunler" element={<ProductManagement />} />
           </Route>
 
@@ -62,17 +67,14 @@ function App() {
           <Route path="/kategoriler/:tier/:categoryId" element={<Series />} />
           <Route path="/kategoriler/:tier/:categoryId/:seriesId" element={<Article />} />
           <Route path="/seri/:seriesId" element={<Article />} />
-          <Route path="/urun/:productId" element={<ProductDetails />} />
+          <Route path="/urun/:sku" element={<ProductDetails />} />
           <Route path="/iletisim" element={<ContactPage />} />
           <Route path="/demo-talebi" element={<DemoRequestPage />} />
           <Route path="/teknik-servis" element={<TechnicalServicePage />} />
           <Route path="/sss" element={<FAQ />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:id" element={<BlogDetail />} />
-          {/* PDF routes temporarily disabled */}
-          {/* <Route path="/katalog" element={<PdfViewer />} /> */}
-          {/* <Route path="/pdf" element={<PdfViewer />} /> */}
-          {/* <Route path="/simple-pdf" element={<SimplePdfViewer />} /> */}
+
           
           {/* 404 - Catch all unmatched routes */}
           <Route path="*" element={<NotFound />} />

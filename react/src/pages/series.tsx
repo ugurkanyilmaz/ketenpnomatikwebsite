@@ -1,12 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
-import { fetchTiers, type Tier } from '../api'
-
-interface SubchildWithImage {
-  id: string
-  title: string
-  main_image?: string
-}
+import { fetchTiers, type Tier } from '../utils/api'
 
 export default function Series() {
   const { tier, categoryId } = useParams()
@@ -20,8 +14,8 @@ export default function Series() {
     fetchTiers()
       .then((t) => { if (active) setTiers(t) })
     
-    // Load subchild main_images from categories API
-    fetch('/php/api/categories_find.php')
+    // Load subchild main_images from articles API
+    fetch('/php/api/articles_find.php')
       .then(res => res.json())
       .then(data => {
         if (active && data.items) {
@@ -88,12 +82,13 @@ export default function Series() {
                 /* route updated to nested structure: /kategoriler/:tier/:categoryId/:seriesId */
                 <Link
                   key={s.id}
-                  to={`/kategoriler/${tierKey}/${categoryId}/${s.id}`}
+                  to={`/kategoriler/${tierKey}/${categoryId}/${encodeURIComponent(s.title)}`}
                   className="group relative block rounded-box overflow-hidden shadow hover:shadow-lg transition-shadow"
                 >
                   <img
                     src={imageUrl}
-                    alt={s.title}
+                    alt={`${s.title} - Seri Görseli`}
+                    title={s.title}
                     className="h-48 w-full object-cover"
                     loading="lazy"
                     onError={(e) => {

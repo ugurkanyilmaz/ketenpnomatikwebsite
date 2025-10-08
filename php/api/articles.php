@@ -2,7 +2,7 @@
 declare(strict_types=1);
 require __DIR__ . '/bootstrap.php';
 
-$stmt = $pdo->query('SELECT parent, child, subchild, title FROM categories WHERE parent != "TEST"');
+$stmt = $pdo->query('SELECT parent, child, subchild, title FROM articles WHERE parent != "TEST"');
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
 // Helper function to create URL-safe slugs

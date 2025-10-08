@@ -15,13 +15,12 @@ export default function AdminDashboard() {
   useEffect(() => {
     // Fetch stats from API
     Promise.all([
-      fetch('/php/api/categories.php').then(r => r.json()),
+      fetch('/php/api/articles.php').then(r => r.json()),
       fetch('/php/api/category_photos_list.php').then(r => r.json()),
-      // Mock product count for now
-      Promise.resolve({ count: 0 })
+      fetch('/php/api/products.php').then(r => r.json())
     ])
-      .then(([categoriesData, photosData, productsData]) => {
-        const categoryCount = categoriesData.tiers?.reduce((sum: number, tier: any) => {
+      .then(([articlesData, photosData, productsData]) => {
+        const categoryCount = articlesData.tiers?.reduce((sum: number, tier: any) => {
           return sum + tier.children.reduce((childSum: number, child: any) => {
             return childSum + (child.subchildren?.length || 0)
           }, 0)
@@ -30,7 +29,7 @@ export default function AdminDashboard() {
         setStats({
           categories: categoryCount,
           photos: photosData.count || 0,
-          products: productsData.count || 0
+          products: productsData.total || 0
         })
       })
       .catch(err => console.error('Failed to fetch stats:', err))
