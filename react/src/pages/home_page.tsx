@@ -462,4 +462,7 @@ export default function HomePage() {
         transition={{ duration: 0.6, delay: 0.1 }}
       >
         <Newsletter />
-      </m
+      </motion.div>
+    </>
+  )
+}
