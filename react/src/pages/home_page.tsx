@@ -4,9 +4,15 @@ import Newsletter from '../components/Newsletter'
 import { motion, useScroll, useSpring } from 'framer-motion'
 import DistributorSections from '../components/DistributorSections'
 import SectionHeader from '../components/SectionHeader'
+import { ScrollToTopLink } from '../components/ScrollToTopLink'
 import { useSiteImage } from '../hooks/useSiteImages'
+import { useEffect } from 'react'
+import { applyPageSEO } from '../utils/other_seo'
 
 export default function HomePage() {
+  useEffect(() => {
+    applyPageSEO('home')
+  }, [])
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, mass: 0.2 })
   
@@ -45,7 +51,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <img src={electricImg?.image_path || "/professional_banner.png"} alt="Elektrikli ürünler"
+            <img src={electricImg?.image_path || "/professional_banner.png"} alt={electricImg?.alt_text || "Elektrikli ürünler"}
                  className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </motion.div>
           <div>
@@ -55,9 +61,9 @@ export default function HomePage() {
               İşinizin kritik noktalarında maksimum hassasiyet ve kontrol sizinle olsun. Elektrikli alet serimiz, tork ayarlı tornavidalar dahil olmak üzere, şebeke gücünden aldığı kesintisiz enerji ile en zorlu montaj ve üretim işlemlerinizi hatasız tamamlamanızı sağlar. Dayanıklı ve ergonomik çözümlerimizle tanışın.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <a
+              <ScrollToTopLink
                 className="btn"
-                href="/kategoriler/profesyonel"
+                to="/urunler?q=Elektrikli"
                 style={{
                   outline: 'none',
                   boxShadow: 'none',
@@ -66,8 +72,8 @@ export default function HomePage() {
                   color: '#1f2937',
                 }}
               >
-                Profesyonel Seriler
-              </a>
+                Elektrikli Seriler
+              </ScrollToTopLink>
               <a
                 className="btn btn-outline"
                 href="/kategoriler"
@@ -88,9 +94,8 @@ export default function HomePage() {
                 { title: 'Elektrikli Taşlama', href: '/kategoriler/profesyonel' },
                 { title: 'Matkap & Delici', href: '/kategoriler/profesyonel' },
               ].map((s, i) => (
-                <motion.a
+                <motion.div
                   key={s.title}
-                  href={s.href}
                   className="rounded-box bg-gray-800 p-4 text-sm font-semibold hover:shadow-md"
                   style={{
                     color: '#facc15',
@@ -104,8 +109,8 @@ export default function HomePage() {
                   transition={{ duration: 0.4, delay: i * 0.05 }}
                   whileHover={{ y: -3 }}
                 >
-                  {s.title}
-                </motion.a>
+                  <ScrollToTopLink to={s.href} className="block h-full w-full">{s.title}</ScrollToTopLink>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -126,9 +131,9 @@ export default function HomePage() {
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Akülü Ürünlerimiz</h2>
             <p className="mt-3 text-gray-700 text-base md:text-lg">Çalışma alanınız neresi olursa olsun, performansınızdan ödün vermeyin. Akülü ürün serimiz, hafifliği, uzun ömürlü bataryaları ve yüksek gücü tek bir çatıda birleştirir. Şarj endişesi yaşamadan, aletlerimizin sunduğu tam hareket özgürlüğü ile en zorlu projelerinizi dahi kesintisiz tamamlayın. Dayanıklı ve güçlü çözümlerimizle tanışın, iş akışınızı şimdi kablolardan bağımsız hale getirin.</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <a
+              <ScrollToTopLink
                 className="btn"
-                href="/kategoriler/profesyonel"
+                to="/urunler?q=ak%C3%BCl%C3%BC"
                 style={{
                   backgroundColor: '#c1121f',
                   borderColor: '#9b0f1a',
@@ -136,7 +141,7 @@ export default function HomePage() {
                 }}
               >
                 Akülü Seriler
-              </a>
+              </ScrollToTopLink>
               <a
                 className="btn btn-outline"
                 href="/kategoriler"
@@ -182,7 +187,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <img src={batteryImg?.image_path || "/professional_banner.png"} alt="Akülü ürünler"
+            <img src={batteryImg?.image_path || "/professional_banner.png"} alt={batteryImg?.alt_text || "Akülü ürünler"}
                  className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </motion.div>
         </div>
@@ -203,7 +208,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <img src={pneumaticImg?.image_path || "/endus.jpg"} alt="Havalı ürünler"
+            <img src={pneumaticImg?.image_path || "/endus.jpg"} alt={pneumaticImg?.alt_text || "Havalı ürünler"}
                  className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </motion.div>
           <div className="text-right">
@@ -213,7 +218,7 @@ export default function HomePage() {
                 Pnömatik aletler, ağır hizmet tipi kullanımlarda bile tutarlı ve güvenilir performans sunar. Darbelere ve sürekli kullanıma dayanıklı yapıları ile uzun yıllar hizmet ederken, servis kolaylıkları ile de operasyonel devamlılığınızı korur. İşletmenizin verimliliğini ve dayanıklılığını artıracak çözümler bu kategoride.
               </p>
             <div className="mt-6 flex flex-wrap gap-3 justify-end">
-              <a className="btn btn-info" href="/kategoriler/endustriyel">Endüstriyel Seriler</a>
+              <a className="btn btn-info" href="/urunler?q=haval%C4%B1">Havalı Seriler</a>
               <a
                 className="btn btn-outline"
                 href="/kategoriler"
@@ -233,9 +238,8 @@ export default function HomePage() {
                 { title: 'Kompresörler', href: '/kategoriler/endustriyel' },
                 { title: 'Hortum & Bağlantılar', href: '/kategoriler/endustriyel' },
               ].map((s, i) => (
-                <motion.a
+                <motion.div
                   key={s.title}
-                  href={s.href}
                   className="rounded-box bg-gray-800 p-4 text-sm hover:shadow-md"
                   style={{ color: '#60a5fa', borderColor: '#60a5fa', borderWidth: '1px', borderStyle: 'solid', fontWeight: '600' }}
                   initial={{ opacity: 0, y: 12 }}
@@ -244,8 +248,8 @@ export default function HomePage() {
                   transition={{ duration: 0.4, delay: i * 0.05 }}
                   whileHover={{ y: -3 }}
                 >
-                  {s.title}
-                </motion.a>
+                  <ScrollToTopLink to={s.href} className="block h-full w-full">{s.title}</ScrollToTopLink>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -329,7 +333,7 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <img src={process1Img?.image_path || "/technical_service_banner.png"} alt="İhtiyaç analizi"
+                <img src={process1Img?.image_path || "/technical_service_banner.png"} alt={process1Img?.alt_text || "İhtiyaç analizi"}
                      className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
               </motion.div>
               <div>
@@ -371,7 +375,7 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <img src={process2Img?.image_path || "/keten_banner.jpg"} alt="Ürün/Seri seçimi"
+                <img src={process2Img?.image_path || "/keten_banner.jpg"} alt={process2Img?.alt_text || "Ürün/Seri seçimi"}
                      className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
               </motion.div>
             </div>
@@ -394,7 +398,7 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <img src={process3Img?.image_path || "/technical_service_banner.png"} alt="Kurulum ve eğitim"
+                <img src={process3Img?.image_path || "/technical_service_banner.png"} alt={process3Img?.alt_text || "Kurulum ve eğitim"}
                      className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
               </motion.div>
               <div>
@@ -435,8 +439,8 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <img src="/professional_banner.png" alt="Servis ve takip"
-                     className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+       <img src={process4Img?.image_path || "/professional_banner.png"} alt={process4Img?.alt_text || "Servis ve takip"}
+         className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
               </motion.div>
             </div>
           </div>
@@ -466,3 +470,5 @@ export default function HomePage() {
     </>
   )
 }
+
+// page SEO is applied inside the HomePage component via useEffect

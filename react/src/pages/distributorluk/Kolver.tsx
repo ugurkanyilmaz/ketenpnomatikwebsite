@@ -1,7 +1,14 @@
 import { motion } from 'framer-motion'
 import { ScrollToTopLink } from '../../components/ScrollToTopLink'
+import { useSectionImages } from '../../hooks/useSectionImages'
+import { useEffect } from 'react'
+import { applyPageSEO } from '../../utils/other_seo'
 
 export default function Kolver() {
+  const { hero: kolverHero, showcase: kolverShowcase } = useSectionImages('kolver_section', 'about_kolver')
+  useEffect(() => {
+    applyPageSEO('about_kolver')
+  }, [])
   return (
     <div className="space-y-20">
       {/* Hero */}
@@ -50,7 +57,7 @@ export default function Kolver() {
             </div>
           </div>
           <div>
-            <img src="/professional_banner.png" alt="Kolver tork çözümleri" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src={kolverHero?.image_path || '/professional_banner.png'} alt={kolverHero?.alt_text || 'Kolver tork çözümleri'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
         </div>
       </motion.section>
@@ -131,7 +138,7 @@ export default function Kolver() {
       >
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           <div>
-            <img src="/keten_banner.jpg" alt="Kolver Ergonomik Tasarım" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src={kolverShowcase?.image_path || '/keten_banner.jpg'} alt={kolverShowcase?.alt_text || 'Kolver Ergonomik Tasarım'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
           <div>
             <h3 className="text-xl md:text-2xl font-bold text-gray-900">Ergonomi ve Verimlilik</h3>
@@ -183,7 +190,7 @@ export default function Kolver() {
             </div>
           </div>
           <div>
-            <img src="/endus.jpg" alt="Kolver Endüstriyel Uygulamalar" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src={kolverShowcase?.image_path || '/endus.jpg'} alt={kolverShowcase?.alt_text || 'Kolver Endüstriyel Uygulamalar'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
         </div>
       </motion.section>

@@ -43,6 +43,16 @@ function handleGet($pdo) {
     // GET /api/site_images.php?section_key=home_hero_1
     // GET /api/site_images.php (list all)
     
+    // support prefix queries: ?prefix=apac_section will return all site_images where section_key LIKE 'apac_section%'
+    if (isset($_GET['prefix'])) {
+        $prefix = $_GET['prefix'];
+        $stmt = $pdo->prepare('SELECT * FROM site_images WHERE section_key LIKE :prefix ORDER BY section_key ASC');
+        $stmt->execute([':prefix' => $prefix . '%']);
+        $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode($images);
+        return;
+    }
+
     if (isset($_GET['section_key'])) {
         $stmt = $pdo->prepare('SELECT * FROM site_images WHERE section_key = :section_key');
         $stmt->execute([':section_key' => $_GET['section_key']]);

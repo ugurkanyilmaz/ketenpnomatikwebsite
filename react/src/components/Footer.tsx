@@ -21,13 +21,11 @@ export default function Footer() {
           <div className="flex flex-col gap-2">
             <Link to="/hakkimizda" className="hover:text-primary transition-colors">Hakkımızda</Link>
             <Link to="/iletisim" className="hover:text-primary transition-colors">İletişim</Link>
-            <Link to="/teknik-servis" className="hover:text-primary transition-colors">Teknik Servis</Link>
             <Link to="/blog" className="hover:text-primary transition-colors">Blog</Link>
           </div>
           <div className="flex flex-col gap-2">
             <Link to="/sss" className="hover:text-primary transition-colors">SSS</Link>
-            <a className="hover:text-primary transition-colors">İade & Değişim</a>
-            <a className="hover:text-primary transition-colors">KVKK</a>
+            <Link to="/teknik-servis" className="hover:text-primary transition-colors">Teknik Servis</Link>
           </div>
         </div>
 
@@ -48,16 +46,16 @@ export default function Footer() {
             </a>
           </div>
           <div className="flex gap-4">
-            <a href="https://www.facebook.com/" aria-label="Facebook" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors">
+            <a href="https://www.facebook.com/ketenpnomatik" aria-label="Facebook" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
               <IconFacebook size={20} />
             </a>
-            <a href="https://wa.me/905xxxxxxxxx" aria-label="WhatsApp" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors">
+            <a href="https://wa.me/905414526058" aria-label="WhatsApp" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors">
               <IconWhatsapp size={20} />
             </a>
-            <a href="#" aria-label="Instagram" className="hover:text-primary transition-colors">
+            <a href="https://www.instagram.com/ketenpnomatik" aria-label="Instagram" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
               <IconSimple name="instagram" size={20} />
             </a>
-            <a href="#" aria-label="YouTube" className="hover:text-primary transition-colors">
+            <a href="https://www.youtube.com/@Keten.Pnomatik/" aria-label="YouTube" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
               <IconSimple name="youtube" size={20} />
             </a>
           </div>

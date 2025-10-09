@@ -121,6 +121,38 @@ try {
         );"
     );
 
+    // blogs table: simple blog posts with 1 image and 3 paragraphs + SEO fields
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS blogs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            image TEXT,
+            paragraph1 TEXT,
+            paragraph2 TEXT,
+            paragraph3 TEXT,
+            meta_title TEXT,
+            meta_desc TEXT,
+            meta_keywords TEXT,
+            schema_desc TEXT,
+            author TEXT,
+            published_date TEXT,
+            slug TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME
+        );"
+    );
+    // Ensure slug column exists (for older DBs) and add unique index
+    try {
+        $pdo->exec("ALTER TABLE blogs ADD COLUMN slug TEXT;");
+    } catch (Exception $e) {
+        // ignore if column exists
+    }
+    try {
+        $pdo->exec("CREATE UNIQUE INDEX IF NOT EXISTS ux_blogs_slug ON blogs(slug);");
+    } catch (Exception $e) {
+        // ignore
+    }
+
     echo "Database ready at: $dbFile\n";
     echo "Ensured tables: users, articles, products, category_photos, site_images\n";
 

@@ -1,8 +1,12 @@
-import { useMemo, useState } from 'react'
-import ContactCTAButton from '../components/common/ContactCTAButton'
+import { useMemo, useState, useEffect } from 'react'
+import WhatsAppButton from '../components/common/WhatsAppButton'
+import { applyPageSEO } from '../utils/other_seo'
 
 export default function ContactPage() {
-  const FIXED_ADDRESS = 'Osmanyılmaz, Mehmet Akif Ersoy Cad. No:52, 41400 Gebze/Kocaeli'
+  useEffect(() => {
+    applyPageSEO('contact')
+  }, [])
+  const FIXED_ADDRESS = 'Osmanyılmaz Mahallesi, Mehmet Akif Ersoy Cad. No:52, 41400 Gebze/Kocaeli'
   const VENV = (typeof import.meta !== 'undefined' && (import.meta as any).env) ? (import.meta as any).env : {}
   const envQuery = VENV.VITE_CONTACT_QUERY || ''
   const envLat = VENV.VITE_CONTACT_LAT || ''
@@ -45,12 +49,21 @@ export default function ContactPage() {
       const src = `https://www.google.com/maps?q=${encodeURIComponent(lat + ',' + lng)}&z=15&output=embed`
       return { mapSrc: src, displayAddress: selected.address, mapsUrl: `https://www.google.com/maps?q=${lat},${lng}`, branch: selected }
     }
-    const baseQuery = (selected.key === 'merkez' && envQuery && envQuery.trim()) ? envQuery.trim() : selected.address
-    const shouldAppendCountry = !/\+/.test(baseQuery) && !/,\s*(turkey|türkiye|tr)$/i.test(baseQuery)
-    const queryWithCountry = shouldAppendCountry ? baseQuery + ', Türkiye' : baseQuery
-    const encoded = encodeURIComponent(queryWithCountry)
-    const src = `https://maps.google.com/maps?q=${encoded}&z=15&output=embed`
-    return { mapSrc: src, displayAddress: selected.address, mapsUrl: `https://maps.google.com/maps?q=${encoded}`, branch: selected }
+  // Prefer precise business search names per branch so Google Maps shows the official business listing
+  // Keep envQuery override for merkez if provided; otherwise use explicit business names
+  const baseQuery = (selected.key === 'merkez' && envQuery && envQuery.trim())
+    ? envQuery.trim()
+    : (selected.key === 'merkez'
+      ? 'Keten Pnömatik Makina'
+      : (selected.key === 'manisa'
+        ? 'Manisa Keten Pnömatik'
+        : selected.address))
+
+  const shouldAppendCountry = !/\+/.test(baseQuery) && !/,\s*(turkey|türkiye|tr)$/i.test(baseQuery)
+  const queryWithCountry = shouldAppendCountry ? baseQuery + ', Türkiye' : baseQuery
+  const encoded = encodeURIComponent(queryWithCountry)
+  const src = `https://maps.google.com/maps?q=${encoded}&z=15&output=embed`
+  return { mapSrc: src, displayAddress: selected.address, mapsUrl: `https://maps.google.com/maps?q=${encoded}`, branch: selected }
   }, [selectedBranchKey, envQuery, envLat, envLng])
 
   return (
@@ -158,7 +171,8 @@ export default function ContactPage() {
           </div>
 
         </div>
-  <ContactCTAButton subject={"İletişim - Servis"} body={"Merhaba, iletişim/servis hakkında bilgi almak istiyorum."} subtitle={"Bilgi Al"} />
+  {/* Floating WhatsApp button (user-provided style) */}
+  <WhatsAppButton phone={String(branch?.phones?.[0]?.raw ?? '').replace(/[^0-9]/g, '')} message={`Merhaba Bilgi almak istiyorum`} subtitle={branch?.label ?? 'Teknik Servis'} />
       </div>
     </section>
   )

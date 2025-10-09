@@ -1,7 +1,11 @@
 import { motion } from 'framer-motion'
 import SectionHeader from './SectionHeader'
+import { useSiteImage } from '../hooks/useSiteImages'
 
 export default function DistributorSections() {
+  const { image: kolverDist } = useSiteImage('distributor_kolver')
+  const { image: apacDist } = useSiteImage('distributor_apac')
+  const { image: hiyokiDist } = useSiteImage('distributor_hiyoki')
   return (
     <section aria-label="Distribütörlük bölümleri">
       {/* Kolver - dark background */}
@@ -39,8 +43,8 @@ export default function DistributorSections() {
           transition={{ duration: 0.6, delay: 0.1 }}
         >
           <img
-            src="/keten_banner.jpg"
-            alt="Kolver resmi distribütör görseli"
+            src={kolverDist?.image_path || '/keten_banner.jpg'}
+            alt={kolverDist?.alt_text || 'Kolver resmi distribütör görseli'}
             className="rounded-box shadow-xl w-full object-cover"
             loading="lazy"
           />
@@ -65,8 +69,8 @@ export default function DistributorSections() {
           transition={{ duration: 0.6, delay: 0.1 }}
         >
           <img
-            src="/professional_banner.png"
-            alt="APAC resmi distribütör görseli"
+            src={apacDist?.image_path || '/professional_banner.png'}
+            alt={apacDist?.alt_text || 'APAC resmi distribütör görseli'}
             className="rounded-box shadow-xl w-full object-cover"
             loading="lazy"
           />
@@ -127,8 +131,8 @@ export default function DistributorSections() {
           transition={{ duration: 0.6, delay: 0.1 }}
         >
           <img
-            src="/endus.jpg"
-            alt="Hiyoki resmi distribütör görseli"
+            src={hiyokiDist?.image_path || '/endus.jpg'}
+            alt={hiyokiDist?.alt_text || 'Hiyoki resmi distribütör görseli'}
             className="rounded-box shadow-xl w-full object-cover"
             loading="lazy"
           />

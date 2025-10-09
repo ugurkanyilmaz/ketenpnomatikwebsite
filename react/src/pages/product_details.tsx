@@ -321,7 +321,7 @@ export default function ProductDetails() {
                     Fiyat Teklifi Al
                   </a>
                   <a
-                    href={`https://wa.me/905324735500?text=Merhaba, ${encodeURIComponent(product.title)} (SKU: ${product.sku}) ürünü için fiyat teklifi almak istiyorum.`}
+                    href={`https://wa.me/905414526058?text=Merhaba, ${encodeURIComponent(product.title)} (SKU: ${product.sku}) ürünü için fiyat teklifi almak istiyorum.`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn btn-success btn-sm"

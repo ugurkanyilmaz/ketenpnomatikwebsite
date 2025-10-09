@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { applyPageSEO } from '../utils/other_seo'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Search, Filter, X, Grid3x3, List, Package } from 'lucide-react'
 
@@ -18,6 +19,9 @@ interface Product {
 }
 
 export default function Urunler() {
+  useEffect(() => {
+    applyPageSEO('products')
+  }, [])
   const [searchParams, setSearchParams] = useSearchParams()
   const [products, setProducts] = useState<Product[]>([])
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([])

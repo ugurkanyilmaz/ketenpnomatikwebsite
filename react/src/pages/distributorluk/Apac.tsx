@@ -1,7 +1,15 @@
 import { motion } from 'framer-motion'
 import { ScrollToTopLink } from '../../components/ScrollToTopLink'
+import { useSectionImages } from '../../hooks/useSectionImages'
+import { useEffect } from 'react'
+import { applyPageSEO } from '../../utils/other_seo'
 
 export default function Apac() {
+  // Use section gallery first (apac_section*), fallback to about_apac
+  const { hero: apacHero, showcase: apacShowcase } = useSectionImages('apac_section', 'about_apac')
+  useEffect(() => {
+    applyPageSEO('about_apac')
+  }, [])
   return (
     <div className="space-y-20">
       {/* Hero */}
@@ -30,13 +38,15 @@ export default function Apac() {
                 <span className="badge badge-outline text-white border-white/30">Havalı Matkap</span>
               </div>
             </div>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <ScrollToTopLink to="/iletisim" className="btn btn-primary">Teklif Al</ScrollToTopLink>
-              <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost text-white">Demo Talebi</ScrollToTopLink>
+            <div className="mt-6">
+              <div className="mt-4 flex gap-3">
+                <ScrollToTopLink to="/iletisim" className="btn btn-primary">Teklif Al</ScrollToTopLink>
+                <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost text-white">Demo Talebi</ScrollToTopLink>
+              </div>
             </div>
           </div>
           <div>
-            <img src="/keten_banner.jpg" alt="APAC ürün gamı" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src={apacHero?.image_path || '/professional_banner.png'} alt={apacHero?.alt_text || 'APAC hero'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
         </div>
       </motion.section>
@@ -71,7 +81,7 @@ export default function Apac() {
 
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           <div>
-            <img src="/professional_banner.png" alt="APAC Pnömatik Aletler" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src={apacShowcase?.image_path || '/keten_banner.jpg'} alt={apacShowcase?.alt_text || 'APAC Pnömatik Aletler'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
           <div>
             <h3 className="text-xl md:text-2xl font-bold text-gray-900">Endüstriyel Dayanıklılık</h3>
@@ -122,7 +132,7 @@ export default function Apac() {
             </div>
           </div>
           <div>
-            <img src="/endus.jpg" alt="APAC Endüstriyel Uygulamalar" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src={apacShowcase?.image_path || '/endus.jpg'} alt={apacShowcase?.alt_text || 'APAC Endüstriyel Uygulamalar'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
         </div>
       </motion.section>

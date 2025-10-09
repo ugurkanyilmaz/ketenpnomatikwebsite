@@ -1,8 +1,13 @@
 import { Link } from 'react-router-dom'
 import { ScrollToTopLink } from '../../components/ScrollToTopLink'
 import { motion } from 'framer-motion'
+import { useSiteImage } from '../../hooks/useSiteImages'
 
 export default function DistributorlukIndex() {
+  const { image: kolverImg } = useSiteImage('about_kolver')
+  const { image: apacImg } = useSiteImage('about_apac')
+  const { image: hiyokiImg } = useSiteImage('about_hiyoki')
+  const { image: serviceImg } = useSiteImage('about_service')
   return (
     <div>
   {/* Kolver section - Light gray background */}
@@ -36,7 +41,7 @@ export default function DistributorlukIndex() {
             transition={{ duration: 0.6 }}
             className="flex items-center"
           >
-            <img src="/professional_banner.png" alt="Kolver Elektrikli Tork Sistemleri" className="rounded-box shadow-xl w-full object-contain" loading="lazy" />
+            <img src={kolverImg?.image_path || '/professional_banner.png'} alt={kolverImg?.alt_text || 'Kolver Elektrikli Tork Sistemleri'} className="rounded-box shadow-xl w-full object-contain" loading="lazy" />
           </motion.div>
         </motion.section>
       </div>
@@ -58,7 +63,7 @@ export default function DistributorlukIndex() {
             transition={{ duration: 0.6 }}
             className="flex items-center"
           >
-            <img src="/keten_banner.jpg" alt="APAC Pnömatik El Aletleri" className="rounded-box shadow-xl w-full object-contain" loading="lazy" />
+            <img src={apacImg?.image_path || '/keten_banner.jpg'} alt={apacImg?.alt_text || 'APAC Pnömatik El Aletleri'} className="rounded-box shadow-xl w-full object-contain" loading="lazy" />
           </motion.div>
           <div className="text-right">
             <div className="badge badge-primary mb-3">Yetkili Distribütör</div>
@@ -107,7 +112,7 @@ export default function DistributorlukIndex() {
             transition={{ duration: 0.6 }}
             className="flex items-center"
           >
-            <img src="/endus.jpg" alt="Hiyoki Ölçüm Cihazları" className="rounded-box shadow-xl w-full object-contain" loading="lazy" />
+            <img src={hiyokiImg?.image_path || '/endus.jpg'} alt={hiyokiImg?.alt_text || 'Hiyoki Ölçüm Cihazları'} className="rounded-box shadow-xl w-full object-contain" loading="lazy" />
           </motion.div>
         </motion.section>
       </div>
@@ -162,7 +167,7 @@ export default function DistributorlukIndex() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <img src="/technical_service_banner.png" alt="Keten Pnömatik Teknik Servis" className="rounded-box shadow-xl w-full object-contain" loading="lazy" />
+            <img src={serviceImg?.image_path || '/technical_service_banner.png'} alt={serviceImg?.alt_text || 'Keten Pnömatik Teknik Servis'} className="rounded-box shadow-xl w-full object-contain" loading="lazy" />
           </motion.div>
         </motion.section>
       </div>

@@ -1,7 +1,15 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { useEffect } from 'react'
+import { applyPageSEO } from '../utils/other_seo'
 
 export default function Hakkimizda() {
+  const location = useLocation()
+  const path = location.pathname.replace(/\/+$/g, '')
+  const isIndex = path === '/hakkimizda'
+  useEffect(() => {
+    applyPageSEO('about')
+  }, [])
   const brands = [
     { id: "kolver", name: "Kolver", img: "/kolver.jpg", desc: "Kolver hakkında açıklama buraya gelecek." },
     { id: "apac", name: "APAC", img: "/apac.jpg", desc: "APAC hakkında açıklama buraya gelecek." },
@@ -10,8 +18,9 @@ export default function Hakkimizda() {
 
   return (
     <div className="bg-base-100">
-      {/* Hero - Modern split design with overlay */}
-      <section className="relative w-full min-h-[500px] md:min-h-[600px] bg-gradient-to-br from-slate-900 to-slate-800 overflow-hidden">
+      {/* Hero - Modern split design with overlay (only on main /hakkimizda) */}
+      {isIndex && (
+        <section className="relative w-full min-h-[500px] md:min-h-[600px] bg-gradient-to-br from-slate-900 to-slate-800 overflow-hidden">
         {/* Background image with overlay */}
         <div className="absolute inset-0">
           <img
@@ -77,9 +86,10 @@ export default function Hakkimizda() {
           </div>
         </div>
 
-        {/* Decorative elements */}
-        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-base-100 to-transparent" />
-      </section>
+          {/* Decorative elements */}
+          <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-base-100 to-transparent" />
+        </section>
+      )}
 
       {/* Brands are provided by nested routes (Outlet) to avoid duplication */}
 

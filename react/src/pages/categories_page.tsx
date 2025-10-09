@@ -1,7 +1,12 @@
 
 import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { applyPageSEO } from '../utils/other_seo'
 
 export default function Categories_page() {
+  useEffect(() => {
+    applyPageSEO('categories')
+  }, [])
   // Images are served from the `public/` folder and available at the site root.
   const mainTiers = [
     { id: 'endustriyel', title: 'Endüstriyel', desc: 'Ağır hizmet, 7/24 kullanım', img: '/endustrial_cat_pic..jpg' },

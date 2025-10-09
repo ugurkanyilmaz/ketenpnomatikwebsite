@@ -1,8 +1,10 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { LayoutDashboard, FileText, Image, Package, LogOut } from 'lucide-react'
+import { useAuth } from '../../utils/auth'
 
 export default function AdminLayout() {
   const location = useLocation()
+  const auth = useAuth()
   
   const isActive = (path: string) => {
     return location.pathname === path || location.pathname.startsWith(path + '/')
@@ -14,6 +16,7 @@ export default function AdminLayout() {
     { path: '/admin/kategori-fotograflari', icon: Image, label: 'Kategori Fotoğrafları' },
     { path: '/admin/site-gorselleri', icon: Image, label: 'Site Görselleri' },
     { path: '/admin/urunler', icon: Package, label: 'Ürünler' },
+      { path: '/admin/bloglar', icon: FileText, label: 'Blog Yönetimi' },
   ]
 
   return (
@@ -52,12 +55,18 @@ export default function AdminLayout() {
           </ul>
         </nav>
 
-        <div className="absolute bottom-0 w-64 p-4 border-t border-base-300">
-          <Link
-            to="/"
+        <div className="absolute bottom-0 w-64 p-4 border-t border-base-300 flex items-center gap-3">
+          <button
+            onClick={() => { auth.logout() }}
             className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-base-200 transition-colors"
           >
             <LogOut size={20} />
+            <span>Çıkış</span>
+          </button>
+          <Link
+            to="/"
+            className="ml-auto flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-base-200 transition-colors"
+          >
             <span>Siteye Dön</span>
           </Link>
         </div>

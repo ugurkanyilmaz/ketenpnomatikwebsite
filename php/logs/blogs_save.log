@@ -1,0 +1,16 @@
+2025-10-09T11:13:27+02:00 - SQLSTATE[HY000]: General error: 1 no such column: slug
+#0 C:\Users\uur\OneDrive\Masaüstü\keten_work\ketenpnomatik.com\php\api\blogs_save.php(61): PDO->prepare('SELECT COUNT(*)...')
+#1 C:\Users\uur\OneDrive\Masaüstü\keten_work\ketenpnomatik.com\php\_test_blog_save.php(24): include('C:\\Users\\uur\\On...')
+#2 {main}
+
+2025-10-09T11:31:01+02:00 - FILES:image -> Array
+(
+    [name] => istockphoto-2027127656-612x612.jpg
+    [full_path] => istockphoto-2027127656-612x612.jpg
+    [type] => image/jpeg
+    [tmp_name] => C:\xampp\tmp\php63C6.tmp
+    [error] => 0
+    [size] => 31284
+)
+
+2025-10-09T11:31:01+02:00 - move_uploaded_file result: ok target: C:\Users\uur\OneDrive\Masaüstü\keten_work\ketenpnomatik.com\php\api/../uploads/blog_images/49d213c9c27ca9ac_istockphoto-2027127656-612x612.jpg

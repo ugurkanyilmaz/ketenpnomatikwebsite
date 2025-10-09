@@ -1,7 +1,14 @@
 import { motion } from 'framer-motion'
 import { ScrollToTopLink } from '../../components/ScrollToTopLink'
+import { useSectionImages } from '../../hooks/useSectionImages'
+import { useEffect } from 'react'
+import { applyPageSEO } from '../../utils/other_seo'
 
 export default function Hiyoki() {
+  const { hero: hiyokiHero, showcase: hiyokiShowcase } = useSectionImages('hiyoki_section', 'about_hiyoki')
+  useEffect(() => {
+    applyPageSEO('about_hiyoki')
+  }, [])
   return (
     <div className="space-y-20">
       {/* Hero */}
@@ -26,7 +33,7 @@ export default function Hiyoki() {
             </div>
           </div>
           <div>
-            <img src="/endus.jpg" alt="Hiyoki ölçüm çözümleri" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src={hiyokiHero?.image_path || '/endus.jpg'} alt={hiyokiHero?.alt_text || 'Hiyoki ölçüm çözümleri'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
         </div>
       </motion.section>
@@ -47,7 +54,7 @@ export default function Hiyoki() {
 
         <div className="grid lg:grid-cols-2 gap-8 items-center mb-10">
           <div>
-            <img src="/professional_banner.png" alt="Hiyoki Ölçüm Sistemleri" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src={hiyokiShowcase?.image_path || '/professional_banner.png'} alt={hiyokiShowcase?.alt_text || 'Hiyoki Ölçüm Sistemleri'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
           <div>
             <h3 className="text-xl md:text-2xl font-bold text-gray-900">Geniş Ürün Yelpazesi</h3>
@@ -67,7 +74,7 @@ export default function Hiyoki() {
             </p>
           </div>
           <div>
-            <img src="/keten_banner.jpg" alt="Hiyoki Teknik Destek" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src={hiyokiShowcase?.image_path || '/keten_banner.jpg'} alt={hiyokiShowcase?.alt_text || 'Hiyoki Teknik Destek'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
         </div>
       </motion.section>

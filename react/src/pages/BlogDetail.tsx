@@ -1,116 +1,55 @@
+import React from 'react'
 import { useParams, Link } from 'react-router-dom'
-
-interface BlogPost {
-  id: string
-  title: string
-  excerpt: string
-  content: string
-  author: string
-  date: string
-  category: string
-  image: string
-}
-
-const blogPosts: BlogPost[] = [
-  {
-    id: '1',
-    title: 'Pnömatik Aletlerin Bakım ve Onarımında Dikkat Edilmesi Gerekenler',
-    excerpt: 'Pnömatik aletlerinizin ömrünü uzatmak ve verimliliğini artırmak için düzenli bakım şarttır. Bu yazıda temel bakım adımlarını ve püf noktalarını paylaşıyoruz.',
-    content: `
-      <h2>Pnömatik Aletlerin Düzenli Bakımının Önemi</h2>
-      <p>Pnömatik el aletleri, endüstriyel üretimde yüksek verimlilik ve dayanıklılık sunar. Ancak bu performansı sürdürmek için düzenli bakım şarttır.</p>
-      
-      <h3>1. Yağlama</h3>
-      <p>Pnömatik aletler her kullanımdan önce veya günde en az bir kez hava girişinden birkaç damla pnömatik alet yağı ile yağlanmalıdır. Bu, içerideki hareketli parçaların sürtünmesini azaltır ve ömrünü uzatır.</p>
-      
-      <h3>2. Hava Temizliği</h3>
-      <p>Kompresörden gelen havanın temiz ve kuru olması kritik öneme sahiptir. Nem ve kir, aletin iç parçalarına zarar verebilir. Hava hattına bir filtre ve nem tutucu monte edilmelidir.</p>
-      
-      <h3>3. Hortum Kontrolü</h3>
-      <p>Hava hortumlarında çatlak, delik veya aşınma olup olmadığı düzenli kontrol edilmelidir. Hasarlı hortumlar hem performans kaybına hem de güvenlik sorunlarına yol açabilir.</p>
-      
-      <h3>4. Vida ve Bağlantı Kontrolü</h3>
-      <p>Aletin tüm vidaları ve bağlantı noktaları düzenli olarak kontrol edilmeli ve gerekirse sıkılmalıdır. Gevşek bağlantılar titreşime ve performans kaybına neden olur.</p>
-      
-      <h3>5. Periyodik Servis</h3>
-      <p>Yoğun kullanımda olan aletler yılda en az bir kez yetkili servise götürülmeli ve profesyonel bakım yaptırılmalıdır.</p>
-      
-      <p><strong>Sonuç:</strong> Düzenli bakım, pnömatik aletlerinizin ömrünü önemli ölçüde uzatır ve iş güvenliğinizi artırır. Bu basit adımları takip ederek hem maliyetlerinizi düşürebilir hem de iş verimliliğinizi artırabilirsiniz.</p>
-    `,
-    author: 'Ahmet Yılmaz',
-    date: '15 Eylül 2025',
-    category: 'Bakım & Onarım',
-    image: '/technical_service_banner.png'
-  },
-  {
-    id: '2',
-    title: 'Elektrikli ve Pnömatik Aletler: Hangisi Sizin İçin Daha Uygun?',
-    excerpt: 'Elektrikli ve pnömatik aletler arasındaki farkları, avantajları ve hangi durumda hangisinin tercih edilmesi gerektiğini detaylı olarak inceliyoruz.',
-    content: `
-      <h2>Elektrikli ve Pnömatik Aletler Karşılaştırması</h2>
-      <p>Endüstriyel uygulamalarda elektrikli ve pnömatik aletler arasında seçim yaparken birçok faktörü göz önünde bulundurmalısınız. Bu rehberde her iki alet türünün avantajlarını ve kullanım alanlarını detaylıca inceliyoruz.</p>
-      
-      <h3>Pnömatik Aletlerin Avantajları</h3>
-      <ul>
-        <li><strong>Yüksek Güç/Ağırlık Oranı:</strong> Pnömatik aletler, boyutlarına göre çok yüksek güç üretirler ve genellikle elektrikli eşdeğerlerinden daha hafiftir.</li>
-        <li><strong>Dayanıklılık:</strong> Basit iç yapıları sayesinde daha az arızalanırlar ve uzun ömürlüdürler.</li>
-        <li><strong>Güvenlik:</strong> Elektrik çarpması riski yoktur, ıslak veya nemli ortamlarda güvenle kullanılabilir.</li>
-        <li><strong>Sürekli Kullanım:</strong> Aşırı ısınma sorunu olmadan uzun süreler boyunca kesintisiz çalışabilirler.</li>
-      </ul>
-      
-      <h3>Elektrikli Aletlerin Avantajları</h3>
-      <ul>
-        <li><strong>Taşınabilirlik:</strong> Akülü modeller sayesinde her yerde kullanılabilir, hava hortumu gereksinimi yoktur.</li>
-        <li><strong>Kolay Kurulum:</strong> Kompresör ve hava hatları gerektirmez, prize takıp kullanmaya başlayabilirsiniz.</li>
-        <li><strong>Sessiz Çalışma:</strong> Pnömatik aletlere göre daha sessiz çalışırlar.</li>
-        <li><strong>Hassas Kontrol:</strong> Hız ve tork ayarları daha hassas yapılabilir.</li>
-      </ul>
-      
-      <h3>Hangi Durumda Hangisi?</h3>
-      <p><strong>Pnömatik Aletler İçin İdeal:</strong></p>
-      <ul>
-        <li>Fabrika ve atölye gibi sabit üretim alanları</li>
-        <li>Yoğun ve sürekli kullanım gerektiren işler</li>
-        <li>Yüksek tork gerektiren uygulamalar</li>
-        <li>Nemli veya ıslak ortamlar</li>
-      </ul>
-      
-      <p><strong>Elektrikli Aletler İçin İdeal:</strong></p>
-      <ul>
-        <li>Mobil kullanım gerektiren işler</li>
-        <li>Kompresör altyapısı olmayan alanlar</li>
-        <li>Hassas işlemler ve ayar gerektiren uygulamalar</li>
-        <li>Gürültü seviyesinin önemli olduğu ortamlar</li>
-      </ul>
-      
-      <p><strong>Sonuç:</strong> Her iki alet türünün de kendine özgü avantajları vardır. İhtiyacınız, kullanım alanınız ve bütçeniz doğrultusunda en uygun seçimi yapmalısınız. Detaylı bilgi ve ürün önerileri için bizimle iletişime geçebilirsiniz.</p>
-    `,
-    author: 'Mehmet Demir',
-    date: '8 Eylül 2025',
-    category: 'Karşılaştırma',
-    image: '/professional_banner.png'
-  }
-]
+import { buildBlogSEO, applySEOToHead } from '../utils/blog_seo'
 
 export default function BlogDetail() {
-  const { id } = useParams<{ id: string }>()
-  const post = blogPosts.find(p => p.id === id)
+  const { slug } = useParams<{ slug: string }>()
+  const [post, setPost] = React.useState<any | null>(null)
+  const [error, setError] = React.useState<string | null>(null)
 
-  if (!post) {
+  React.useEffect(() => {
+    if (!slug) return
+    fetch(`/php/api/blogs_find.php?slug=${encodeURIComponent(slug)}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && data.blog) setPost(data.blog)
+        else setError('Yazı bulunamadı')
+      })
+  .catch(() => setError('Sunucu hatası'))
+  }, [slug])
+
+  // Apply blog-specific SEO when post is loaded
+  React.useEffect(() => {
+    if (!post) return
+    try {
+      const seo = buildBlogSEO(post)
+      applySEOToHead(seo)
+    } catch (e) {
+      // fail silently
+      console.error('Error applying blog SEO', e)
+    }
+  }, [post])
+
+  if (error) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Blog yazısı bulunamadı</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">{error}</h1>
           <Link to="/blog" className="btn btn-primary">Blog'a Dön</Link>
         </div>
       </div>
     )
   }
 
+  if (!post) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">Yükleniyor...</div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <article className="max-w-4xl mx-auto px-4 py-12">
-        {/* Breadcrumb */}
         <div className="text-sm breadcrumbs mb-6">
           <ul>
             <li><Link to="/">Ana Sayfa</Link></li>
@@ -119,35 +58,56 @@ export default function BlogDetail() {
           </ul>
         </div>
 
-        {/* Hero Image */}
         <div className="mb-8">
-          <img src={post.image} alt={post.title} className="w-full h-96 object-cover rounded-lg shadow-lg" />
+          {
+            (() => {
+              const imageSrc = post.image
+                ? post.image.startsWith('http')
+                  ? post.image
+                  : `${window.location.origin}${post.image}`
+                : '/keten_banner.jpg'
+              return <img src={imageSrc} alt={post.title} className="w-full h-96 object-cover rounded-lg shadow-lg" />
+            })()
+          }
         </div>
 
-        {/* Post Meta */}
         <div className="flex items-center gap-4 mb-6 text-sm text-gray-600">
-          <span className="badge badge-primary">{post.category}</span>
+          {post.category && <span className="badge badge-primary">{post.category}</span>}
           <span>•</span>
-          <span>{post.date}</span>
+          <span>{post.published_date || post.created_at}</span>
           <span>•</span>
           <span>Yazar: {post.author}</span>
         </div>
 
-        {/* Post Title */}
         <h1 className="text-4xl font-bold text-gray-900 mb-6">{post.title}</h1>
 
-        {/* Post Excerpt */}
-        <p className="text-xl text-gray-600 mb-8 italic border-l-4 border-primary pl-4">
-          {post.excerpt}
-        </p>
+        {(() => {
+          const renderParagraph = (content?: string) => {
+            if (!content) return null
+            const looksLikeHtml = /<[^>]+>/.test(content)
+            if (looksLikeHtml) {
+              return <div className="prose prose-lg max-w-none mb-6" dangerouslySetInnerHTML={{ __html: content }} />
+            }
+            // Plain text: preserve line breaks and spaces while allowing wrapping
+            return (
+              <div
+                className="prose prose-lg max-w-none mb-6"
+                style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}
+              >
+                {content}
+              </div>
+            )
+          }
 
-        {/* Post Content */}
-        <div 
-          className="prose prose-lg max-w-none"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+          return (
+            <>
+              {renderParagraph(post.paragraph1)}
+              {renderParagraph(post.paragraph2)}
+              {renderParagraph(post.paragraph3)}
+            </>
+          )
+        })()}
 
-        {/* Back to Blog */}
         <div className="mt-12 pt-8 border-t border-gray-200">
           <Link to="/blog" className="btn btn-outline">
             ← Blog'a Dön

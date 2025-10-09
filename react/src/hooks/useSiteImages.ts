@@ -116,7 +116,15 @@ export function useSiteImages() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update image');
+        // Attempt to parse backend error message for clearer feedback
+        let errMsg = 'Failed to update image';
+        try {
+          const body = await response.json();
+          errMsg = body.error || body.message || errMsg;
+        } catch (e) {
+          // ignore parse errors
+        }
+        throw new Error(errMsg);
       }
 
       const updatedImage: SiteImage = await response.json();

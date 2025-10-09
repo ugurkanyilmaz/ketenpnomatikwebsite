@@ -1,4 +1,10 @@
+import { useEffect } from 'react'
+import { applyPageSEO } from '../utils/other_seo'
+
 export default function TechnicalServicePage() {
+  useEffect(() => {
+    applyPageSEO('technical_service')
+  }, [])
   return (
   <div className="bg-gray-100 min-h-screen flex flex-col items-center">
       {/* Hero Section - fullscreen */}

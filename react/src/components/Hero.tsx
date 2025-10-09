@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSiteImage } from '../hooks/useSiteImages'
 
 type Slide = {
@@ -7,6 +7,7 @@ type Slide = {
   subtitle: string
   ctaPrimary: { label: string; href: string }
   ctaSecondary: { label: string; href: string }
+  alt: string
 }
 
 function OverlapImages({
@@ -18,12 +19,10 @@ function OverlapImages({
   slides: Slide[]
   onClickImage?: (i: number) => void
 }) {
-  const images = useMemo(() => slides.map(s => s.image), [slides])
-
   return (
     <div className="relative w-full max-w-2xl aspect-video min-h-[440px]">
-      {images.map((src, i) => {
-        const pos = (i - index + images.length) % images.length
+      {slides.map((slide, i) => {
+        const pos = (i - index + slides.length) % slides.length
         const base =
           pos === 0
             ? 'z-30 left-[68%] top-[35%] -translate-x-1/2 -translate-y-1/2 w-[78%] h-[78%]'
@@ -33,9 +32,9 @@ function OverlapImages({
         const anim = pos === 0 ? 'scale-100 opacity-100' : 'scale-95 opacity-95'
         return (
           <img
-            key={src}
-            src={src}
-            alt="Hero görseli"
+            key={slide.image}
+            src={slide.image}
+            alt={slide.alt}
             onClick={() => onClickImage && onClickImage(i)}
             role="button"
             tabIndex={0}
@@ -64,6 +63,7 @@ export default function Hero() {
       subtitle: 'Endüstriyel pnömatik çözümler ve ekipmanlar',
       ctaPrimary: { label: 'Ürünleri Keşfet', href: '/kategoriler' },
       ctaSecondary: { label: 'Demo Talep Et', href: '/demo-talebi' },
+      alt: hero1?.alt_text || 'Keten Pnömatik Ana Görsel',
     },
     {
       image: hero2?.image_path || '/endus.jpg',
@@ -71,6 +71,7 @@ export default function Hero() {
       subtitle: 'Ağır hizmet için yüksek dayanım ve verimlilik',
       ctaPrimary: { label: 'Endüstriyel Seriye Git', href: '/kategoriler/endustriyel' },
       ctaSecondary: { label: 'Teknik Servis', href: '/teknik-servis' },
+      alt: hero2?.alt_text || 'Endüstriyel Seri',
     },
     {
       image: hero3?.image_path || '/professional_banner.png',
@@ -78,12 +79,24 @@ export default function Hero() {
       subtitle: 'Usta kullanıcılar için hafif ve güçlü çözümler',
       ctaPrimary: { label: 'Profesyonel Seriye Git', href: '/kategoriler/profesyonel' },
       ctaSecondary: { label: 'Demo Talep Et', href: '/demo-talebi' },
+      alt: hero3?.alt_text || 'Profesyonel Seri',
     },
   ]
 
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   const textRef = useRef<HTMLDivElement | null>(null)
+
+  // Mobile slider state
+  const [mobileIndex, setMobileIndex] = useState(0)
+  const mobileTouchStart = useRef<number | null>(null)
+
+  useEffect(() => {
+    // autoplay only on mobile slider when not paused
+    if (paused) return
+    const id = setInterval(() => setMobileIndex((i) => (i + 1) % slides.length), 4000)
+    return () => clearInterval(id)
+  }, [slides.length, paused])
 
   useEffect(() => {
     if (paused) return
@@ -104,6 +117,73 @@ export default function Hero() {
     textRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
+  function MobileSlider({ slides }: { slides: Slide[] }) {
+    function prev() {
+      setMobileIndex((i) => (i - 1 + slides.length) % slides.length)
+      setPaused(true)
+    }
+    function next() {
+      setMobileIndex((i) => (i + 1) % slides.length)
+      setPaused(true)
+    }
+
+    function onTouchStart(e: React.TouchEvent) {
+      mobileTouchStart.current = e.touches[0].clientX
+    }
+    function onTouchEnd(e: React.TouchEvent) {
+      if (mobileTouchStart.current == null) return
+      const dx = e.changedTouches[0].clientX - mobileTouchStart.current
+      mobileTouchStart.current = null
+      if (Math.abs(dx) < 40) return
+      if (dx > 0) prev()
+      else next()
+    }
+
+    return (
+      <div className="w-full relative block lg:hidden">
+        <div
+          className="w-full h-56 sm:h-72 md:h-96 bg-black/5 overflow-hidden rounded-box"
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+        >
+          {slides.map((s, i) => (
+            <img
+              key={s.image}
+              src={s.image}
+              alt={s.alt}
+              className={`w-full h-56 sm:h-72 md:h-96 object-cover transition-transform duration-500 ${i === mobileIndex ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 absolute inset-0'}`}
+              style={{ display: i === mobileIndex ? 'block' : 'none' }}
+            />
+          ))}
+        </div>
+        {/* Controls */}
+        <div className="absolute left-3 top-1/2 -translate-y-1/2">
+          <button onClick={prev} className="btn btn-circle btn-sm bg-white/10 border-none text-white">◀</button>
+        </div>
+        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+          <button onClick={next} className="btn btn-circle btn-sm bg-white/10 border-none text-white">▶</button>
+        </div>
+        {/* Indicators */}
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+          {slides.map((_, i) => (
+            <button key={i} onClick={() => { setMobileIndex(i); setPaused(true) }} className={`w-2 h-2 rounded-full ${i === mobileIndex ? 'bg-white' : 'bg-white/40'}`} />
+          ))}
+        </div>
+        {/* Text overlay for mobile */}
+        <div className="p-4">
+          <div className="backdrop-blur-sm bg-white/5 rounded-2xl p-4 border border-white/10 shadow-2xl text-white">
+            <h2 className="text-xl font-bold">{slides[mobileIndex].title}</h2>
+            <p className="text-sm mt-2">{slides[mobileIndex].subtitle}</p>
+            <div className="mt-3 flex gap-2">
+              <a className="btn btn-primary btn-sm" href={slides[mobileIndex].ctaPrimary.href}>{slides[mobileIndex].ctaPrimary.label}</a>
+              <a className="btn btn-outline btn-sm" href={slides[mobileIndex].ctaSecondary.href}>{slides[mobileIndex].ctaSecondary.label}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <section className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
       {/* Subtle background pattern */}
@@ -121,10 +201,13 @@ export default function Hero() {
       <div className="relative hero py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4">
           <div className="hero-content flex-col lg:flex-row items-center justify-between gap-12 relative">
-            <div className="shrink-0">
+            <div className="shrink-0 hidden lg:block">
               <OverlapImages index={index} slides={slides} onClickImage={handleImageClick} />
             </div>
-            <div ref={textRef} className="max-w-xl md:pl-6 lg:pl-10 text-right">
+            <div className="block lg:hidden">
+              <MobileSlider slides={slides} />
+            </div>
+            <div ref={textRef} className="hidden lg:block max-w-xl md:pl-6 lg:pl-10 text-right">
               {/* Glassmorphism card effect */}
               <div className="backdrop-blur-sm bg-white/5 rounded-2xl p-8 border border-white/10 shadow-2xl">
                 <h1 className="text-4xl md:text-6xl font-extrabold leading-tight tracking-tight transition-all duration-500 ease-out transform-gpu text-white"
