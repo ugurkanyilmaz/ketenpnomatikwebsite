@@ -94,7 +94,7 @@ export default function DistributorlukIndex() {
           className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-8 items-center"
         >
           <div className="text-left">
-            <div className="badge badge-secondary mb-3">Yetkili Distribütör</div>
+            <div className="badge badge-warning mb-3">Yetkili Distribütör</div>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Hiyoki</h2>
             <p className="mt-4 text-gray-700 leading-relaxed">
               Hiyoki, elektrikli ölçüm ve test cihazları konusunda geniş ürün yelpazesi ile profesyonel çözümler sunar. 

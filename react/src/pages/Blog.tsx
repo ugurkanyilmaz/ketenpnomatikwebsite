@@ -41,7 +41,7 @@ export default function Blog() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+  <div className="w-full bg-gray-50">
       <SectionHeader title="Blog" subtitle="Havalı El Aletleri hakkında güncel bilgiler ve ipuçları" />
 
       <div className="max-w-7xl mx-auto px-4 py-12">

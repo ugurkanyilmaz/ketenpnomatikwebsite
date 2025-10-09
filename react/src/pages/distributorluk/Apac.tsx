@@ -40,8 +40,8 @@ export default function Apac() {
             </div>
             <div className="mt-6">
               <div className="mt-4 flex gap-3">
-                <ScrollToTopLink to="/iletisim" className="btn btn-primary">Teklif Al</ScrollToTopLink>
-                <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost text-white">Demo Talebi</ScrollToTopLink>
+                <ScrollToTopLink to="/iletisim" className="btn btn-primary">İletişim</ScrollToTopLink>
+                <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost text-white">Demo Talep Et</ScrollToTopLink>
               </div>
             </div>
           </div>
@@ -153,7 +153,7 @@ export default function Apac() {
             </div>
             <div className="flex gap-3 lg:justify-end">
               <ScrollToTopLink to="/iletisim" className="btn btn-primary">İletişim</ScrollToTopLink>
-              <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost">Demo Talebi</ScrollToTopLink>
+              <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost">Demo Talep Et</ScrollToTopLink>
             </div>
           </div>
         </div>

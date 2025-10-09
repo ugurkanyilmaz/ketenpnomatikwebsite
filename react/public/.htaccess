@@ -1,0 +1,23 @@
+# SPA rewrite: if the request is not a real file/dir and not an API call, serve index.html
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Don't touch existing files or directories
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Exclude backend API/PHP paths from being rewritten
+  RewriteCond %{REQUEST_URI} !^/php/ [NC]
+  RewriteCond %{REQUEST_URI} !^/api/ [NC]
+
+  # Rewrite everything else to index.html (SPA entry)
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Optional security headers (you can enable/adjust on the server)
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set X-XSS-Protection "1; mode=block"
+</IfModule>

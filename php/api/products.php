@@ -16,9 +16,19 @@ $url = isset($_GET['url']) ? trim((string)$_GET['url']) : '';
 $sql = 'SELECT * FROM products WHERE 1=1';
 $params = [];
 
+// Helper to escape LIKE wildcards so user input is treated literally
+function escape_like(string $s): string {
+    // escape backslash first
+    $s = str_replace('\\', '\\\\', $s);
+    $s = str_replace('%', '\\%', $s);
+    $s = str_replace('_', '\\_', $s);
+    return $s;
+}
+
 if ($q !== '') {
-    $sql .= ' AND (title LIKE :q OR description LIKE :q OR paragraph LIKE :q OR brand LIKE :q OR sku LIKE :q)';
-    $params[':q'] = "%$q%";
+    $safeQ = escape_like($q);
+    $sql .= " AND (title LIKE :q ESCAPE '\\' OR description LIKE :q ESCAPE '\\' OR paragraph LIKE :q ESCAPE '\\' OR brand LIKE :q ESCAPE '\\' OR sku LIKE :q ESCAPE '\\')";
+    $params[':q'] = "%{$safeQ}%";
 }
 if ($parent !== '') {
     $sql .= ' AND parent = :parent';
@@ -55,7 +65,7 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
 // Get total count for pagination
 $countSql = 'SELECT COUNT(*) as total FROM products WHERE 1=1';
-if ($q !== '') $countSql .= ' AND (title LIKE :q OR description LIKE :q OR paragraph LIKE :q OR brand LIKE :q OR sku LIKE :q)';
+if ($q !== '') $countSql .= " AND (title LIKE :q ESCAPE '\\' OR description LIKE :q ESCAPE '\\' OR paragraph LIKE :q ESCAPE '\\' OR brand LIKE :q ESCAPE '\\' OR sku LIKE :q ESCAPE '\\')";
 if ($parent !== '') $countSql .= ' AND parent = :parent';
 if ($child !== '') $countSql .= ' AND child = :child';
 if ($subchild !== '') $countSql .= ' AND subchild = :subchild';

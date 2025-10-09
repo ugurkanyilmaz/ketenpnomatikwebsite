@@ -45,8 +45,14 @@ function handleGet($pdo) {
     
     // support prefix queries: ?prefix=apac_section will return all site_images where section_key LIKE 'apac_section%'
     if (isset($_GET['prefix'])) {
-        $prefix = $_GET['prefix'];
-        $stmt = $pdo->prepare('SELECT * FROM site_images WHERE section_key LIKE :prefix ORDER BY section_key ASC');
+        $prefix = trim((string)($_GET['prefix'] ?? ''));
+        // limit prefix length to avoid abuse
+        if ($prefix === '' || strlen($prefix) > 100) {
+            http_response_code(400);
+            echo json_encode(['error' => 'invalid_prefix']);
+            return;
+        }
+    $stmt = $pdo->prepare("SELECT * FROM site_images WHERE section_key LIKE :prefix ESCAPE '\\' ORDER BY section_key ASC");
         $stmt->execute([':prefix' => $prefix . '%']);
         $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($images);
@@ -95,7 +101,9 @@ function handlePost($pdo) {
     ]);
     
     $id = $pdo->lastInsertId();
-    $result = $pdo->query("SELECT * FROM site_images WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
+    $stmtRes = $pdo->prepare('SELECT * FROM site_images WHERE id = :id');
+    $stmtRes->execute([':id' => $id]);
+    $result = $stmtRes->fetch(PDO::FETCH_ASSOC);
     
     http_response_code(201);
     echo json_encode($result);

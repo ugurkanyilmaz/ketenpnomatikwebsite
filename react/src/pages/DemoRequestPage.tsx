@@ -9,12 +9,14 @@ export default function DemoRequestPage() {
     phone: '',
     company: '',
     products: [{ id: 1, name: '', quantity: 1 }],
-    notes: '',
-    privacyAccepted: false
+    notes: ''
   })
   const [submitted, setSubmitted] = useState(false)
 
   const [availableProducts, setAvailableProducts] = useState<Array<{id:number, title:string, sku?:string}>>([])
+  // per-product search query and suggestion visibility
+  const [searchQueries, setSearchQueries] = useState<Record<string,string>>({})
+  const [openSuggestions, setOpenSuggestions] = useState<Record<string,boolean>>({})
 
   useEffect(() => {
     // Fetch products from the PHP API. Keep limit reasonable.
@@ -63,10 +65,6 @@ export default function DemoRequestPage() {
       return
     }
 
-    if (!formData.privacyAccepted) {
-      alert('Lütfen gizlilik politikasını kabul edin')
-      return
-    }
 
     const hasEmptyProduct = formData.products.some(p => !p.name)
     if (hasEmptyProduct) {
@@ -97,15 +95,14 @@ export default function DemoRequestPage() {
         phone: '',
         company: '',
         products: [{ id: 1, name: '', quantity: 1 }],
-        notes: '',
-        privacyAccepted: false
+        notes: ''
       })
     }, 3000)
   }
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+      <div className="w-full py-12 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
           <div className="mb-4 flex justify-center">
             <CheckCircle className="w-16 h-16 text-green-500" />
@@ -120,7 +117,7 @@ export default function DemoRequestPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-12 px-4">
+    <div className="w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -225,16 +222,53 @@ export default function DemoRequestPage() {
                       <label className="block text-sm font-medium text-slate-700 mb-2">
                         Ürün {index + 1} <span className="text-red-500">*</span>
                       </label>
-                      <select
-                        value={product.name}
-                        onChange={(e) => updateProduct(product.id, 'name', e.target.value)}
-                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white"
-                      >
-                        <option value="">Ürün seçiniz...</option>
-                        {availableProducts.map((prod) => (
-                          <option key={prod.id} value={prod.sku || prod.title}>{prod.title}</option>
-                        ))}
-                      </select>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={searchQueries[product.id] ?? product.name}
+                          onChange={(e) => {
+                            const q = e.target.value
+                            setSearchQueries((s) => ({ ...s, [product.id]: q }))
+                            setOpenSuggestions((s) => ({ ...s, [product.id]: true }))
+                            // optimistic update: set the product name to what user types (allows free-text)
+                            updateProduct(product.id, 'name', q)
+                          }}
+                          onFocus={() => setOpenSuggestions((s) => ({ ...s, [product.id]: true }))}
+                          onBlur={() => setTimeout(() => setOpenSuggestions((s) => ({ ...s, [product.id]: false })), 150)}
+                          placeholder="Ürün seçiniz..."
+                          className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white"
+                        />
+
+                        {/* suggestions */}
+                        {openSuggestions[product.id] && (
+                          <ul className="absolute z-20 left-0 right-0 mt-1 max-h-48 overflow-auto bg-white border border-slate-200 rounded shadow-lg">
+                            {availableProducts
+                              .filter((prod) => {
+                                const q = (searchQueries[product.id] ?? product.name ?? '').toLowerCase()
+                                if (!q) return true
+                                return (prod.title || prod.sku || '').toLowerCase().includes(q)
+                              })
+                              .slice(0, 25)
+                              .map((prod) => (
+                                <li
+                                  key={prod.id}
+                                  onMouseDown={(e) => e.preventDefault()}
+                                  onClick={() => {
+                                    const val = prod.sku || prod.title
+                                    updateProduct(product.id, 'name', val)
+                                    setSearchQueries((s) => ({ ...s, [product.id]: val }))
+                                    setOpenSuggestions((s) => ({ ...s, [product.id]: false }))
+                                  }}
+                                  className="px-3 py-2 hover:bg-slate-100 cursor-pointer text-sm"
+                                >
+                                  {prod.title}
+                                  {prod.sku ? <span className="text-xs text-slate-400 ml-2">({prod.sku})</span> : null}
+                                </li>
+                              ))}
+                            {availableProducts.length === 0 && <li className="px-3 py-2 text-sm text-slate-500">Ürün bulunamadı</li>}
+                          </ul>
+                        )}
+                      </div>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -281,23 +315,7 @@ export default function DemoRequestPage() {
             />
           </div>
 
-          {/* Gizlilik Onayı */}
-          <div className="mb-6">
-            <label className="flex items-start gap-3 cursor-pointer group">
-              <input
-                type="checkbox"
-                checked={formData.privacyAccepted}
-                onChange={(e) => setFormData({ ...formData, privacyAccepted: e.target.checked })}
-                className="mt-1 w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-2 focus:ring-blue-500"
-              />
-              <span className="text-sm text-slate-600 group-hover:text-slate-800 transition-colors">
-                <span className="text-red-500">*</span> Kişisel verilerimin demo talebi kapsamında işlenmesini kabul ediyorum. 
-                <a href="/gizlilik" className="text-blue-600 hover:text-blue-700 underline ml-1">
-                  Gizlilik Politikası
-                </a>
-              </span>
-            </label>
-          </div>
+          
 
           {/* Submit Button */}
           <button
@@ -313,8 +331,8 @@ export default function DemoRequestPage() {
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6">
           <h3 className="font-bold text-blue-900 mb-2">📞 Hızlı İletişim</h3>
           <p className="text-blue-800 text-sm">
-            Acil durumlar için bizi <strong>0262 XXX XX XX</strong> numaralı telefondan arayabilir 
-            veya <strong>info@ketenpnomatik.com</strong> adresine e-posta gönderebilirsiniz.
+            Acil durumlar için bizi <strong>0262 643 43 39</strong> numaralı telefondan arayabilir 
+            veya <strong>info@ketenpnomatik.com.tr</strong> adresine e-posta gönderebilirsiniz.
           </p>
         </div>
       </div>

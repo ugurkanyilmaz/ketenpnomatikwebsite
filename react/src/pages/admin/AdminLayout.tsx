@@ -17,6 +17,7 @@ export default function AdminLayout() {
     { path: '/admin/site-gorselleri', icon: Image, label: 'Site Görselleri' },
     { path: '/admin/urunler', icon: Package, label: 'Ürünler' },
       { path: '/admin/bloglar', icon: FileText, label: 'Blog Yönetimi' },
+    { path: '/admin/demo-talepleri', icon: FileText, label: 'Demo Talepleri' },
   ]
 
   return (

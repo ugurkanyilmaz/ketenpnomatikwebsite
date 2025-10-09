@@ -65,8 +65,8 @@ export default function Categories_page() {
         <div className="mt-4 mb-8 flex justify-center">
           <Link
             to="/urunler"
-            className="rounded-full px-8 py-3 text-lg font-bold bg-gradient-to-r from-primary to-accent text-white shadow-2xl transform transition-transform hover:-translate-y-1 hover:scale-105"
-            style={{ boxShadow: '0 14px 40px rgba(0,0,0,0.35)' }}
+            className="btn btn-primary rounded-full px-8 py-3 text-lg font-bold"
+            style={{ boxShadow: '0 14px 40px rgba(0,0,0,0.15)' }}
           >
             Tüm Ürünleri Gör
           </Link>

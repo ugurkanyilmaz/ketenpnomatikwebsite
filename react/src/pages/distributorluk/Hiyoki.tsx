@@ -21,15 +21,15 @@ export default function Hiyoki() {
       >
         <div className="max-w-7xl mx-auto px-4 py-14 grid lg:grid-cols-2 gap-10 items-center">
           <div>
-            <div className="badge badge-secondary mb-3">Yetkili Distribütör</div>
+            <div className="badge badge-warning mb-3">Yetkili Distribütör</div>
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">Hiyoki Ölçüm Cihazları</h1>
             <p className="mt-4 text-gray-300 max-w-3xl">
               Hiyoki, elektrikli ölçüm cihazları ve test ekipmanlarında güvenilir çözümler sunar. 
               Elektronik, otomotiv ve endüstriyel sektörlerde hassas ölçüm ihtiyaçları için geniş ürün yelpazesi bulundurur.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <ScrollToTopLink to="/iletisim" className="btn btn-primary">Teklif Al</ScrollToTopLink>
-              <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost text-white">Demo Talebi</ScrollToTopLink>
+              <ScrollToTopLink to="/iletisim" className="btn btn-primary">İletişim</ScrollToTopLink>
+              <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost text-white">Demo Talep Et</ScrollToTopLink>
             </div>
           </div>
           <div>
@@ -95,7 +95,7 @@ export default function Hiyoki() {
             </div>
             <div className="flex gap-3 lg:justify-end">
               <ScrollToTopLink to="/iletisim" className="btn btn-primary">İletişim</ScrollToTopLink>
-              <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost">Demo Talebi</ScrollToTopLink>
+              <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost">Demo Talep Et</ScrollToTopLink>
             </div>
           </div>
         </div>

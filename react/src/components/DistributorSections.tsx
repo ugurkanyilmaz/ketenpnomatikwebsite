@@ -32,7 +32,7 @@ export default function DistributorSections() {
             <li className="flex items-start gap-2"><span className="text-primary mt-1">•</span> Garanti kapsamı ve orijinal yedek parça</li>
           </ul>
           <div className="mt-6 flex gap-3">
-            <a href="/iletisim" className="btn btn-primary">Teklif Al</a>
+            <a href="/iletisim" className="btn btn-primary">İletişim</a>
             <a href="/demo-talebi" className="btn btn-outline">Demo Talep Et</a>
           </div>
         </div>
@@ -75,21 +75,21 @@ export default function DistributorSections() {
             loading="lazy"
           />
         </motion.div>
-        <div>
-          <div className="badge badge-secondary mb-4">Distribütörlük</div>
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900">Resmi APAC Distribütörü</h2>
+          <div>
+            <div className="badge badge-primary mb-4">Distribütörlük</div>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900">Resmi APAC Distribütörü</h2>
           <p className="mt-5 text-gray-700 leading-relaxed text-lg">
             APAC ürünlerinde resmi distribütör olarak; geniş ürün gamını rekabetçi teslim süreleriyle
             sunuyoruz. Uygulamanıza en uygun çözümleri belirleyip, saha kurulumu ve eğitimle destekliyoruz.
           </p>
           <ul className="mt-6 space-y-2 text-gray-700">
-            <li className="flex items-start gap-2"><span className="text-secondary mt-1">•</span> Geniş ürün yelpazesi ve alternatifler</li>
-            <li className="flex items-start gap-2"><span className="text-secondary mt-1">•</span> Hızlı servis ve yedek parça erişimi</li>
-            <li className="flex items-start gap-2"><span className="text-secondary mt-1">•</span> Saha devreye alma ve kullanıcı eğitimi</li>
+            <li className="flex items-start gap-2"><span className="text-primary mt-1">•</span> Geniş ürün yelpazesi ve alternatifler</li>
+            <li className="flex items-start gap-2"><span className="text-primary mt-1">•</span> Hızlı servis ve yedek parça erişimi</li>
+            <li className="flex items-start gap-2"><span className="text-primary mt-1">•</span> Saha devreye alma ve kullanıcı eğitimi</li>
           </ul>
           <div className="mt-6 flex gap-3">
-            <a href="/kategoriler" className="btn btn-secondary">Ürünleri İncele</a>
-            <a href="/iletisim" className="btn btn-outline">Bilgi Al</a>
+            <a href="/iletisim" className="btn btn-primary">İletişim</a>
+            <a href="/demo-talebi" className="btn btn-outline">Demo Talep Et</a>
           </div>
         </div>
       </motion.div>
@@ -105,23 +105,23 @@ export default function DistributorSections() {
         className="max-w-7xl mx-auto px-4 pb-16 grid lg:grid-cols-2 gap-10 items-center"
       >
         <div className="text-left">
-          <div className="badge badge-secondary mb-4">Distribütörlük</div>
+          <div className="badge badge-primary mb-4">Distribütörlük</div>
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">Resmi Hiyoki Distribütörü</h2>
           <p className="mt-5 text-gray-300 leading-relaxed text-lg">
             Hiyoki ölçüm ve test çözümlerinde yetkili distribütör olarak uzman ölçüm cihazları ve saha desteği sağlıyoruz.
             Üretim ve Ar-Ge süreçlerinizde hassas sonuçlara ulaşmanız için doğru ürün seçimi ve devreye alma desteği sunuyoruz.
           </p>
           <ul className="mt-6 space-y-2 text-gray-300">
-            <li className="flex items-start gap-2"><span className="text-secondary mt-1">•</span> Hassas ölçüm cihazları
+            <li className="flex items-start gap-2"><span className="text-primary mt-1">•</span> Hassas ölçüm cihazları
             </li>
-            <li className="flex items-start gap-2"><span className="text-secondary mt-1">•</span> Uygulama danışmanlığı ve eğitim
+            <li className="flex items-start gap-2"><span className="text-primary mt-1">•</span> Uygulama danışmanlığı ve eğitim
             </li>
-            <li className="flex items-start gap-2"><span className="text-secondary mt-1">•</span> Satış sonrası teknik destek
+            <li className="flex items-start gap-2"><span className="text-primary mt-1">•</span> Satış sonrası teknik destek
             </li>
           </ul>
           <div className="mt-6 flex gap-3 justify-start">
-            <a href="/kategoriler" className="btn btn-secondary">Ürünleri İncele</a>
-            <a href="/iletisim" className="btn btn-outline">Bilgi Al</a>
+            <a href="/iletisim" className="btn btn-primary">İletişim</a>
+            <a href="/demo-talebi" className="btn btn-outline">Demo Talep Et</a>
           </div>
         </div>
         <motion.div

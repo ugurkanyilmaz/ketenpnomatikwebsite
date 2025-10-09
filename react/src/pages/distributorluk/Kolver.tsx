@@ -39,8 +39,8 @@ export default function Kolver() {
               </div>
             </div>
             <div className="mt-6 flex flex-wrap gap-3">
-              <ScrollToTopLink to="/iletisim" className="btn btn-primary">Teklif Al</ScrollToTopLink>
-              <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost text-white">Demo Talebi</ScrollToTopLink>
+              <ScrollToTopLink to="/iletisim" className="btn btn-primary">İletişim</ScrollToTopLink>
+              <ScrollToTopLink to="/demo-talebi" className="btn btn-outline">Demo Talep Et</ScrollToTopLink>
             </div>
             <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 text-gray-300">
               {[
@@ -210,8 +210,8 @@ export default function Kolver() {
               <p className="mt-2 text-gray-700">Ürün/seri seçimi, proses kurulumu ve entegrasyon için uzman ekibimizle iletişime geçin.</p>
             </div>
             <div className="flex gap-3 lg:justify-end">
-              <ScrollToTopLink to="/iletisim" className="btn btn-primary">İletişim</ScrollToTopLink>
-              <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost">Demo Talebi</ScrollToTopLink>
+              <ScrollToTopLink to="/iletisim" className="btn">İletişim</ScrollToTopLink>
+              <ScrollToTopLink to="/demo-talebi" className="btn btn-outline">Demo Talep Et</ScrollToTopLink>
             </div>
           </div>
         </div>

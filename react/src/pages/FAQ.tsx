@@ -10,17 +10,12 @@ const faqs = [
   {
     question: "Yedek parça temini ne kadar sürer?",
     answer:
-      "Orijinal yedek parçalar stok durumuna bağlı olarak değişir; ortalama 3-7 iş günü içerisinde temin edilir."
+      "Orijinal yedek parçalar stok durumuna bağlı olarak değişir; ortalama yurt dışı termin süresi 2-4 haftadır."
   },
   {
     question: "Garanti kapsamında neler yapılır?",
     answer:
-      "Garanti kapsamında olan arızalar ücretsiz olarak giderilir; detaylar garanti belgesinde yer alır."
-  },
-  {
-    question: "Kargo ücretleri kime ait?",
-    answer:
-      "Garanti kapsamındaki işlemlerde gidiş-dönüş kargo ücreti firmamıza aittir. Garanti dışındaki işlemlerde müşteriye aittir."
+      "Ürünlerimiz Servisten Çıktıkları tarihten itibaren 6 ay bakım garantisi altındadır."
   },
   {
     question: "Onarım sonrası test yapılıyor mu?",
@@ -30,7 +25,7 @@ const faqs = [
   {
     question: "Ortalama onarım süresi ne kadar?",
     answer:
-      "Arızanın türüne göre değişmekle birlikte ortalama 5-10 iş günü içerisinde ürün teslim edilir."
+      "Servisimize gelen ürünler minimum 3 iş günü içerisinde kontrol sağlanarak parça teminine bağlı süre hesaplanır, ürün sahibi bilgilendirilir."
   }
 ]
 

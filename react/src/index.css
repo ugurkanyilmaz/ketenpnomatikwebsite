@@ -64,6 +64,46 @@ body { margin: 0; font-family: Inter, system-ui, sans-serif; }
   color: #1f2937 !important;
 }
 
+/* When JS hasn't initialized yet, keep animations/transitions off to avoid
+   visual jumps on mobile. The attribute is removed by an early script when
+   animations are allowed. */
+html[data-no-animations="true"],
+html[data-no-animations="true"] * {
+  transition: none !important;
+  animation: none !important;
+  transform: none !important;
+}
+
+/* Homepage-specific button styling: make non-primary buttons orange to match site theme */
+.home-page .btn:not(.btn-primary) {
+  color: var(--p) !important; /* primary orange */
+  border-color: var(--p) !important;
+  background-color: transparent !important;
+}
+
+.home-page .btn.btn-outline,
+.home-page a.btn.btn-outline {
+  color: var(--p) !important;
+  border-color: var(--p) !important;
+}
+
+.home-page .card .btn {
+  /* keep cards' internal buttons consistent */
+  color: var(--p) !important;
+  border-color: var(--p) !important;
+}
+
+/* Product page hero gradients */
+.products-hero {
+  background: linear-gradient(90deg, #f3f4f6 0%, var(--p) 100%); /* gray -> primary orange */
+}
+.products-hero-alt {
+  background: linear-gradient(90deg, var(--p) 0%, #f3f4f6 100%); /* primary orange -> gray */
+}
+.products-hero .hero-content {
+  color: var(--pc) !important; /* text on orange should be readable */
+}
+
 [data-theme="keten"] .bg-base-100 { background-color: inherit !important; }
 [data-theme="keten"] .text-base-content { color: #1f2937 !important; }
 

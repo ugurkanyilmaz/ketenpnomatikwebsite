@@ -1,5 +1,10 @@
 <!doctype html>
-<html lang="en" data-theme="keten">
+<!--
+  Start with animations disabled at the HTML level to prevent layout jank on mobile
+  before the JS bundle initializes. The React entrypoint will toggle this attribute
+  based on prefers-reduced-motion and viewport width.
+-->
+<html lang="en" data-theme="keten" data-no-animations="true">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />

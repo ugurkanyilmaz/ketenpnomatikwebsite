@@ -42,13 +42,13 @@ export default function BlogDetail() {
   }
 
   if (!post) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">Yükleniyor...</div>
+      return (
+        <div className="w-full py-12 bg-gray-50 flex items-center justify-center">Yükleniyor...</div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+      <div className="w-full bg-gray-50">
       <article className="max-w-4xl mx-auto px-4 py-12">
         <div className="text-sm breadcrumbs mb-6">
           <ul>

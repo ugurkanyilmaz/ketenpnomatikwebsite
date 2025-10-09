@@ -11,7 +11,7 @@ export default function Distributorluk() {
   return (
     <div className="bg-base-100">
       {/* Hero - Modern split design with overlay */}
-      <section className="relative w-full min-h-[500px] md:min-h-[600px] bg-gradient-to-br from-slate-900 to-slate-800 overflow-hidden">
+    <section className="relative w-full min-h-[300px] md:min-h-[500px] lg:min-h-[600px] bg-gradient-to-br from-slate-900 to-slate-800 overflow-hidden">
         {/* Background image with overlay */}
         <div className="absolute inset-0">
           <img
@@ -24,7 +24,7 @@ export default function Distributorluk() {
         </div>
 
         {/* Content */}
-        <div className="relative max-w-7xl mx-auto px-6 py-20 md:py-28">
+  <div className="relative max-w-7xl mx-auto px-6 py-12 md:py-20 lg:py-24">
           <div className="max-w-3xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

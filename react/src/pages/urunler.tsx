@@ -187,10 +187,10 @@ export default function Urunler() {
   const hasActiveFilters = searchTerm || selectedParent || selectedChild || selectedSubchild || selectedBrand
 
   return (
-    <section className="bg-base-100 min-h-screen">
+  <section className="bg-base-100 w-full py-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary to-primary-focus text-primary-content">
-        <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="products-hero text-primary-content">
+        <div className="max-w-7xl mx-auto px-4 py-12 hero-content">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Tüm Ürünler</h1>
           <p className="text-lg opacity-90">
             {loading ? 'Yükleniyor...' : `${filteredProducts.length} ürün bulundu`}

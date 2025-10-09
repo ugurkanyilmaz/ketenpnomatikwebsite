@@ -2,6 +2,7 @@ import Hero from '../components/Hero'
 import Benefits from '../components/Benefits'
 import Newsletter from '../components/Newsletter'
 import { motion, useScroll, useSpring } from 'framer-motion'
+import useShouldAnimate from '../hooks/useShouldAnimate'
 import DistributorSections from '../components/DistributorSections'
 import SectionHeader from '../components/SectionHeader'
 import { ScrollToTopLink } from '../components/ScrollToTopLink'
@@ -15,6 +16,14 @@ export default function HomePage() {
   }, [])
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, mass: 0.2 })
+  const shouldAnimate = useShouldAnimate()
+  const M: any = shouldAnimate
+    ? motion
+    : {
+        div: (p: any) => <div {...p} />,
+        section: (p: any) => <section {...p} />,
+        a: (p: any) => <a {...p} />,
+      }
   
   // Fetch dynamic images
   const { image: electricImg } = useSiteImage('home_electric')
@@ -25,15 +34,15 @@ export default function HomePage() {
   const { image: process3Img } = useSiteImage('home_process_3')
   const { image: process4Img } = useSiteImage('home_process_4')
   return (
-    <>
-      {/* Scroll Progress Bar */}
-      <motion.div style={{ scaleX }} className="fixed left-0 right-0 top-0 h-1 origin-left bg-primary z-[100]" />
+    <div className="home-page">
+  {/* Scroll Progress Bar */}
+  <M.div style={shouldAnimate ? { scaleX } : undefined} className="fixed left-0 right-0 top-0 h-1 origin-left bg-primary z-[100]" />
     <Hero />
 
   {/* Ürünlerimiz header now sits above the Elektrikli section */}
 
     {/* Elektrikli Ürünlerimiz - Blog Layout (Görsel solda, metin sağda) */}
-      <motion.section
+      <M.section
         className="bg-slate-800"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -44,7 +53,7 @@ export default function HomePage() {
           <SectionHeader title="Ürünlerimiz" subtitle="Havalı, Akülü, Elektrikli ürünler" dark />
         </div>
         <div className="max-w-7xl mx-auto px-4 py-16 grid lg:grid-cols-2 gap-10 items-center">
-          <motion.div
+          <M.div
             className="order-1 lg:order-none"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -53,7 +62,7 @@ export default function HomePage() {
           >
             <img src={electricImg?.image_path || "/professional_banner.png"} alt={electricImg?.alt_text || "Elektrikli ürünler"}
                  className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
-          </motion.div>
+          </M.div>
           <div>
             <p className="text-gray-300 mb-2 text-base md:text-lg">İhtiyacınıza uygun elektrikli çözümler</p>
             <h2 className="text-3xl md:text-4xl font-bold text-white">Elektrikli Ürünlerimiz</h2>
@@ -63,13 +72,13 @@ export default function HomePage() {
             <div className="mt-6 flex flex-wrap gap-3">
               <ScrollToTopLink
                 className="btn"
-                to="/urunler?q=Elektrikli"
+                to="/urunler?q=elektrikli"
                 style={{
                   outline: 'none',
                   boxShadow: 'none',
-                  backgroundColor: '#facc15',
-                  borderColor: '#eab308',
-                  color: '#1f2937',
+                  backgroundColor: 'var(--p)',
+                  borderColor: 'var(--pf)',
+                  color: 'var(--pc)',
                 }}
               >
                 Elektrikli Seriler
@@ -80,8 +89,8 @@ export default function HomePage() {
                 style={{
                   outline: 'none',
                   boxShadow: 'none',
-                  borderColor: '#facc15',
-                  color: '#facc15',
+                  borderColor: 'var(--p)',
+                  color: 'var(--p)',
                 }}
               >
                 Tüm Kategoriler
@@ -90,19 +99,19 @@ export default function HomePage() {
             {/* Alt seri kutuları */}
             <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-4">
               {[
-                { title: 'Akülü Vidalama', href: '/kategoriler/profesyonel' },
-                { title: 'Elektrikli Taşlama', href: '/kategoriler/profesyonel' },
-                { title: 'Matkap & Delici', href: '/kategoriler/profesyonel' },
+                { title: 'Tork Kontrollü Tornavidalar', href: '/urunler?q=tork+kontroll%C3%BC+tornavida' },
+                { title: 'Kömürsüz Tornavidalar', href: '/urunler?q=k%C3%B6m%C3%BCrs%C3%BCz+tornavida' },
+                { title: 'Elektrikli Tornavidalar', href: '/urunler?q=elektrikli+tornavida' },
               ].map((s, i) => (
-                <motion.div
+                <M.div
                   key={s.title}
                   className="rounded-box bg-gray-800 p-4 text-sm font-semibold hover:shadow-md"
                   style={{
-                    color: '#facc15',
-                    borderColor: '#facc15',
-                    borderWidth: '1px',
-                    borderStyle: 'solid',
-                  }}
+                        color: 'var(--p)',
+                        borderColor: 'var(--p)',
+                        borderWidth: '1px',
+                        borderStyle: 'solid',
+                      }}
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -110,12 +119,12 @@ export default function HomePage() {
                   whileHover={{ y: -3 }}
                 >
                   <ScrollToTopLink to={s.href} className="block h-full w-full">{s.title}</ScrollToTopLink>
-                </motion.div>
+                </M.div>
               ))}
             </div>
           </div>
         </div>
-    </motion.section>
+  </M.section>
 
     {/* Akülü section */}
       <motion.section
@@ -133,11 +142,11 @@ export default function HomePage() {
             <div className="mt-6 flex flex-wrap gap-3">
               <ScrollToTopLink
                 className="btn"
-                to="/urunler?q=ak%C3%BCl%C3%BC"
+                to="/urunler?q=akülü"
                 style={{
-                  backgroundColor: '#c1121f',
-                  borderColor: '#9b0f1a',
-                  color: '#ffffff',
+                  backgroundColor: 'var(--p)',
+                  borderColor: 'var(--pf)',
+                  color: 'var(--pc)',
                 }}
               >
                 Akülü Seriler
@@ -155,17 +164,18 @@ export default function HomePage() {
             </div>
             <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-4">
               {[
-                { title: 'Akülü Vidalama', href: '/kategoriler/profesyonel' },
-                { title: 'Akülü Taşlama', href: '/kategoriler/profesyonel' },
-                { title: 'Akülü Matkap', href: '/kategoriler/profesyonel' },
+                { title: 'Transducer', href: '/urunler?q=transducer' },
+                { title: 'Sıkıcılar', href: '/urunler?q=s%C4%B1k%C4%B1c%C4%B1lar' },
+                { title: 'Boru Rekor Tabancalar', href: '/urunler?q=boru+rekor+tabanca' },
+                { title: 'Darbeli Vidalama', href: '/urunler?q=ak%C3%BCl%C3%BC+vidalama' },
               ].map((s, i) => (
                 <motion.a
                   key={s.title}
                   href={s.href}
                   className="rounded-box bg-base-100 p-4 text-sm font-semibold hover:shadow-md"
                   style={{
-                    color: '#c1121f',
-                    borderColor: '#c1121f',
+                    color: 'var(--p)',
+                    borderColor: 'var(--p)',
                     borderWidth: '1px',
                     borderStyle: 'solid',
                   }}
@@ -211,14 +221,14 @@ export default function HomePage() {
             <img src={pneumaticImg?.image_path || "/endus.jpg"} alt={pneumaticImg?.alt_text || "Havalı ürünler"}
                  className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </motion.div>
-          <div className="text-right">
+          <div>
             <p className="text-gray-300 mb-2 text-base md:text-lg">Yüksek dayanım ve verimlilik</p>
             <h2 className="text-3xl md:text-4xl font-bold text-white">Havalı Ürünlerimiz</h2>
               <p className="mt-3 text-gray-300 text-base md:text-lg text-justify leading-relaxed max-w-prose mx-auto">
                 Pnömatik aletler, ağır hizmet tipi kullanımlarda bile tutarlı ve güvenilir performans sunar. Darbelere ve sürekli kullanıma dayanıklı yapıları ile uzun yıllar hizmet ederken, servis kolaylıkları ile de operasyonel devamlılığınızı korur. İşletmenizin verimliliğini ve dayanıklılığını artıracak çözümler bu kategoride.
               </p>
-            <div className="mt-6 flex flex-wrap gap-3 justify-end">
-              <a className="btn btn-info" href="/urunler?q=haval%C4%B1">Havalı Seriler</a>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a className="btn" href="/urunler?q=haval%C4%B1">Havalı Seriler</a>
               <a
                 className="btn btn-outline"
                 href="/kategoriler"
@@ -231,25 +241,31 @@ export default function HomePage() {
               </a>
             </div>
             {/* Alt seri kutuları */}
-            <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4 justify-items-end">
+            <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-4">
               {[
-                { title: 'Darbeli Somun Sökme', href: '/kategoriler/endustriyel' },
-                { title: 'Pnömatik Zımpara', href: '/kategoriler/endustriyel' },
-                { title: 'Kompresörler', href: '/kategoriler/endustriyel' },
-                { title: 'Hortum & Bağlantılar', href: '/kategoriler/endustriyel' },
+                { title: 'Tork Ayarlı Tornavidalar', href: '/urunler?q=tork+ayarlı+tornavida' },
+                { title: 'Perçin Makinesi', href: '/urunler?q=perçin+makinesi' },
+                { title: 'Taşlamalar', href: '/urunler?q=taşlama' },
+                { title: 'Somun Sıkma Sökme', href: '/urunler?q=somun+sıkma+sökme' },
               ].map((s, i) => (
-                <motion.div
+                <motion.a
                   key={s.title}
-                  className="rounded-box bg-gray-800 p-4 text-sm hover:shadow-md"
-                  style={{ color: '#60a5fa', borderColor: '#60a5fa', borderWidth: '1px', borderStyle: 'solid', fontWeight: '600' }}
+                  href={s.href}
+                  className="rounded-box bg-base-100 p-4 text-sm font-semibold hover:shadow-md"
+                  style={{
+                    color: 'var(--p)',
+                    borderColor: 'var(--p)',
+                    borderWidth: '1px',
+                    borderStyle: 'solid',
+                  }}
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.05 }}
                   whileHover={{ y: -3 }}
                 >
-                  <ScrollToTopLink to={s.href} className="block h-full w-full">{s.title}</ScrollToTopLink>
-                </motion.div>
+                  {s.title}
+                </motion.a>
               ))}
             </div>
           </div>
@@ -467,7 +483,7 @@ export default function HomePage() {
       >
         <Newsletter />
       </motion.div>
-    </>
+    </div>
   )
 }
 

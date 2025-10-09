@@ -37,6 +37,7 @@ import CategoryPhotos from './pages/admin/CategoryPhotos'
 import SiteImagesAdmin from './pages/admin/SiteImagesAdmin'
 import ProductManagement from './pages/admin/ProductManagement'
 import BlogManagement from './pages/admin/BlogManagement'
+import DemoRequestsAdmin from './pages/admin/DemoRequests'
 
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
               <Route path="site-gorselleri" element={<SiteImagesAdmin />} />
               <Route path="urunler" element={<ProductManagement />} />
               <Route path="bloglar" element={<BlogManagement />} />
+              <Route path="demo-talepleri" element={<DemoRequestsAdmin />} />
             </Route>
 
             {/* Public Routes */}

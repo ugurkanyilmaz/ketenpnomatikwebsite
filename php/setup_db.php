@@ -121,6 +121,21 @@ try {
         );"
     );
 
+    // demo_requests: stores demo request submissions from the site
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS demo_requests (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            first_name TEXT,
+            last_name TEXT,
+            email TEXT,
+            phone TEXT,
+            company TEXT,
+            products TEXT,
+            notes TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );"
+    );
+
     // blogs table: simple blog posts with 1 image and 3 paragraphs + SEO fields
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS blogs (
@@ -154,7 +169,7 @@ try {
     }
 
     echo "Database ready at: $dbFile\n";
-    echo "Ensured tables: users, articles, products, category_photos, site_images\n";
+    echo "Ensured tables: users, articles, products, category_photos, site_images, blogs, demo_requests\n";
 
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";

@@ -111,7 +111,7 @@ export default function ProductDetails() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="w-full py-12 flex items-center justify-center">
         <span className="loading loading-spinner loading-lg"></span>
       </div>
     )
@@ -119,7 +119,7 @@ export default function ProductDetails() {
 
   if (!product) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
+      <div className="w-full py-12 flex flex-col items-center justify-center">
         <Package size={64} className="text-base-content/20 mb-4" />
         <h2 className="text-2xl font-bold mb-2">Ürün Bulunamadı</h2>
         <p className="text-base-content/60 mb-4">Aradığınız ürün mevcut değil.</p>
@@ -453,7 +453,7 @@ export default function ProductDetails() {
                     <Link
                       key={relProduct.id}
                       to={`/urun/${relProduct.sku}`}
-                      className="card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 flex-shrink-0 w-64"
+                      className="card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 flex-shrink-0 w-full md:w-64"
                       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                     >
                       <figure className="aspect-square bg-base-200">
