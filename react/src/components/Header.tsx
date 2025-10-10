@@ -187,10 +187,10 @@ export default function Header() {
               />
             </div>
 
-            {/* Demo Button - Hidden on smallest screens */}
+            {/* Demo Button - Show on mobile too */}
             <ScrollToTopLink 
               to="/demo-talebi" 
-              className="hidden sm:inline-flex btn btn-primary btn-sm md:btn-md rounded-full"
+              className="inline-flex btn btn-primary btn-sm md:btn-md rounded-full"
             >
               Demo Talebi
             </ScrollToTopLink>

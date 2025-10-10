@@ -1,34 +1,32 @@
 <?php
 // setup_db.php
-// Creates an SQLite database and required tables for the project.
+// Creates MySQL database tables for the project.
 
-$dbFile = __DIR__ . '/database.sqlite';
+require_once 'api/bootstrap.php';
 
 try {
-    $pdo = new PDO('sqlite:' . $dbFile);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // users table (full structure requested)
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT NOT NULL UNIQUE,
-            password TEXT NOT NULL,
-            role TEXT NOT NULL DEFAULT 'user', -- e.g. 'admin' or 'user'
-            is_active INTEGER NOT NULL DEFAULT 1,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME
-        );"
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL UNIQUE,
+            password VARCHAR(255) NOT NULL,
+            role VARCHAR(50) NOT NULL DEFAULT 'user',
+            is_active TINYINT(1) NOT NULL DEFAULT 1,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
     );
 
     // articles table (article içerikleri için)
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS articles (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            parent TEXT,
-            child TEXT,
-            subchild TEXT,
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            parent VARCHAR(255),
+            child VARCHAR(255),
+            subchild VARCHAR(255),
             title TEXT,
             title_subtext TEXT,
             about TEXT,
@@ -43,9 +41,9 @@ try {
             main_image TEXT,
             img1 TEXT,
             video_url TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME
-        );"
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
     );
     // Unique index for upsert semantics (parent+child+subchild defines a node)
     $pdo->exec("CREATE UNIQUE INDEX IF NOT EXISTS ux_articles_path ON articles(parent, child, subchild);");
@@ -53,16 +51,16 @@ try {
     // products table (ürünler için)
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id INT AUTO_INCREMENT PRIMARY KEY,
             url TEXT,
-            parent TEXT,
-            child TEXT,
-            subchild TEXT,
-            title TEXT NOT NULL,
-            sku TEXT,
+            parent VARCHAR(255),
+            child VARCHAR(255),
+            subchild VARCHAR(255),
+            title VARCHAR(255) NOT NULL,
+            sku VARCHAR(255),
             paragraph TEXT,
             description TEXT,
-            brand TEXT,
+            brand VARCHAR(255),
             feature1 TEXT,
             feature2 TEXT,
             feature3 TEXT,
@@ -86,23 +84,23 @@ try {
             meta_title TEXT,
             schema_description TEXT,
             keywords TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME
-        );"
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
     );
 
     // category_photos: stores photos for parent+child (subcategory) combinations
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS category_photos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            parent TEXT NOT NULL,
-            child TEXT NOT NULL,
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            parent VARCHAR(255) NOT NULL,
+            child VARCHAR(255) NOT NULL,
             photo_url TEXT NOT NULL,
             alt_text TEXT,
-            display_order INTEGER DEFAULT 0,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME
-        );"
+            display_order INT DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
     );
     // Unique index for parent+child+photo_url to prevent duplicates
     $pdo->exec("CREATE UNIQUE INDEX IF NOT EXISTS ux_category_photos_path ON category_photos(parent, child, photo_url);");
@@ -110,37 +108,37 @@ try {
     // site_images: stores dynamic site images for different sections
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS site_images (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            section_key TEXT NOT NULL UNIQUE,
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            section_key VARCHAR(255) NOT NULL UNIQUE,
             image_path TEXT NOT NULL,
-            width INTEGER,
-            height INTEGER,
+            width INT,
+            height INT,
             alt_text TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME
-        );"
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
     );
 
     // demo_requests: stores demo request submissions from the site
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS demo_requests (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            first_name TEXT,
-            last_name TEXT,
-            email TEXT,
-            phone TEXT,
-            company TEXT,
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            first_name VARCHAR(255),
+            last_name VARCHAR(255),
+            email VARCHAR(255),
+            phone VARCHAR(255),
+            company VARCHAR(255),
             products TEXT,
             notes TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        );"
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
     );
 
     // blogs table: simple blog posts with 1 image and 3 paragraphs + SEO fields
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS blogs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
             image TEXT,
             paragraph1 TEXT,
             paragraph2 TEXT,
@@ -149,16 +147,16 @@ try {
             meta_desc TEXT,
             meta_keywords TEXT,
             schema_desc TEXT,
-            author TEXT,
-            published_date TEXT,
-            slug TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME
-        );"
+            author VARCHAR(255),
+            published_date VARCHAR(255),
+            slug VARCHAR(255),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
     );
     // Ensure slug column exists (for older DBs) and add unique index
     try {
-        $pdo->exec("ALTER TABLE blogs ADD COLUMN slug TEXT;");
+        $pdo->exec("ALTER TABLE blogs ADD COLUMN slug VARCHAR(255);");
     } catch (Exception $e) {
         // ignore if column exists
     }
@@ -168,14 +166,11 @@ try {
         // ignore
     }
 
-    echo "Database ready at: $dbFile\n";
+    echo "MySQL database tables created successfully!\n";
     echo "Ensured tables: users, articles, products, category_photos, site_images, blogs, demo_requests\n";
 
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
-    if (file_exists($dbFile)) {
-        unlink($dbFile);
-    }
     exit(1);
 }
 
