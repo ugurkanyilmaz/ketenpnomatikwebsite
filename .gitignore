@@ -47,3 +47,8 @@ coverage/
 
 # Optional: lock file if you prefer source control
 # package-lock.json
+ 
+# Ignore big catalog PDF
+katalog.pdf
+# Ignore other root PDFs (optional)
+/*.pdf
