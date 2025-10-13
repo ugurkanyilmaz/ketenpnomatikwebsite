@@ -70,41 +70,40 @@ export default function Series() {
         <p className="mt-2 text-base-content/70">Bu kategori altındaki serileri inceleyin.</p>
 
         {catData && catData.series.length > 0 ? (
-          <div className="grid gap-5 mt-6 sm:grid-cols-2 lg:grid-cols-3">
-            {catData.series.map((s) => {
-              // Get main_image for this subchild from the imageMap
-              const mainImage = subchildImages[s.title]
-              const imageUrl = mainImage || `https://picsum.photos/seed/${s.id}/800/600`
-              
-              console.log(`🎨 Series "${s.title}":`, mainImage ? `main_image=${mainImage}` : 'using mock')
-              
-              return (
-                /* route updated to nested structure: /kategoriler/:tier/:categoryId/:seriesId */
-                <Link
-                  key={s.id}
-                  to={`/kategoriler/${tierKey}/${categoryId}/${encodeURIComponent(s.title)}`}
-                  className="group relative block rounded-box overflow-hidden shadow hover:shadow-lg transition-shadow"
-                >
-                  <img
-                    src={imageUrl}
-                    alt={`${s.title} - Seri Görseli`}
-                    title={s.title}
-                    className="h-48 w-full object-cover"
-                    loading="lazy"
-                    onError={(e) => {
-                      // Fallback to mock if main_image fails
-                      e.currentTarget.src = `https://picsum.photos/seed/${s.id}/800/600`
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-base-300/70 to-transparent" />
-                  <div className="absolute bottom-0 p-4">
-                    <div className="badge badge-primary badge-sm mb-2 opacity-0 group-hover:opacity-100 transition-opacity">İncele</div>
-                    <div className="text-lg font-semibold">{s.title}</div>
-                    {/* desc optional from DB later */}
-                  </div>
-                </Link>
-              )
-            })}
+          <div className="mt-6">
+            <div className="grid gap-5" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+              {catData.series.map((s) => {
+                // Get main_image for this subchild from the imageMap
+                const mainImage = subchildImages[s.title]
+                const imageUrl = mainImage || `https://picsum.photos/seed/${s.id}/800/600`
+
+                return (
+                  <Link
+                    key={s.id}
+                    to={`/kategoriler/${tierKey}/${categoryId}/${encodeURIComponent(s.title)}`}
+                    className="group block rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105 border-2 bg-transparent w-full"
+                    style={{ borderColor: 'rgba(255,140,66,0.18)' }}
+                  >
+                    <div className="relative" style={{ paddingBottom: '75%', height: 0 }}>
+                      <img
+                        src={imageUrl}
+                        alt={`${s.title} - Seri Görseli`}
+                        title={s.title}
+                        className="absolute inset-0 w-full h-full object-contain bg-gray-50"
+                        loading="lazy"
+                        onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${s.id}/800/600` }}
+                      />
+
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+
+                      <div className="absolute left-3 bottom-3 text-white">
+                        <div className="text-sm font-semibold drop-shadow-md">{s.title}</div>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
           </div>
         ) : (
           <div className="alert mt-6">

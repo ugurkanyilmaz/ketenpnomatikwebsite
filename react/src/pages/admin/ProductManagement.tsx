@@ -64,7 +64,7 @@ export default function ProductManagement() {
       if (searchTerm) params.set('q', searchTerm)
       if (filterBrand) params.set('brand', filterBrand)
 
-      const res = await fetch(`/php/api/products.php?${params}`)
+  const res = await fetch(`/php/api/products.php?${params.toString()}`)
       const data = await res.json()
       setProducts(data.products || [])
       setTotalProducts(data.total || 0)

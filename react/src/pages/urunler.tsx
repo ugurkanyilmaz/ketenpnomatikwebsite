@@ -45,6 +45,12 @@ export default function Urunler() {
     loadProducts()
   }, [])
 
+  // Keep local searchTerm in sync when URL search params change (e.g. header search navigates here)
+  useEffect(() => {
+    const q = searchParams.get('q') || ''
+    setSearchTerm(q)
+  }, [searchParams])
+
   // Validate filters when products load
   useEffect(() => {
     if (products.length === 0) return

@@ -25,6 +25,17 @@ try {
     
     $photos = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     
+    // Ensure photo_url is absolute (prefix domain if relative)
+    $baseDomain = 'https://ketenpnomatik.com';
+    foreach ($photos as &$ph) {
+        if (!empty($ph['photo_url']) && !preg_match('#^https?://#i', $ph['photo_url'])) {
+            $u = $ph['photo_url'];
+            if (strpos($u, '/') !== 0) $u = '/' . $u;
+            $ph['photo_url'] = rtrim($baseDomain, '/') . $u;
+        }
+    }
+    unset($ph);
+
     json_ok([
         'success' => true,
         'count' => count($photos),

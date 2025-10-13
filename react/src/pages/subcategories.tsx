@@ -46,6 +46,8 @@ export default function Subcategories() {
 
   console.log('tierData:', tierData, 'children count:', tierData?.children?.length)
 
+  // No temporary mock data — page will wait for real API-provided children.
+
   // Function to get photo for a child category
   const getPhotoForChild = (childTitle: string) => {
     if (!tierData) return null
@@ -60,6 +62,10 @@ export default function Subcategories() {
     return photo
   }
 
+  // Only render actual children returned from the API. If there are none,
+  // render nothing so the page waits for real data.
+  const displayChildren = tierData?.children || []
+
   return (
     <section className="bg-base-100">
       <div className="max-w-7xl mx-auto px-4">
@@ -68,39 +74,46 @@ export default function Subcategories() {
         {error && <div className="alert alert-error mt-4">{error}</div>}
         {!tiers && !error && <div className="mt-6">Yükleniyor...</div>}
         {tiers && !tierData && <div className="alert alert-warning mt-4">Kategori bulunamadı: {tier}</div>}
-        {tierData && tierData.children && tierData.children.length > 0 && (
-        <div className="grid gap-5 mt-6 sm:grid-cols-2 lg:grid-cols-3">
-          {tierData.children.map((s) => {
-            const photo = getPhotoForChild(s.title)
-            const imageUrl = photo?.photo_url || `https://picsum.photos/seed/${s.id}/800/600`
-            
-            const item = (
-              <div className="group block rounded-box overflow-hidden shadow hover:shadow-lg transition-shadow">
-                  <div className="overflow-hidden rounded-t-box">
-                    <img
-                      src={imageUrl}
-                      alt={`${s.title} - Alt Kategori Görseli`}
-                      title={s.title}
-                      className="h-48 w-full object-cover"
-                      loading="lazy"
-                      onError={(e) => {
-                        // Fallback to mock if custom photo fails
-                        e.currentTarget.src = `https://picsum.photos/seed/${s.id}/800/600`
-                      }}
-                    />
-                  </div>
-                  <div className="p-3">
-                    <div className="text-lg font-semibold">{s.title}</div>
-                    <div className="text-base-content/70 text-sm">{s.subchildren?.length ? `${s.subchildren.length} seri` : 'Alt kategoriler yakında'}</div>
-                  </div>
-                </div>
-            )
-            return (
-              <Link key={s.id} to={`/kategoriler/${tier}/${s.id}`}>{item}</Link>
-            )
-          })}
-        </div>
-        )}
+  {displayChildren && displayChildren.length > 0 && (
+    <div className="grid gap-7 mt-6"
+      style={{
+        gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))'
+      }}
+    >
+      {displayChildren.map((s) => {
+        const photo = getPhotoForChild(s.title)
+        const imageUrl = photo?.photo_url || `https://picsum.photos/seed/${s.id}/480/360`
+
+        const item = (
+          <div className="group block rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105 border-2 bg-transparent w-full focus:outline-none focus:ring-4 ring-offset-0" style={{ borderColor: 'rgba(255,140,66,0.18)', maxWidth: 480 }}>
+            <div className="relative" style={{ paddingBottom: '75%', height: 0 }}>
+              <img
+                src={imageUrl}
+                alt={`${s.title} - Alt Kategori Görseli`}
+                title={s.title}
+                width={480}
+                height={360}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-contain bg-gray-50"
+                onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${s.id}/480/360` }}
+              />
+
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+
+              <div className="absolute left-4 bottom-4 text-white">
+                <div className="text-xl font-bold drop-shadow-md">{s.title}</div>
+                <div className="text-sm text-white/85">{s.subchildren?.length ? `${s.subchildren.length} seri` : 'Alt kategoriler yakında'}</div>
+              </div>
+            </div>
+          </div>
+        )
+        return (
+          <Link key={s.id} to={`/kategoriler/${tier}/${s.id}`}>{item}</Link>
+        )
+      })}
+    </div>
+  )}
       </div>
     </section>
   )
