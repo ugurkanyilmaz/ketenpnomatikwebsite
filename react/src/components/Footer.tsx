@@ -1,9 +1,10 @@
 import { IconFacebook, IconWhatsapp, IconSimple } from "../assets/icons/SocialIcons";
 import { Link } from 'react-router-dom';
+import UrwareLogo from './urware.net_logo.png';
 
 export default function Footer() {
   return (
-    <footer className="bg-slate-800 text-gray-300 border-t border-slate-700">
+    <footer className="relative bg-slate-800 text-gray-300 border-t border-slate-700">
       <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-10">
         
         {/* Logo + açıklama */}
@@ -65,7 +66,18 @@ export default function Footer() {
       {/* Alt kısım */}
       <div className="border-t border-gray-800 py-4 text-sm text-gray-500 flex flex-col md:flex-row items-center justify-between gap-4 px-6">
         <span>© {new Date().getFullYear()} Keten Pnömatik</span>
-        <span>React · Tailwind · DaisyUI</span>
+      </div>
+
+      {/* Urware small watermark logo (bottom-right) */}
+      <div className="absolute right-4 md:right-6" style={{ bottom: 2 }}>
+        <a href="https://urware.net" target="_blank" rel="noopener noreferrer" title="urwares.net">
+          <img
+            src={UrwareLogo}
+            alt="Urware"
+            className="w-8 md:w-10 h-auto opacity-25 hover:opacity-100 transition-opacity duration-200"
+            style={{ filter: 'grayscale(20%)', transform: 'translateY(2px)' }}
+          />
+        </a>
       </div>
     </footer>
   );
