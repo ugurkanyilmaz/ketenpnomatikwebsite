@@ -500,6 +500,9 @@ function PhotoModal({
       display_order: 0
     }
   )
+  const [file, setFile] = useState<File | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [localPreview, setLocalPreview] = useState<string | null>(null)
   const [children, setChildren] = useState<string[]>([])
 
   useEffect(() => {
@@ -507,6 +510,16 @@ function PhotoModal({
       loadChildrenForParent(formData.parent)
     }
   }, [formData.parent])
+
+  useEffect(() => {
+    if (file) {
+      const url = URL.createObjectURL(file)
+      setLocalPreview(url)
+      return () => URL.revokeObjectURL(url)
+    } else {
+      setLocalPreview(null)
+    }
+  }, [file])
 
   const loadChildrenForParent = async (parent: string) => {
     try {
@@ -534,6 +547,40 @@ function PhotoModal({
       return
     }
     onSave(formData)
+  }
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files && e.target.files[0]
+    if (f) {
+      setFile(f)
+    }
+  }
+
+  const uploadSelectedFile = async () => {
+    if (!file) return
+    setUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('image', file)
+
+      const res = await fetch('/php/api/upload_image.php', {
+        method: 'POST',
+        body: fd
+      })
+      const data = await res.json()
+      if (!res.ok || !data || !data.url) {
+        throw new Error(data?.error || data?.message || 'Yükleme başarısız')
+      }
+      // server returns relative url like /php/uploads/products/...
+      setFormData({ ...formData, photo_url: data.url })
+      alert('Dosya yüklendi ve URL form alanına yerleştirildi.')
+      setFile(null)
+    } catch (err) {
+      console.error('Upload failed', err)
+      alert('Dosya yükleme başarısız: ' + (err instanceof Error ? err.message : String(err)))
+    } finally {
+      setUploading(false)
+    }
   }
 
   return (
@@ -590,6 +637,20 @@ function PhotoModal({
           </div>
 
           <div className="form-control">
+            <label className="label"><span className="label-text">Veya Dosya Yükle</span></label>
+            <input type="file" accept="image/*" onChange={handleFileSelect} className="file-input file-input-bordered w-full" />
+            {file && (
+              <div className="flex gap-2 items-center mt-2">
+                <div className="text-sm">Seçilen: {file.name} ({Math.round(file.size / 1024)} KB)</div>
+                <button type="button" className="btn btn-sm btn-primary" onClick={uploadSelectedFile} disabled={uploading}>
+                  {uploading ? 'Yükleniyor...' : 'Yükle ve URL Al'}
+                </button>
+                <button type="button" className="btn btn-sm" onClick={() => setFile(null)} disabled={uploading}>İptal</button>
+              </div>
+            )}
+          </div>
+
+          <div className="form-control">
             <label className="label"><span className="label-text">Alt Text</span></label>
             <input
               type="text"
@@ -614,7 +675,7 @@ function PhotoModal({
             <div className="form-control">
               <label className="label"><span className="label-text">Önizleme</span></label>
               <img
-                src={formData.photo_url}
+                src={localPreview || formData.photo_url || ''}
                 alt="Preview"
                 className="w-full h-48 object-cover rounded-lg"
                 onError={(e) => {

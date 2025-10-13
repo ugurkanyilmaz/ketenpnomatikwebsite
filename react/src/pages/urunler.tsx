@@ -35,7 +35,10 @@ export default function Urunler() {
   const [showFilters, setShowFilters] = useState(false)
   
   // Pagination
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState<number>(() => {
+    const p = parseInt(searchParams.get('page') || '1', 10)
+    return isNaN(p) || p < 1 ? 1 : p
+  })
   const itemsPerPage = 12
 
   useEffect(() => {
@@ -83,6 +86,14 @@ export default function Urunler() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [products, searchTerm, selectedParent, selectedChild, selectedSubchild, selectedBrand])
 
+  // Keep URL page param in sync when currentPage changes
+  useEffect(() => {
+    const params = new URLSearchParams(Array.from(searchParams.entries()))
+    if (currentPage > 1) params.set('page', String(currentPage))
+    else params.delete('page')
+    setSearchParams(params, { replace: true })
+  }, [currentPage])
+
   const updateURL = () => {
     const params = new URLSearchParams()
     if (searchTerm) params.set('q', searchTerm)
@@ -90,7 +101,8 @@ export default function Urunler() {
     if (selectedChild) params.set('child', selectedChild)
     if (selectedSubchild) params.set('subchild', selectedSubchild)
     if (selectedBrand) params.set('brand', selectedBrand)
-    
+    // When filters change, remove any existing 'page' param so the list resets to page 1
+    params.delete('page')
     setSearchParams(params, { replace: true })
   }
 
@@ -147,8 +159,21 @@ export default function Urunler() {
 
     // No sorting - show products as they come from database
     setFilteredProducts(filtered)
-    setCurrentPage(1) // Reset to first page when filters change
+    // Reset to first page when filters change, but if URL contains page keep it within bounds
+    const pageFromUrl = parseInt(searchParams.get('page') || '1', 10)
+    if (!isNaN(pageFromUrl) && pageFromUrl > 1) {
+      setCurrentPage(1) // prefer resetting to 1 after filters change
+    } else {
+      setCurrentPage(1)
+    }
   }
+
+  // If filteredProducts length or totalPages changes, clamp currentPage
+  useEffect(() => {
+    const total = Math.ceil(filteredProducts.length / itemsPerPage) || 1
+    if (currentPage > total) setCurrentPage(total)
+    if (currentPage < 1) setCurrentPage(1)
+  }, [filteredProducts.length])
 
   const clearFilters = () => {
     setSearchTerm('')
@@ -284,6 +309,8 @@ export default function Urunler() {
                           setSelectedParent(e.target.value)
                           setSelectedChild('') // Reset child when parent changes
                           setSelectedSubchild('') // Reset subchild when parent changes
+                          // Reset pagination when filters change
+                          setCurrentPage(1)
                         }}
                       >
                         <option value="">Tümü</option>
@@ -306,6 +333,8 @@ export default function Urunler() {
                         onChange={(e) => {
                           setSelectedChild(e.target.value)
                           setSelectedSubchild('') // Reset subchild when child changes
+                          // Reset pagination when filters change
+                          setCurrentPage(1)
                         }}
                       >
                         <option value="">Tümü</option>
@@ -325,7 +354,11 @@ export default function Urunler() {
                       <select
                         className="select select-bordered select-sm w-full"
                         value={selectedSubchild}
-                        onChange={(e) => setSelectedSubchild(e.target.value)}
+                        onChange={(e) => {
+                          setSelectedSubchild(e.target.value)
+                          // Reset pagination when filters change
+                          setCurrentPage(1)
+                        }}
                       >
                         <option value="">Tümü</option>
                         {subchildren.map(subchild => (
@@ -344,7 +377,11 @@ export default function Urunler() {
                       <select
                         className="select select-bordered select-sm w-full"
                         value={selectedBrand}
-                        onChange={(e) => setSelectedBrand(e.target.value)}
+                        onChange={(e) => {
+                          setSelectedBrand(e.target.value)
+                          // Reset pagination when filters change
+                          setCurrentPage(1)
+                        }}
                       >
                         <option value="">Tümü</option>
                         {brands.map(brand => (

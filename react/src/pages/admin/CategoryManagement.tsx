@@ -447,6 +447,12 @@ function CategoryModal({
       meta_keywords: ''
     }
   )
+  const [mainFile, setMainFile] = useState<File | null>(null)
+  const [img1File, setImg1File] = useState<File | null>(null)
+  const [uploadingMain, setUploadingMain] = useState(false)
+  const [uploadingImg1, setUploadingImg1] = useState(false)
+  const [mainPreview, setMainPreview] = useState<string | null>(null)
+  const [img1Preview, setImg1Preview] = useState<string | null>(null)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -455,6 +461,59 @@ function CategoryModal({
       return
     }
     onSave(formData)
+  }
+
+  useEffect(() => {
+    if (mainFile) {
+      const url = URL.createObjectURL(mainFile)
+      setMainPreview(url)
+      return () => URL.revokeObjectURL(url)
+    }
+    setMainPreview(null)
+  }, [mainFile])
+
+  useEffect(() => {
+    if (img1File) {
+      const url = URL.createObjectURL(img1File)
+      setImg1Preview(url)
+      return () => URL.revokeObjectURL(url)
+    }
+    setImg1Preview(null)
+  }, [img1File])
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, target: 'main' | 'img1') => {
+    const f = e.target.files?.[0] ?? null
+    if (target === 'main') setMainFile(f)
+    else setImg1File(f)
+  }
+
+  const uploadFile = async (target: 'main' | 'img1') => {
+    const file = target === 'main' ? mainFile : img1File
+    if (!file) return
+    if (file.size > 5 * 1024 * 1024) { alert('Dosya boyutu 5MB sınırını aşıyor'); return }
+
+    if (target === 'main') setUploadingMain(true)
+    else setUploadingImg1(true)
+
+    try {
+      const fd = new FormData()
+      fd.append('image', file)
+      const res = await fetch('/php/api/upload_image.php', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (!res.ok || !data?.url) throw new Error(data?.error || data?.message || 'Upload failed')
+      const url = data.url
+      if (target === 'main') setFormData({ ...formData, main_image: url })
+      else setFormData({ ...formData, img1: url })
+      alert('Yükleme başarılı. URL form alanına yerleştirildi.')
+      if (target === 'main') setMainFile(null)
+      else setImg1File(null)
+    } catch (err) {
+      console.error('Upload failed', err)
+      alert('Dosya yükleme başarısız: ' + (err instanceof Error ? err.message : String(err)))
+    } finally {
+      if (target === 'main') setUploadingMain(false)
+      else setUploadingImg1(false)
+    }
   }
 
   return (
@@ -578,6 +637,19 @@ function CategoryModal({
                 onChange={(e) => setFormData({ ...formData, main_image: e.target.value })}
                 placeholder="https://..."
               />
+              <div className="mt-2">
+                <input type="file" accept="image/*" onChange={(e) => handleFileSelect(e, 'main')} className="file-input file-input-bordered w-full" />
+                {mainFile && (
+                  <div className="flex gap-2 items-center mt-2">
+                    <div className="text-sm">Seçilen: {mainFile.name} ({Math.round(mainFile.size/1024)} KB)</div>
+                    <button type="button" className="btn btn-sm btn-primary" onClick={() => uploadFile('main')} disabled={uploadingMain}>Yükle</button>
+                    <button type="button" className="btn btn-sm" onClick={() => setMainFile(null)} disabled={uploadingMain}>İptal</button>
+                  </div>
+                )}
+                {mainPreview && (
+                  <img src={mainPreview} alt="main preview" className="w-full h-28 object-cover rounded mt-2" />
+                )}
+              </div>
             </div>
             <div className="form-control">
               <label className="label"><span className="label-text">İkinci Görsel URL</span></label>
@@ -588,6 +660,19 @@ function CategoryModal({
                 onChange={(e) => setFormData({ ...formData, img1: e.target.value })}
                 placeholder="https://..."
               />
+              <div className="mt-2">
+                <input type="file" accept="image/*" onChange={(e) => handleFileSelect(e, 'img1')} className="file-input file-input-bordered w-full" />
+                {img1File && (
+                  <div className="flex gap-2 items-center mt-2">
+                    <div className="text-sm">Seçilen: {img1File.name} ({Math.round(img1File.size/1024)} KB)</div>
+                    <button type="button" className="btn btn-sm btn-primary" onClick={() => uploadFile('img1')} disabled={uploadingImg1}>Yükle</button>
+                    <button type="button" className="btn btn-sm" onClick={() => setImg1File(null)} disabled={uploadingImg1}>İptal</button>
+                  </div>
+                )}
+                {img1Preview && (
+                  <img src={img1Preview} alt="img1 preview" className="w-full h-28 object-cover rounded mt-2" />
+                )}
+              </div>
             </div>
             <div className="form-control">
               <label className="label"><span className="label-text">Video URL</span></label>

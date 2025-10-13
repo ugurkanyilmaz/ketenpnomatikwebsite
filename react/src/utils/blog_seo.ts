@@ -23,45 +23,32 @@ export interface BlogSEOData {
 
 const SITE_DOMAIN = 'https://ketenpnomatik.com'
 const SITE_NAME = 'Keten Pnömatik'
-const SITE_LOGO = `${SITE_DOMAIN}/ketenlogoson.fw_.png`
-const DEFAULT_IMAGE = `${SITE_DOMAIN}/keten_banner.jpg`
+const SITE_LOGO = `${SITE_DOMAIN}/weblogo.jpg`
+const DEFAULT_IMAGE = `${SITE_DOMAIN}/weblogo.jpg`
 
-/**
- * Builds complete head metadata for blog pages
- */
+function absUrl(p?: string) {
+  if (!p) return DEFAULT_IMAGE
+  if (p.startsWith('http')) return p
+  return `${SITE_DOMAIN}${p}`
+}
+
 export function buildBlogSEO(blog: BlogSEOData) {
-  // Meta Title - used for <title> tag
   const pageTitle = blog.meta_title || blog.title || 'Blog Yazısı'
-  
-  // Meta Description - used for <meta name="description">
-  // If no meta_desc, try to use first 160 chars of paragraph1
-  const metaDescription = blog.meta_desc || 
-    (blog.paragraph1 ? blog.paragraph1.substring(0, 160) + '...' : `${blog.title} hakkında detaylı bilgi.`)
-  
-  // Schema Description - used for Schema.org structured data only
+  const metaDescription = blog.meta_desc || (blog.paragraph1 ? blog.paragraph1.substring(0, 160) + '...' : `${blog.title} hakkında detaylı bilgi.`)
   const schemaDescription = blog.schema_desc || metaDescription
-  
-  // Meta Keywords - used for <meta name="keywords">
   const metaKeywords = blog.meta_keywords || `${blog.title}, pnömatik, blog, endüstriyel`
-  
-  const pageImage = blog.image ? `${SITE_DOMAIN}${blog.image}` : DEFAULT_IMAGE
-  
-  // Build canonical URL
+  const pageImage = absUrl(blog.image)
   const canonicalUrl = buildCanonicalUrl(blog)
-  
-  // Format dates
   const publishedDate = blog.published_date || blog.created_at || new Date().toISOString()
   const modifiedDate = blog.updated_at || publishedDate
-  
+
   return {
     title: `${pageTitle} | ${SITE_NAME}`,
     meta: [
-      // Basic Meta Tags
       { name: 'description', content: metaDescription },
       { name: 'keywords', content: metaKeywords },
       { name: 'author', content: blog.author || SITE_NAME },
-      
-      // Open Graph / Facebook
+
       { property: 'og:type', content: 'article' },
       { property: 'og:site_name', content: SITE_NAME },
       { property: 'og:title', content: pageTitle },
@@ -74,14 +61,12 @@ export function buildBlogSEO(blog: BlogSEOData) {
       { property: 'article:published_time', content: publishedDate },
       { property: 'article:modified_time', content: modifiedDate },
       { property: 'article:author', content: blog.author || SITE_NAME },
-      
-      // Twitter Card
+
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: pageTitle },
       { name: 'twitter:description', content: metaDescription },
       { name: 'twitter:image', content: pageImage },
-      
-      // Additional SEO
+
       { name: 'robots', content: 'index, follow, max-image-preview:large' },
       { name: 'googlebot', content: 'index, follow' },
     ],
@@ -92,19 +77,11 @@ export function buildBlogSEO(blog: BlogSEOData) {
   }
 }
 
-/**
- * Builds canonical URL for blog post
- */
 function buildCanonicalUrl(blog: BlogSEOData): string {
-  if (blog.slug) {
-    return `${SITE_DOMAIN}/blog/${blog.slug}`
-  }
-  return `${SITE_DOMAIN}/blog/${blog.id}`
+  if (blog.slug) return `${SITE_DOMAIN}/blog/${encodeURIComponent(blog.slug)}`
+  return `${SITE_DOMAIN}/blog/${encodeURIComponent(String(blog.id))}`
 }
 
-/**
- * Builds Schema.org structured data (JSON-LD) for blog
- */
 function buildStructuredData(
   blog: BlogSEOData,
   canonicalUrl: string,
@@ -113,27 +90,24 @@ function buildStructuredData(
   publishedDate: string,
   modifiedDate: string
 ) {
-  // Build article body from paragraphs
-  const articleBody = [
-    blog.paragraph1,
-    blog.paragraph2,
-    blog.paragraph3
-  ].filter(Boolean).join('\n\n')
+  const articleBody = [blog.paragraph1, blog.paragraph2, blog.paragraph3].filter(Boolean).join('\n\n')
 
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      // Website
       {
         '@type': 'WebSite',
         '@id': `${SITE_DOMAIN}/#website`,
         'url': SITE_DOMAIN,
         'name': SITE_NAME,
         'description': 'Endüstriyel pnömatik el aletleri ve ekipmanları',
-        'inLanguage': 'tr-TR'
+        'inLanguage': 'tr-TR',
+        'potentialAction': {
+          '@type': 'SearchAction',
+          'target': `${SITE_DOMAIN}/ara?q={search_term_string}`,
+          'query-input': 'required name=search_term_string'
+        }
       },
-      
-      // Organization
       {
         '@type': 'Organization',
         '@id': `${SITE_DOMAIN}/#organization`,
@@ -142,27 +116,31 @@ function buildStructuredData(
         'logo': {
           '@type': 'ImageObject',
           'url': SITE_LOGO,
-          '@id': `${SITE_DOMAIN}/#logo`
+          '@id': `${SITE_DOMAIN}/#logo`,
+          'width': 1200,
+          'height': 630
         },
         'image': { '@id': `${SITE_DOMAIN}/#logo` },
         'contactPoint': {
           '@type': 'ContactPoint',
           'contactType': 'Müşteri Hizmetleri',
-          'availableLanguage': 'Turkish'
-        }
+          'availableLanguage': 'Turkish',
+          'telephone': '+90 (262) 643 43 39'
+        },
+        'sameAs': [
+          'https://www.facebook.com/ketenpnomatik',
+          'https://www.linkedin.com/company/ketenpnomatik',
+          'https://www.instagram.com/ketenpnomatik'
+        ]
       },
-      
-      // Author
       {
         '@type': 'Person',
         '@id': `${SITE_DOMAIN}/#author`,
         'name': blog.author || SITE_NAME,
         'url': SITE_DOMAIN
       },
-      
-      // WebPage
       {
-        '@type': 'WebPage',
+        '@type': ['WebPage','Blog'],
         '@id': `${canonicalUrl}#webpage`,
         'url': canonicalUrl,
         'name': blog.meta_title || blog.title,
@@ -174,8 +152,6 @@ function buildStructuredData(
         'dateModified': modifiedDate,
         'breadcrumb': { '@id': `${canonicalUrl}#breadcrumb` }
       },
-      
-      // Primary Image
       {
         '@type': 'ImageObject',
         '@id': `${canonicalUrl}#primaryimage`,
@@ -185,8 +161,6 @@ function buildStructuredData(
         'height': 630,
         'inLanguage': 'tr-TR'
       },
-      
-      // BlogPosting (Main Article)
       {
         '@type': 'BlogPosting',
         '@id': `${canonicalUrl}#article`,
@@ -203,58 +177,32 @@ function buildStructuredData(
         'inLanguage': 'tr-TR',
         'url': canonicalUrl
       },
-      
-      // BreadcrumbList
       {
         '@type': 'BreadcrumbList',
         '@id': `${canonicalUrl}#breadcrumb`,
         'itemListElement': [
-          {
-            '@type': 'ListItem',
-            'position': 1,
-            'name': 'Ana Sayfa',
-            'item': SITE_DOMAIN
-          },
-          {
-            '@type': 'ListItem',
-            'position': 2,
-            'name': 'Blog',
-            'item': `${SITE_DOMAIN}/blog`
-          },
-          {
-            '@type': 'ListItem',
-            'position': 3,
-            'name': blog.title,
-            'item': canonicalUrl
-          }
+          { '@type': 'ListItem', 'position': 1, 'name': 'Ana Sayfa', 'item': SITE_DOMAIN },
+          { '@type': 'ListItem', 'position': 2, 'name': 'Blog', 'item': `${SITE_DOMAIN}/blog` },
+          { '@type': 'ListItem', 'position': 3, 'name': blog.title, 'item': canonicalUrl }
         ]
       }
     ]
   }
 }
 
-/**
- * Apply SEO data to document head (for React components)
- */
 export function applySEOToHead(seoData: ReturnType<typeof buildBlogSEO>) {
-  // Set title
-  document.title = seoData.title
-  
-  // Remove old meta tags
+  if (seoData?.title) document.title = seoData.title
+
   const oldMetas = document.querySelectorAll('meta[data-seo="true"]')
-  oldMetas.forEach(meta => meta.remove())
-  
+  oldMetas.forEach((m) => m.remove())
   const oldLinks = document.querySelectorAll('link[data-seo="true"]')
-  oldLinks.forEach(link => link.remove())
-  
+  oldLinks.forEach((l) => l.remove())
   const oldScripts = document.querySelectorAll('script[data-seo="true"]')
-  oldScripts.forEach(script => script.remove())
-  
-  // Add new meta tags
-  seoData.meta.forEach(metaData => {
+  oldScripts.forEach((s) => s.remove())
+
+  ;(seoData.meta || []).forEach((metaData: any) => {
     const meta = document.createElement('meta')
     meta.setAttribute('data-seo', 'true')
-    
     if ('name' in metaData && metaData.name) {
       meta.setAttribute('name', metaData.name)
       meta.setAttribute('content', metaData.content)
@@ -262,35 +210,33 @@ export function applySEOToHead(seoData: ReturnType<typeof buildBlogSEO>) {
       meta.setAttribute('property', metaData.property)
       meta.setAttribute('content', metaData.content)
     }
-    
     document.head.appendChild(meta)
   })
-  
-  // Add canonical link
-  seoData.link.forEach(linkData => {
-    const link = document.createElement('link')
-    link.setAttribute('data-seo', 'true')
-    link.setAttribute('rel', linkData.rel)
-    link.setAttribute('href', linkData.href)
-    document.head.appendChild(link)
+
+  ;(seoData.link || []).forEach((linkData: any) => {
+    const existing = Array.from(document.querySelectorAll('link[rel="canonical"]'))
+    existing.forEach((l) => l.remove())
+    if (linkData.href) {
+      const link = document.createElement('link')
+      link.setAttribute('data-seo', 'true')
+      link.setAttribute('rel', linkData.rel || 'canonical')
+      link.setAttribute('href', linkData.href)
+      document.head.appendChild(link)
+    }
   })
-  
-  // Add structured data
-  const script = document.createElement('script')
-  script.setAttribute('data-seo', 'true')
-  script.setAttribute('type', 'application/ld+json')
-  script.textContent = JSON.stringify(seoData.structuredData, null, 2)
-  document.head.appendChild(script)
+
+  if (seoData.structuredData) {
+    const script = document.createElement('script')
+    script.setAttribute('data-seo', 'true')
+    script.setAttribute('type', 'application/ld+json')
+    script.textContent = JSON.stringify(seoData.structuredData, null, 2)
+    document.head.appendChild(script)
+  }
 }
 
-/**
- * Example usage:
- * 
- * import { buildBlogSEO, applySEOToHead } from './blogSEOHelper'
- * 
- * // In your blog component:
- * useEffect(() => {
- *   const seoData = buildBlogSEO(blogPost)
- *   applySEOToHead(seoData)
- * }, [blogPost])
- */
+/* Example usage:
+useEffect(() => {
+  const seoData = buildBlogSEO(blogPost)
+  applySEOToHead(seoData)
+}, [blogPost])
+*/

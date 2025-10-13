@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { fetchProducts, fetchArticleRows } from '../utils/api'
+import { slugifyForApi } from '../utils/search'
 
 // ScrollToTopLink component - small typed anchor wrapper
 type ScrollToTopLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
@@ -128,11 +131,7 @@ function MobileMenu() {
           </nav>
 
           <div className="mt-8 space-y-3">
-            <input 
-              type="text" 
-              placeholder="Ara..." 
-              className="input input-bordered w-full bg-slate-700 text-white border-slate-600"
-            />
+            <SearchInput />
             <a 
               href="/demo-talebi" 
               className="btn btn-primary w-full"
@@ -179,12 +178,8 @@ export default function Header() {
           {/* Right Side Actions */}
           <div className="flex items-center gap-2 md:gap-3">
             {/* Desktop Search */}
-            <div className="hidden md:block">
-              <input 
-                type="text" 
-                placeholder="Ara: darbeli tabanca..." 
-                className="input input-sm md:input-md input-bordered w-48 lg:w-64 rounded-full bg-slate-700 text-white border-slate-600 placeholder:text-slate-400"
-              />
+            <div className="hidden md:block relative">
+              <SearchInput />
             </div>
 
             {/* Demo Button - Show on mobile too */}
@@ -209,5 +204,124 @@ export default function Header() {
         </div>
       </div>
     </header>
+  )
+}
+
+function SearchInput() {
+  const [query, setQuery] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [suggestions, setSuggestions] = useState<Array<{ type: 'product'|'article'; title: string; href: string }>>([])
+  const [open, setOpen] = useState(false)
+  const mounted = useRef(true)
+  const timer = useRef<number|undefined>(undefined)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    mounted.current = true
+    return () => { mounted.current = false }
+  }, [])
+
+  useEffect(() => {
+    if (!query) {
+      setSuggestions([])
+      setOpen(false)
+      return
+    }
+
+    // debounce
+    if (timer.current) window.clearTimeout(timer.current)
+    timer.current = window.setTimeout(() => void doSearch(query), 250)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query])
+
+  async function doSearch(q: string) {
+    setLoading(true)
+    try {
+      const results: Array<{ type: 'product'|'article'; title: string; href: string }> = []
+
+      // products
+      try {
+        const prodJson = await fetchProducts({ limit: 10, q })
+        ;(prodJson.products || []).slice(0, 6).forEach((p: any) => {
+          results.push({ type: 'product', title: p.title || p.sku || p.brand || 'Ürün', href: `/urun/${p.sku}` })
+        })
+      } catch (e) {
+        console.warn('Product search failed', e)
+      }
+
+      // articles - try slugified parent match first, then fallback to non-slug if no results
+      try {
+        const artSlug = slugifyForApi(q)
+        const artJson = await fetchArticleRows({ parent: artSlug })
+        ;(artJson.items || []).slice(0, 6).forEach((a: any) => {
+          let href = '/kategoriler'
+          if (a.parent && a.child && a.subchild) href = `/kategoriler/${slugifyForApi(a.parent)}/${slugifyForApi(a.child)}/${slugifyForApi(a.subchild)}`
+          else if (a.parent && a.child) href = `/kategoriler/${slugifyForApi(a.parent)}/${slugifyForApi(a.child)}`
+          else if (a.parent) href = `/kategoriler/${slugifyForApi(a.parent)}`
+          results.push({ type: 'article', title: a.title || a.subchild || a.child || a.parent || 'Makale', href })
+        })
+      } catch (e) {
+        console.warn('Article search failed', e)
+      }
+
+      if (mounted.current) {
+        setSuggestions(results.slice(0, 8))
+        setOpen(results.length > 0)
+      }
+    } catch (err) {
+      console.error('Search failed', err)
+    } finally {
+      if (mounted.current) setLoading(false)
+    }
+  }
+
+  return (
+    <div className="relative">
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault()
+            setOpen(false)
+            // If we have suggestions, navigate to first suggestion; otherwise go to product search page
+            if (suggestions && suggestions.length > 0) {
+              navigate(suggestions[0].href)
+            } else {
+              navigate(`/urunler?q=${encodeURIComponent(query)}`)
+            }
+          }
+        }}
+        onFocus={() => { if (suggestions.length) setOpen(true) }}
+        type="text"
+        placeholder="Ara: darbeli tabanca..."
+        className="input input-sm md:input-md input-bordered w-48 lg:w-64 rounded-full bg-slate-700 text-white border-slate-600 placeholder:text-slate-400"
+      />
+
+      {open && (
+        <div className="absolute right-0 mt-2 w-80 bg-white text-black rounded shadow-lg z-50">
+          {loading && <div className="p-3 text-sm text-gray-600">Aranıyor...</div>}
+          {!loading && suggestions.length === 0 && <div className="p-3 text-sm text-gray-600">Sonuç yok</div>}
+          <ul className="max-h-64 overflow-auto">
+            {suggestions.map((s, idx) => (
+              <li key={idx}>
+                <a
+                  href={s.href}
+                  className="block px-3 py-2 hover:bg-slate-100"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setOpen(false)
+                    navigate(s.href)
+                  }}
+                >
+                  <span className="text-sm">{s.title}</span>
+                  <span className="ml-2 text-xs opacity-60">{s.type}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
   )
 }

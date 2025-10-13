@@ -1,0 +1,49 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+pnpm-lock.yaml
+.env
+.DS_Store
+.vscode/
+.idea/
+
+# Build outputs
+react/dist/
+react/build/
+react/.turbo/
+
+# OS files
+Thumbs.db
+ehthumbs.db
+
+# Logs
+logs/
+logs/**/*.log
+
+# OneDrive/Windows temporary
+~$*
+
+# TypeScript
+*.tsbuildinfo
+
+# Editor files
+*.sublime-workspace
+*.sublime-project
+
+# Local uploads and sensitive
+uploads/
+php/uploads/
+react/public/uploads/
+
+# Certificates and keys
+*.pem
+*.key
+
+# Misc
+coverage/
+
+# Optional: lock file if you prefer source control
+# package-lock.json

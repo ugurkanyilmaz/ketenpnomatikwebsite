@@ -8,6 +8,13 @@ export interface ProductSEOData {
   sku: string
   url?: string
   title: string
+  // Optional commercial fields (may be absent when price is on request)
+  price?: number | string
+  price_currency?: string
+  stock?: number
+  availability?: string
+  seller_name?: string
+  seller_url?: string
   description?: string
   paragraph?: string
   brand?: string
@@ -43,8 +50,15 @@ export interface ProductSEOData {
 
 const SITE_DOMAIN = 'https://ketenpnomatik.com'
 const SITE_NAME = 'Keten Pnömatik'
-const SITE_LOGO = `${SITE_DOMAIN}/ketenlogoson.fw_.png`
-const DEFAULT_IMAGE = `${SITE_DOMAIN}/keten_banner.jpg`
+// Use weblogo.jpg as site logo for social previews by default
+const SITE_LOGO = `${SITE_DOMAIN}/weblogo.jpg`
+const DEFAULT_IMAGE = `${SITE_DOMAIN}/weblogo.jpg`
+
+function absUrl(p?: string) {
+  if (!p) return DEFAULT_IMAGE
+  if (p.startsWith('http')) return p
+  return `${SITE_DOMAIN}${p}`
+}
 
 /**
  * Builds complete head metadata for product pages
@@ -62,7 +76,13 @@ export function buildProductSEO(product: ProductSEOData) {
   // Meta Keywords - used for <meta name="keywords">
   const metaKeywords = product.keywords || `${product.title}, ${product.brand}, ${product.parent}, ${product.child}, ${product.subchild}, pnömatik, endüstriyel`
   
-  const pageImage = product.main_img ? `${SITE_DOMAIN}${product.main_img}` : DEFAULT_IMAGE
+  function absUrl(p?: string) {
+    if (!p) return DEFAULT_IMAGE
+    if (p.startsWith('http')) return p
+    return `${SITE_DOMAIN}${p}`
+  }
+
+  const pageImage = absUrl(product.main_img)
   const canonicalUrl = `${SITE_DOMAIN}/urun/${product.sku}`
   
   return {
@@ -85,9 +105,15 @@ export function buildProductSEO(product: ProductSEOData) {
       
       // Product-specific Open Graph
       { property: 'product:brand', content: product.brand || SITE_NAME },
-      { property: 'product:availability', content: 'in stock' },
+      // Open Graph availability: map to common OG values when possible
+      { property: 'product:availability', content: mapOgAvailability(product) },
       { property: 'product:condition', content: 'new' },
       { property: 'product:retailer_item_id', content: product.sku },
+      // If price is provided, expose it to OG tags so services that read OG can surface it
+      ...(hasNumericPrice(product) ? [
+        { property: 'product:price:amount', content: String(product.price) },
+        { property: 'product:price:currency', content: (product.price_currency || 'TRY') }
+      ] : []),
       
       // Twitter Card
       { name: 'twitter:card', content: 'summary_large_image' },
@@ -136,7 +162,7 @@ function buildStructuredData(
     product.p_img7
   ]
     .filter(Boolean)
-    .map(img => `${SITE_DOMAIN}${img}`)
+    .map(img => absUrl(img as string))
 
   return {
     '@context': 'https://schema.org',
@@ -167,7 +193,7 @@ function buildStructuredData(
           '@type': 'ContactPoint',
           'contactType': 'Müşteri Hizmetleri',
           'availableLanguage': 'Turkish',
-          'telephone': '+90-XXX-XXX-XXXX'
+          'telephone': '+90 (262) 643 43 39'
         }
       },
       
@@ -215,57 +241,9 @@ function buildStructuredData(
           'name': product.brand || SITE_NAME
         },
         'url': canonicalUrl,
-        'category': buildCategoryPath(product),
-        'offers': {
-          '@type': 'Offer',
-          'url': canonicalUrl,
-          'priceCurrency': 'TRY',
-          'price': '0', // Fiyat teklifi alınacak, bu yüzden 0
-          'priceValidUntil': new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 yıl geçerli
-          'availability': 'https://schema.org/InStock',
-          'itemCondition': 'https://schema.org/NewCondition',
-          'seller': {
-            '@type': 'Organization',
-            '@id': `${SITE_DOMAIN}/#organization`,
-            'name': SITE_NAME,
-            'url': SITE_DOMAIN
-          },
-          'hasMerchantReturnPolicy': {
-            '@type': 'MerchantReturnPolicy',
-            'applicableCountry': 'TR',
-            'returnPolicyCategory': 'https://schema.org/MerchantReturnFiniteReturnWindow',
-            'merchantReturnDays': 14,
-            'returnMethod': 'https://schema.org/ReturnByMail',
-            'returnFees': 'https://schema.org/FreeReturn'
-          },
-          'shippingDetails': {
-            '@type': 'OfferShippingDetails',
-            'shippingRate': {
-              '@type': 'MonetaryAmount',
-              'value': '0',
-              'currency': 'TRY'
-            },
-            'shippingDestination': {
-              '@type': 'DefinedRegion',
-              'addressCountry': 'TR'
-            },
-            'deliveryTime': {
-              '@type': 'ShippingDeliveryTime',
-              'handlingTime': {
-                '@type': 'QuantitativeValue',
-                'minValue': 0,
-                'maxValue': 1,
-                'unitCode': 'DAY'
-              },
-              'transitTime': {
-                '@type': 'QuantitativeValue',
-                'minValue': 2,
-                'maxValue': 3,
-                'unitCode': 'DAY'
-              }
-            }
-          }
-        },
+  'category': buildCategoryPath(product),
+  // Build offers object dynamically based on available product commercial data
+  'offers': buildOfferObject(product, canonicalUrl),
         'aggregateRating': {
           '@type': 'AggregateRating',
           'ratingValue': '5',
@@ -280,6 +258,112 @@ function buildStructuredData(
       buildBreadcrumbs(product, canonicalUrl)
     ]
   }
+}
+
+/**
+ * Returns true when product.price is a numeric value (number or numeric string)
+ */
+function hasNumericPrice(product: ProductSEOData): boolean {
+  if (product.price === undefined || product.price === null) return false
+  if (typeof product.price === 'number') return Number.isFinite(product.price)
+  if (typeof product.price === 'string') {
+    const n = parseFloat(product.price.replace(',', '.'))
+    return !Number.isNaN(n) && Number.isFinite(n)
+  }
+  return false
+}
+
+/**
+ * Map product availability/stock to a simple OG-friendly string
+ */
+function mapOgAvailability(product: ProductSEOData): string {
+  if (product.availability) {
+    const a = String(product.availability).toLowerCase()
+    if (a.includes('in') || a.includes('stok') || a.includes('var')) return 'in stock'
+    if (a.includes('out') || a.includes('yok') || a.includes('tükendi')) return 'out of stock'
+    if (a.includes('pre') || a.includes('ön')) return 'preorder'
+  }
+  if (typeof product.stock === 'number') {
+    return product.stock > 0 ? 'in stock' : 'out of stock'
+  }
+  // default fallback
+  return 'in stock'
+}
+
+/**
+ * Map product availability/stock to schema.org availability URL
+ */
+function mapSchemaAvailability(product: ProductSEOData): string {
+  const og = mapOgAvailability(product)
+  if (og === 'in stock') return 'https://schema.org/InStock'
+  if (og === 'out of stock') return 'https://schema.org/OutOfStock'
+  if (og === 'preorder') return 'https://schema.org/PreOrder'
+  return 'https://schema.org/InStock'
+}
+
+/**
+ * Build Offer object for Product structured data. If price is missing, omit price fields
+ * and add a short description asking users to contact for price.
+ */
+function buildOfferObject(product: ProductSEOData, canonicalUrl: string) {
+  const baseOffer: any = {
+    '@type': 'Offer',
+    'url': canonicalUrl,
+    'priceValidUntil': new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 year
+    'availability': mapSchemaAvailability(product),
+    'itemCondition': 'https://schema.org/NewCondition',
+    'seller': {
+      '@type': 'Organization',
+      '@id': `${SITE_DOMAIN}/#organization`,
+      'name': product.seller_name || SITE_NAME,
+      'url': product.seller_url || SITE_DOMAIN
+    },
+    'hasMerchantReturnPolicy': {
+      '@type': 'MerchantReturnPolicy',
+      'applicableCountry': 'TR',
+      'returnPolicyCategory': 'https://schema.org/MerchantReturnFiniteReturnWindow',
+      'merchantReturnDays': 14,
+      'returnMethod': 'https://schema.org/ReturnByMail',
+      'returnFees': 'https://schema.org/FreeReturn'
+    },
+    'shippingDetails': {
+      '@type': 'OfferShippingDetails',
+      'shippingRate': {
+        '@type': 'MonetaryAmount',
+        'value': '0',
+        'currency': product.price_currency || 'TRY'
+      },
+      'shippingDestination': {
+        '@type': 'DefinedRegion',
+        'addressCountry': 'TR'
+      },
+      'deliveryTime': {
+        '@type': 'ShippingDeliveryTime',
+        'handlingTime': {
+          '@type': 'QuantitativeValue',
+          'minValue': 0,
+          'maxValue': 1,
+          'unitCode': 'DAY'
+        },
+        'transitTime': {
+          '@type': 'QuantitativeValue',
+          'minValue': 2,
+          'maxValue': 3,
+          'unitCode': 'DAY'
+        }
+      }
+    }
+  }
+
+  if (hasNumericPrice(product)) {
+    baseOffer.price = String(product.price)
+    baseOffer.priceCurrency = product.price_currency || 'TRY'
+  } else {
+    // No numeric price - prompt users to contact. Keep availability as mapped.
+    baseOffer.description = 'Fiyat bilgisi için lütfen iletişime geçiniz.'
+  }
+
+  return baseOffer
 }
 
 /**

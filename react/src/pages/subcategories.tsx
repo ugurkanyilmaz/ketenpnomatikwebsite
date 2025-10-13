@@ -75,25 +75,25 @@ export default function Subcategories() {
             const imageUrl = photo?.photo_url || `https://picsum.photos/seed/${s.id}/800/600`
             
             const item = (
-              <div className="group relative block rounded-box overflow-hidden shadow hover:shadow-lg transition-shadow">
-                <img
-                  src={imageUrl}
-                  alt={`${s.title} - Alt Kategori Görseli`}
-                  title={s.title}
-                  className="h-48 w-full object-cover"
-                  loading="lazy"
-                  onError={(e) => {
-                    // Fallback to mock if custom photo fails
-                    e.currentTarget.src = `https://picsum.photos/seed/${s.id}/800/600`
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-base-300/70 to-transparent" />
-                <div className="absolute bottom-0 p-4">
-                  <div className="badge badge-primary badge-sm mb-2 opacity-0 group-hover:opacity-100 transition-opacity">İncele</div>
-                  <div className="text-lg font-semibold">{s.title}</div>
-                  <div className="text-base-content/70">{s.subchildren?.length ? `${s.subchildren.length} seri` : 'Alt kategoriler yakında'}</div>
+              <div className="group block rounded-box overflow-hidden shadow hover:shadow-lg transition-shadow">
+                  <div className="overflow-hidden rounded-t-box">
+                    <img
+                      src={imageUrl}
+                      alt={`${s.title} - Alt Kategori Görseli`}
+                      title={s.title}
+                      className="h-48 w-full object-cover"
+                      loading="lazy"
+                      onError={(e) => {
+                        // Fallback to mock if custom photo fails
+                        e.currentTarget.src = `https://picsum.photos/seed/${s.id}/800/600`
+                      }}
+                    />
+                  </div>
+                  <div className="p-3">
+                    <div className="text-lg font-semibold">{s.title}</div>
+                    <div className="text-base-content/70 text-sm">{s.subchildren?.length ? `${s.subchildren.length} seri` : 'Alt kategoriler yakında'}</div>
+                  </div>
                 </div>
-              </div>
             )
             return (
               <Link key={s.id} to={`/kategoriler/${tier}/${s.id}`}>{item}</Link>

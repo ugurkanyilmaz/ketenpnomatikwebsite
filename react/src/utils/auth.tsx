@@ -35,15 +35,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user])
 
   async function login(username: string, password: string) {
-    // Minimal local auth for now: check against a fixed password stored in env or fallback
-    // Replace this with server-side authentication when backend is available.
-    const expected = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123'
-    if (password === expected) {
-      const fakeToken = 'local-fake-token-' + Date.now()
-      setToken(fakeToken)
-      setUser(username)
-      return true
+    // Try server-side authentication first (will accept hashed or plaintext DB values and
+    // upgrade plaintext values to hashed). If the API is unreachable, fall back to local env check.
+    try {
+      const res = await fetch('/php/api/admin_login.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        if (data?.ok) {
+          setToken(data.token ?? 'server-fake-' + Date.now())
+          setUser(data.user?.email ?? username)
+          return true
+        }
+        // server responded with 200 but credentials rejected
+        return false
+      } else {
+        // If server explicitly returned 401 Unauthorized, treat it as definitive invalid credentials
+        if (res.status === 401) {
+          return false
+        }
+        // For other non-2xx responses (server error), fall through to fallback behavior below
+      }
+    } catch (e) {
+      // network error or server unreachable — do NOT fallback to local credentials
+      return false
     }
+    // If we reach here without returning, fall through as failure
     return false
   }
 

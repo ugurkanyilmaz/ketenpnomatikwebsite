@@ -1,4 +1,9 @@
-# SPA rewrite: if the request is not a real file/dir and not an API call, serve index.html
+# --- Allow direct access to robots.txt and sitemap.xml ---
+<FilesMatch "^(robots\.txt|sitemap\.xml)$">
+  Require all granted
+  Satisfy Any
+</FilesMatch>
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
 

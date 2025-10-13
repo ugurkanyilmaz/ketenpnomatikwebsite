@@ -176,17 +176,18 @@ try {
 
 // Seed admin user if not exists
 $existing = $pdo->prepare('SELECT COUNT(*) FROM users WHERE email = :email');
-$existing->execute([':email' => 'admin@example.com']);
+$existing->execute([':email' => 'keten@example.com']);
 if ((int)$existing->fetchColumn() === 0) {
-    $adminPassword = password_hash('admin123', PASSWORD_DEFAULT);
+    // Create admin user 'keten' with the requested password
+    $adminPassword = password_hash('keten@4145', PASSWORD_DEFAULT);
     $stmt = $pdo->prepare('INSERT INTO users (name, email, password, role) VALUES (:name, :email, :password, :role)');
     $stmt->execute([
-        ':name' => 'Admin',
-        ':email' => 'admin@example.com',
+        ':name' => 'keten',
+        ':email' => 'keten@example.com',
         ':password' => $adminPassword,
         ':role' => 'admin'
     ]);
-    echo "Seeded admin user: admin@example.com (password: admin123)\n";
+    echo "Seeded admin user: keten@example.com (password: keten@4145)\n";
 }
 
 // Seed default site images if table is empty

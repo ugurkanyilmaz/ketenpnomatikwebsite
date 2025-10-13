@@ -43,6 +43,8 @@ export default function ProductDetails() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isZoomed, setIsZoomed] = useState(false)
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 })
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [modalImageIndex, setModalImageIndex] = useState(0)
 
   useEffect(() => {
     if (sku) {
@@ -51,11 +53,22 @@ export default function ProductDetails() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sku])
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isModalOpen) return
+      if (e.key === 'Escape') closeModal()
+      if (e.key === 'ArrowLeft') handleModalPrev()
+      if (e.key === 'ArrowRight') handleModalNext()
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isModalOpen])
+
   const loadProduct = async () => {
     try {
       setLoading(true)
       console.log('Loading product with SKU:', sku)
-      // Fetch the specific product by SKU
       const res = await fetch(`/php/api/products.php?sku=${sku}`)
       const data = await res.json()
       console.log('Product data received:', data)
@@ -66,11 +79,9 @@ export default function ProductDetails() {
         console.log('Product subchild:', prod.subchild)
         setProduct(prod)
         
-        // Apply SEO metadata
         const seoData = buildProductSEO(prod as ProductSEOData)
         applySEOToHead(seoData)
         
-        // Load related products from the same subchild (series)
         if (prod.subchild && prod.subchild.trim() !== '') {
           loadRelatedProducts(prod.subchild, prod.id)
         } else {
@@ -91,13 +102,11 @@ export default function ProductDetails() {
   const loadRelatedProducts = async (subchild: string, currentId: number) => {
     try {
       console.log('Loading related products for subchild:', subchild, 'excluding product ID:', currentId)
-      // Fetch products with the same subchild directly from API
       const res = await fetch(`/php/api/products.php?subchild=${encodeURIComponent(subchild)}&limit=20`)
       const data = await res.json()
       console.log('Products fetched for subchild:', data)
       
       if (data.success && data.products) {
-        // Filter out current product and limit to 6
         const related = data.products
           .filter((p: Product) => p.id !== currentId)
           .slice(0, 6)
@@ -108,59 +117,6 @@ export default function ProductDetails() {
       console.error('Failed to load related products:', err)
     }
   }
-
-  if (loading) {
-    return (
-      <div className="w-full py-12 flex items-center justify-center">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    )
-  }
-
-  if (!product) {
-    return (
-      <div className="w-full py-12 flex flex-col items-center justify-center">
-        <Package size={64} className="text-base-content/20 mb-4" />
-        <h2 className="text-2xl font-bold mb-2">Ürün Bulunamadı</h2>
-        <p className="text-base-content/60 mb-4">Aradığınız ürün mevcut değil.</p>
-        <Link to="/urunler" className="btn btn-primary">
-          Ürünlere Dön
-        </Link>
-      </div>
-    )
-  }
-
-  // Collect all product images
-  const images = [
-    product.main_img,
-    product.p_img1,
-    product.p_img2,
-    product.p_img3,
-    product.p_img4,
-    product.p_img5,
-    product.p_img6,
-    product.p_img7,
-  ].filter(Boolean)
-
-  // Parse description for bullet points
-  const descriptionLines = product.description?.split('\n').filter(Boolean) || []
-  const firstLine = descriptionLines[0] || ''
-  const bulletPoints = descriptionLines.slice(1).filter(line => line.trim().startsWith('-'))
-
-  // Parse features for technical table
-  const features = [
-    product.feature1,
-    product.feature2,
-    product.feature3,
-    product.feature4,
-    product.feature5,
-    product.feature6,
-    product.feature7,
-    product.feature8,
-    product.feature9,
-    product.feature10,
-    product.feature11,
-  ].filter(Boolean)
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
@@ -185,6 +141,73 @@ export default function ProductDetails() {
     setIsZoomed(false)
   }
 
+  const openModal = (index: number) => {
+    setModalImageIndex(index)
+    setIsModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+  }
+
+  const handleModalPrev = () => {
+    setModalImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
+  }
+
+  const handleModalNext = () => {
+    setModalImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
+  }
+
+  if (loading) {
+    return (
+      <div className="w-full py-12 flex items-center justify-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    )
+  }
+
+  if (!product) {
+    return (
+      <div className="w-full py-12 flex flex-col items-center justify-center">
+        <Package size={64} className="text-base-content/20 mb-4" />
+        <h2 className="text-2xl font-bold mb-2">Ürün Bulunamadı</h2>
+        <p className="text-base-content/60 mb-4">Aradığınız ürün mevcut değil.</p>
+        <Link to="/urunler" className="btn btn-primary">
+          Ürünlere Dön
+        </Link>
+      </div>
+    )
+  }
+
+  const images = [
+    product.main_img,
+    product.p_img1,
+    product.p_img2,
+    product.p_img3,
+    product.p_img4,
+    product.p_img5,
+    product.p_img6,
+    product.p_img7,
+  ].filter(Boolean)
+
+  const descriptionLines = product.description?.split('\n').filter(Boolean) || []
+  const firstLine = descriptionLines[0] || ''
+  const bulletPoints = descriptionLines.slice(1).filter(line => line.trim().startsWith('-'))
+
+  const features = [
+    product.feature1,
+    product.feature2,
+    product.feature3,
+    product.feature4,
+    product.feature5,
+    product.feature6,
+    product.feature7,
+    product.feature8,
+    product.feature9,
+    product.feature10,
+    product.feature11,
+  ].filter(Boolean)
+
   return (
     <div className="bg-base-100 min-h-screen">
       {/* Breadcrumb */}
@@ -206,10 +229,10 @@ export default function ProductDetails() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-2 gap-8 mb-12">
-          {/* Image Gallery - Order: First on mobile, First on desktop */}
+          {/* Image Gallery */}
           <div className="order-1">
             <div className="flex gap-4">
-              {/* Thumbnail Gallery - Left Side */}
+              {/* Thumbnails */}
               {images.length > 1 && (
                 <div className="flex flex-col gap-2 w-20 flex-shrink-0">
                   {images.map((img, index) => (
@@ -236,12 +259,13 @@ export default function ProductDetails() {
                 </div>
               )}
               
-              {/* Main Image - Right Side */}
+              {/* Main Image */}
               <div 
-                className={`relative aspect-square bg-base-200 rounded-lg overflow-hidden group flex-1 ${isZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}
+                className="relative aspect-square bg-base-200 rounded-lg overflow-hidden group flex-1 cursor-pointer"
                 onMouseMove={handleMouseMove}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
+                onClick={() => openModal(currentImageIndex)}
               >
               {images.length > 0 ? (
                 <>
@@ -266,13 +290,19 @@ export default function ProductDetails() {
                   {images.length > 1 && !isZoomed && (
                     <>
                       <button
-                        onClick={handlePrevImage}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handlePrevImage()
+                        }}
                         className="absolute left-4 top-1/2 -translate-y-1/2 btn btn-circle btn-sm opacity-0 group-hover:opacity-100 transition-opacity z-10"
                       >
                         <ChevronLeft size={20} />
                       </button>
                       <button
-                        onClick={handleNextImage}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleNextImage()
+                        }}
                         className="absolute right-4 top-1/2 -translate-y-1/2 btn btn-circle btn-sm opacity-0 group-hover:opacity-100 transition-opacity z-10"
                       >
                         <ChevronRight size={20} />
@@ -288,7 +318,7 @@ export default function ProductDetails() {
                   {/* Zoom Hint */}
                   {!isZoomed && (
                     <div className="absolute top-4 right-4 bg-base-100/80 backdrop-blur px-3 py-1 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                      🔍 Yakınlaştırmak için fareyi resmin üzerine getirin
+                      <span className="hidden md:inline">🔍 Yakınlaştırmak için fareyi üzerine getirin | </span>Büyütmek için tıklayın
                     </div>
                   )}
                 </>
@@ -301,9 +331,8 @@ export default function ProductDetails() {
             </div>
           </div>
 
-          {/* Product Info - Order: Second on mobile, Second on desktop */}
+          {/* Product Info */}
           <div className="space-y-5 order-2">
-            {/* Title */}
             <h1 className="text-3xl md:text-4xl font-bold leading-tight">{product.title}</h1>
 
             {/* Price Request Buttons */}
@@ -379,7 +408,7 @@ export default function ProductDetails() {
               </div>
             )}
 
-            {/* SKU and Brand - Bottom */}
+            {/* SKU and Brand */}
             <div className="flex items-center justify-between pt-4 border-t border-base-300">
               {product.sku && (
                 <p className="text-sm text-base-content/60 font-mono">
@@ -393,7 +422,7 @@ export default function ProductDetails() {
           </div>
         </div>
 
-        {/* Technical Specifications - Centered Section */}
+        {/* Technical Specifications */}
         {features.length > 0 && (
           <div className="mb-12 flex justify-center">
             <div className="card bg-base-200 w-full max-w-4xl">
@@ -421,7 +450,7 @@ export default function ProductDetails() {
           </div>
         )}
 
-        {/* Paragraph - Full Width Section with Multiple Paragraphs */}
+        {/* Paragraph */}
         {product.paragraph && (
           <div className="mb-12">
             <div className="card bg-base-100 border-2 border-base-300">
@@ -439,7 +468,7 @@ export default function ProductDetails() {
           </div>
         )}
 
-        {/* Related Products Slider */}
+        {/* Related Products */}
         {relatedProducts.length > 0 && (
           <div className="mt-16">
             <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center">
@@ -499,6 +528,69 @@ export default function ProductDetails() {
           </div>
         )}
       </div>
+
+      {/* Image Modal */}
+      {isModalOpen && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4"
+          onClick={closeModal}
+        >
+          {/* Close Button */}
+          <button
+            onClick={closeModal}
+            className="absolute top-4 right-4 btn btn-circle btn-ghost text-white hover:bg-white/20 z-20"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          {/* Navigation Buttons */}
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleModalPrev()
+                }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 btn btn-circle btn-lg btn-ghost text-white hover:bg-white/20 z-20"
+              >
+                <ChevronLeft size={32} />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleModalNext()
+                }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 btn btn-circle btn-lg btn-ghost text-white hover:bg-white/20 z-20"
+              >
+                <ChevronRight size={32} />
+              </button>
+            </>
+          )}
+
+          {/* Image Container */}
+          <div 
+            className="max-w-[95vw] max-h-[95vh] relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={images[modalImageIndex]}
+              alt={`${product.title} - Tam Görünüm`}
+              className="w-full h-full object-contain max-h-[95vh]"
+              onError={(e) => {
+                e.currentTarget.src = 'https://placehold.co/1200x1200?text=No+Image'
+              }}
+            />
+            {/* Image Counter */}
+            {images.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur px-4 py-2 rounded-full text-white text-sm">
+                {modalImageIndex + 1} / {images.length}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <style>{`
         .scrollbar-hide::-webkit-scrollbar {
