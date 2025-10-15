@@ -40,7 +40,7 @@ $sanitize = function ($v): string {
 
 $pdo->beginTransaction();
 $ins = $pdo->prepare('INSERT INTO products (url, parent, child, subchild, title, sku, paragraph, description, brand, feature1, feature2, feature3, feature4, feature5, feature6, feature7, feature8, feature9, feature10, feature11, main_img, p_img1, p_img2, p_img3, p_img4, p_img5, p_img6, p_img7, meta_description, meta_title, schema_description, keywords, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)');
-$upd = $pdo->prepare('UPDATE products SET url=?, parent=?, child=?, subchild=?, paragraph=?, description=?, brand=?, feature1=?, feature2=?, feature3=?, feature4=?, feature5=?, feature6=?, feature7=?, feature8=?, feature9=?, feature10=?, feature11=?, main_img=?, p_img1=?, p_img2=?, p_img3=?, p_img4=?, p_img5=?, p_img6=?, p_img7=?, meta_description=?, meta_title=?, schema_description=?, keywords=?, updated_at=CURRENT_TIMESTAMP WHERE sku=?');
+$upd = $pdo->prepare('UPDATE products SET url=?, parent=?, child=?, subchild=?, paragraph=?, description=?, brand=?, feature1=?, feature2=?, feature3=?, feature4=?, feature5=?, feature6=?, feature7=?, feature8=?, feature9=?, feature10=?, feature11=?, main_img=COALESCE(NULLIF(?, \'\'), main_img), p_img1=COALESCE(NULLIF(?, \'\'), p_img1), p_img2=COALESCE(NULLIF(?, \'\'), p_img2), p_img3=COALESCE(NULLIF(?, \'\'), p_img3), p_img4=COALESCE(NULLIF(?, \'\'), p_img4), p_img5=COALESCE(NULLIF(?, \'\'), p_img5), p_img6=COALESCE(NULLIF(?, \'\'), p_img6), p_img7=COALESCE(NULLIF(?, \'\'), p_img7), meta_description=?, meta_title=?, schema_description=?, keywords=?, updated_at=CURRENT_TIMESTAMP WHERE sku=?');
 
 $inserted = 0; $updated = 0; $skipped = 0; $errors = [];
 try {
@@ -113,6 +113,7 @@ try {
                     $sanitize($row['feature9'] ?? ''),
                     $sanitize($row['feature10'] ?? ''),
                     $sanitize($row['feature11'] ?? ''),
+                    // For image fields, pass through possibly-empty values; UPDATE uses COALESCE(NULLIF(?, ''), existing)
                     $sanitize($row['main_img'] ?? ''),
                     $sanitize($row['p_img1'] ?? ''),
                     $sanitize($row['p_img2'] ?? ''),

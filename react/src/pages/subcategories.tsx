@@ -71,28 +71,28 @@ export default function Subcategories() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="breadcrumbs text-sm py-4"><ul><li><Link to="/">Ana sayfa</Link></li><li><Link to="/kategoriler">Kategoriler</Link></li><li>{tierData?.title || 'Kategori'}</li></ul></div>
         <h1 className="text-3xl font-bold">{tierData?.title || 'Kategori'}</h1>
+        <style>{`
+          .card-grid-300 { grid-template-columns: repeat(auto-fill, 300px); justify-content: start; }
+          @media (min-width: 1200px) { .card-grid-300 { grid-template-columns: repeat(4, 300px); } }
+        `}</style>
         {error && <div className="alert alert-error mt-4">{error}</div>}
         {!tiers && !error && <div className="mt-6">Yükleniyor...</div>}
         {tiers && !tierData && <div className="alert alert-warning mt-4">Kategori bulunamadı: {tier}</div>}
   {displayChildren && displayChildren.length > 0 && (
-    <div className="grid gap-7 mt-6"
-      style={{
-        gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))'
-      }}
-    >
+    <div className="grid gap-7 mt-6 card-grid-300 justify-items-center">
       {displayChildren.map((s) => {
         const photo = getPhotoForChild(s.title)
         const imageUrl = photo?.photo_url || `https://picsum.photos/seed/${s.id}/480/360`
 
         const item = (
-          <div className="group block rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105 border-2 bg-transparent w-full focus:outline-none focus:ring-4 ring-offset-0" style={{ borderColor: 'rgba(255,140,66,0.18)', maxWidth: 480 }}>
+          <div className="group block rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105 border-2 bg-transparent focus:outline-none focus:ring-4 ring-offset-0" style={{ borderColor: 'rgba(255,140,66,0.18)', width: 300, maxWidth: 300 }}>
             <div className="relative" style={{ paddingBottom: '75%', height: 0 }}>
               <img
                 src={imageUrl}
                 alt={`${s.title} - Alt Kategori Görseli`}
                 title={s.title}
-                width={480}
-                height={360}
+                width={300}
+                height={225}
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 w-full h-full object-contain bg-gray-50"

@@ -28,16 +28,6 @@ export default function Kolver() {
               30 yılı aşkın deneyimi ile otomotiv, havacılık, elektronik ve beyaz eşya sektörlerinde hassas montaj çözümleri sunmaktadır. 
               Industry 4.0 uyumlu sistemleri ile üretim kalitesini ve izlenebilirliği maksimize eder.
             </p>
-            <div className="mt-6">
-              <h3 className="text-white font-semibold mb-2">Ürün Kategorileri:</h3>
-              <div className="flex flex-wrap gap-2">
-                <span className="badge badge-outline text-white border-white/30">Elektrikli Torque Vidalama</span>
-                <span className="badge badge-outline text-white border-white/30">Tork Kontrol Ünitesi</span>
-                <span className="badge badge-outline text-white border-white/30">Otomasyon Sistemleri</span>
-                <span className="badge badge-outline text-white border-white/30">MES Entegrasyonu</span>
-                <span className="badge badge-outline text-white border-white/30">Hata Önleme (Poka-Yoke)</span>
-              </div>
-            </div>
             <div className="mt-6 flex flex-wrap gap-3">
               <ScrollToTopLink to="/iletisim" className="btn btn-primary">İletişim</ScrollToTopLink>
               <ScrollToTopLink to="/demo-talebi" className="btn btn-outline">Demo Talep Et</ScrollToTopLink>

@@ -1,7 +1,24 @@
 import { Link } from 'react-router-dom'
 import { Home, ArrowLeft, Search } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 export default function NotFound() {
+  const [countdown, setCountdown] = useState(3)
+
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setCountdown(c => c - 1)
+    }, 1000)
+    const to = setTimeout(() => {
+      // client-side redirect. Note: this cannot set HTTP 301 status — that's server-side.
+      window.location.replace('/')
+    }, 3000)
+    return () => {
+      clearInterval(iv)
+      clearTimeout(to)
+    }
+  }, [])
+
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4">
       <div className="text-center max-w-2xl">
@@ -28,6 +45,7 @@ export default function NotFound() {
           <br />
           URL'yi kontrol edin veya ana sayfaya dönün.
         </p>
+        <p className="text-sm text-base-content/50 mb-6">Ana sayfaya yönlendiriliyorsunuz — {Math.max(0, countdown)} saniye kaldı.</p>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

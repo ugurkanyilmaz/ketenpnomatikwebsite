@@ -102,7 +102,16 @@ try {
             ]);
             $inserted++;
         } catch (PDOException $e) {
-            if (strpos($e->getMessage(), 'UNIQUE') !== false) {
+            // MySQL duplicate entry error code is 1062 (SQLSTATE 23000).
+            // If we hit a duplicate key on insert, perform an update for the same parent/child/subchild
+            $isDuplicate = false;
+            $sqlState = $e->errorInfo[0] ?? null;
+            $errorCode = (int)($e->errorInfo[1] ?? 0);
+            if ($sqlState === '23000' && $errorCode === 1062) {
+                $isDuplicate = true;
+            }
+
+            if ($isDuplicate) {
                 $upd->execute([
                     $sanitize($nrow['title'] ?? ''),
                     $sanitize($nrow['title_subtext'] ?? ''),

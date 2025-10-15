@@ -48,7 +48,7 @@ export interface ProductSEOData {
   updated_at?: string
 }
 
-const SITE_DOMAIN = 'https://ketenpnomatik.com'
+const SITE_DOMAIN = 'https://www.ketenpnomatik.com'
 const SITE_NAME = 'Keten Pnömatik'
 // Use weblogo.jpg as site logo for social previews by default
 const SITE_LOGO = `${SITE_DOMAIN}/weblogo.jpg`

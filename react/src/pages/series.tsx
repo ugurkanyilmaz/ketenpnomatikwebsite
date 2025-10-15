@@ -67,11 +67,16 @@ export default function Series() {
         </div>
 
         <h1 className="text-3xl font-bold">{catData?.categoryTitle || 'Kategori'}</h1>
+        <style>{`
+          /* 300px card grid: auto-fill on small, force 4 columns on wide screens */
+          .card-grid-300 { grid-template-columns: repeat(auto-fill, 300px); justify-content: start; }
+          @media (min-width: 1200px) { .card-grid-300 { grid-template-columns: repeat(4, 300px); } }
+        `}</style>
         <p className="mt-2 text-base-content/70">Bu kategori altındaki serileri inceleyin.</p>
 
         {catData && catData.series.length > 0 ? (
           <div className="mt-6">
-            <div className="grid gap-5" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+              <div className="grid gap-5 card-grid-300 justify-items-center">
               {catData.series.map((s) => {
                 // Get main_image for this subchild from the imageMap
                 const mainImage = subchildImages[s.title]
@@ -82,13 +87,15 @@ export default function Series() {
                     key={s.id}
                     to={`/kategoriler/${tierKey}/${categoryId}/${encodeURIComponent(s.title)}`}
                     className="group block rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105 border-2 bg-transparent w-full"
-                    style={{ borderColor: 'rgba(255,140,66,0.18)' }}
+                    style={{ borderColor: 'rgba(255,140,66,0.18)', width: 300, maxWidth: 300 }}
                   >
                     <div className="relative" style={{ paddingBottom: '75%', height: 0 }}>
                       <img
                         src={imageUrl}
                         alt={`${s.title} - Seri Görseli`}
                         title={s.title}
+                        width={300}
+                        height={225}
                         className="absolute inset-0 w-full h-full object-contain bg-gray-50"
                         loading="lazy"
                         onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${s.id}/800/600` }}

@@ -21,7 +21,7 @@ export interface BlogSEOData {
   updated_at?: string
 }
 
-const SITE_DOMAIN = 'https://ketenpnomatik.com'
+const SITE_DOMAIN = 'https://www.ketenpnomatik.com'
 const SITE_NAME = 'Keten Pnömatik'
 const SITE_LOGO = `${SITE_DOMAIN}/weblogo.jpg`
 const DEFAULT_IMAGE = `${SITE_DOMAIN}/weblogo.jpg`

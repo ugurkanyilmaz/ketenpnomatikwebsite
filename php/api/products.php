@@ -63,6 +63,41 @@ foreach ($params as $k => $v) { $stmt->bindValue($k, $v, PDO::PARAM_STR); }
 $stmt->execute();
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
+// Sanitize image URL fields to avoid broken URLs (e.g. "https://https://...")
+function normalize_image_url(?string $url): string {
+    if ($url === null) return '';
+    $u = trim($url);
+    if ($u === '' || strtoupper($u) === 'NULL') return '';
+
+    // Remove escaped slashes from JSON-encoded inputs
+    $u = str_replace('\\/', '/', $u);
+
+    // Fix double protocols like 'https://https://' or 'http://http://'
+    $u = preg_replace('#^(https?://)+(https?://)#i', '$1', $u);
+
+    // If accidentally has a protocol after an escaped prefix (e.g. 'https:/https://'), normalize
+    $u = preg_replace('#^(https?:/)+(https?://)#i', '$1$2', $u);
+
+    // If it starts with protocol twice without proper slashes, collapse repeated protocols
+    $u = preg_replace('#^(https?://){2,}#i', 'https://', $u);
+
+    // If it starts with '//' (protocol-relative), prefix https:
+    if (strpos($u, '//') === 0) {
+        $u = 'https:' . $u;
+    }
+
+    return $u;
+}
+
+// Normalize image fields on each row
+foreach ($rows as $idx => $r) {
+    foreach (['main_img','p_img1','p_img2','p_img3','p_img4','p_img5','p_img6','p_img7'] as $field) {
+        if (array_key_exists($field, $r)) {
+            $rows[$idx][$field] = normalize_image_url($r[$field]);
+        }
+    }
+}
+
 // Get total count for pagination
 $countSql = 'SELECT COUNT(*) as total FROM products WHERE 1=1';
 if ($q !== '') $countSql .= " AND (title LIKE :q ESCAPE '\\' OR description LIKE :q ESCAPE '\\' OR paragraph LIKE :q ESCAPE '\\' OR brand LIKE :q ESCAPE '\\' OR sku LIKE :q ESCAPE '\\')";

@@ -105,7 +105,7 @@ function MobileMenu() {
               className="px-4 py-3 rounded-lg hover:bg-slate-700 transition-colors"
               onClick={() => setOpen(false)}
             >
-              Kategoriler
+              Ürünlerimiz
             </ScrollToTopLink>
             <ScrollToTopLink 
               to="/iletisim" 
@@ -165,7 +165,7 @@ export default function Header() {
               Hakkımızda
             </ScrollToTopLink>
             <ScrollToTopLink to="/kategoriler" className="px-4 py-2 text-white hover:bg-slate-700 rounded-lg transition-colors">
-              Kategoriler
+              Ürünlerimiz
             </ScrollToTopLink>
             <ScrollToTopLink to="/iletisim" className="px-4 py-2 text-white hover:bg-slate-700 rounded-lg transition-colors">
               İletişim
@@ -174,7 +174,6 @@ export default function Header() {
               Teknik Servis
             </ScrollToTopLink>
           </nav>
-
           {/* Right Side Actions */}
           <div className="flex items-center gap-2 md:gap-3">
             {/* Desktop Search */}
@@ -212,13 +211,29 @@ function SearchInput() {
   const [loading, setLoading] = useState(false)
   const [suggestions, setSuggestions] = useState<Array<{ type: 'product'|'article'; title: string; href: string }>>([])
   const [open, setOpen] = useState(false)
+  const [highlight, setHighlight] = useState<number>(-1)
   const mounted = useRef(true)
   const timer = useRef<number|undefined>(undefined)
+  const containerRef = useRef<HTMLDivElement | null>(null)
   const navigate = useNavigate()
 
   useEffect(() => {
     mounted.current = true
     return () => { mounted.current = false }
+  }, [])
+
+  // close on outside click
+  useEffect(() => {
+    function onDocClick(e: MouseEvent) {
+      if (!containerRef.current) return
+      if (e.target instanceof Node && !containerRef.current.contains(e.target)) {
+        setOpen(false)
+        setHighlight(-1)
+      }
+    }
+
+    document.addEventListener('mousedown', onDocClick)
+    return () => document.removeEventListener('mousedown', onDocClick)
   }, [])
 
   useEffect(() => {
@@ -267,6 +282,7 @@ function SearchInput() {
       if (mounted.current) {
         setSuggestions(results.slice(0, 8))
         setOpen(results.length > 0)
+        setHighlight(-1)
       }
     } catch (err) {
       console.error('Search failed', err)
@@ -276,7 +292,7 @@ function SearchInput() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative" ref={containerRef}>
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -284,30 +300,43 @@ function SearchInput() {
           if (e.key === 'Enter') {
             e.preventDefault()
             setOpen(false)
-            // If we have suggestions, navigate to first suggestion; otherwise go to product search page
-            if (suggestions && suggestions.length > 0) {
-              navigate(suggestions[0].href)
-            } else {
-              navigate(`/urunler?q=${encodeURIComponent(query)}`)
-            }
+            const target = highlight >= 0 && highlight < suggestions.length ? suggestions[highlight].href : (suggestions[0]?.href)
+            if (target) navigate(target)
+            else navigate(`/urunler?q=${encodeURIComponent(query)}`)
+          } else if (e.key === 'ArrowDown') {
+            e.preventDefault()
+            if (!open && suggestions.length) setOpen(true)
+            setHighlight((h) => Math.min(suggestions.length - 1, h + 1))
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault()
+            setHighlight((h) => Math.max(-1, h - 1))
+          } else if (e.key === 'Escape') {
+            setOpen(false)
+            setHighlight(-1)
           }
         }}
         onFocus={() => { if (suggestions.length) setOpen(true) }}
         type="text"
         placeholder="Ara: darbeli tabanca..."
         className="input input-sm md:input-md input-bordered w-48 lg:w-64 rounded-full bg-slate-700 text-white border-slate-600 placeholder:text-slate-400"
+        aria-autocomplete="list"
+        aria-controls="header-search-list"
+        aria-expanded={open}
+        aria-activedescendant={highlight >= 0 ? `search-suggestion-${highlight}` : undefined}
       />
 
       {open && (
         <div className="absolute right-0 mt-2 w-80 bg-white text-black rounded shadow-lg z-50">
           {loading && <div className="p-3 text-sm text-gray-600">Aranıyor...</div>}
           {!loading && suggestions.length === 0 && <div className="p-3 text-sm text-gray-600">Sonuç yok</div>}
-          <ul className="max-h-64 overflow-auto">
+          <ul id="header-search-list" role="listbox" className="max-h-64 overflow-auto">
             {suggestions.map((s, idx) => (
-              <li key={idx}>
+              <li key={idx} role="option" id={`search-suggestion-${idx}`} aria-selected={highlight === idx}>
                 <a
                   href={s.href}
-                  className="block px-3 py-2 hover:bg-slate-100"
+                  className={`block px-3 py-2 ${highlight === idx ? 'bg-slate-100' : 'hover:bg-slate-100'}`}
+                  onMouseEnter={() => setHighlight(idx)}
+                  onMouseLeave={() => setHighlight(-1)}
                   onClick={(e) => {
                     e.preventDefault()
                     setOpen(false)

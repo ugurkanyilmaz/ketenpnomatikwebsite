@@ -128,6 +128,26 @@ export default function About() {
             </p>
           </motion.div>
         </div>
+
+        {/* Hiyoki Section - image right, text left */}
+        <div className="grid lg:grid-cols-2 gap-10 items-center mt-16">
+          <div className="order-1 lg:order-1">
+            <img src="/hiyoki.jpg" alt="Hiyoki Ölçüm Çözümleri" className="rounded-2xl shadow-xl w-full object-cover" loading="lazy" />
+          </div>
+          <div className="order-2 lg:order-2">
+            <div className="mb-3 inline-block px-3 py-1 rounded-full bg-gradient-to-r from-orange-400 to-orange-500 text-white font-semibold">Yetkili Distribütör</div>
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Hiyoki</h2>
+            <p className="text-gray-700 mb-4">
+              Hiyoki, en zorlu endüstriyel ortamlar ve kritik montaj hatları için üstün kaliteli, premium aletler sunar. Ürünlerimiz, üç vardiya süren yoğun çalışma döngülerinde bile tutarlı tork performansı ve benzersiz dayanıklılık sağlamak üzere tasarlanmıştır. Kaliteden ödün vermeyen mühendislikle, üretim sürekliliğinizi ve yatırımınızın uzun ömrünü garanti altına alın.
+            </p>
+            <ul className="list-disc pl-5 text-gray-700 space-y-2">
+              <li>Endüstriyel dayanıklılık ve uzun ömür</li>
+              <li>Yüksek hassasiyet ve tekrarlanabilirlik</li>
+              <li>7/24 kesintisiz performans</li>
+              <li>Teknik destek ve kalibrasyon hizmeti</li>
+            </ul>
+          </div>
+        </div>
       </section>
     </div>
   )

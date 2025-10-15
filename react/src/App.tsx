@@ -24,6 +24,9 @@ import DistributorlukIndex from './pages/distributorluk/Index'
 import Kolver from './pages/distributorluk/Kolver'
 import Hiyoki from './pages/distributorluk/Hiyoki'
 import Apac from './pages/distributorluk/Apac'
+import Hawanox from './pages/distributorluk/Hawanox'
+import Asa from './pages/distributorluk/Asa'
+import DeltaRegis from './pages/distributorluk/DeltaRegis'
 import Blog from './pages/Blog'
 import BlogDetail from './pages/BlogDetail'
 import NotFound from './pages/NotFound'
@@ -75,6 +78,9 @@ function App() {
               <Route path="kolver" element={<Kolver />} />
               <Route path="hiyoki" element={<Hiyoki />} />
               <Route path="apac" element={<Apac />} />
+              <Route path="hawanox" element={<Hawanox />} />
+              <Route path="asa" element={<Asa />} />
+              <Route path="delta-regis" element={<DeltaRegis />} />
             </Route>
 
             <Route path="/kategoriler" element={<Categories_page />} />

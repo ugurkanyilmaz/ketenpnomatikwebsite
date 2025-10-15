@@ -55,6 +55,22 @@ function handleGet($pdo) {
     $stmt = $pdo->prepare("SELECT * FROM site_images WHERE section_key LIKE :prefix ESCAPE '\\' ORDER BY section_key ASC");
         $stmt->execute([':prefix' => $prefix . '%']);
         $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Convert stored relative image_path to absolute URLs for clients
+        // Prefer cPanel-visible base so admin sees the same URL as file manager
+        $CPANEL_BASE = 'https://ketenpnomatik.com';
+        foreach ($images as &$img) {
+            if (isset($img['image_path']) && !preg_match('#^https?://#i', $img['image_path'])) {
+                // ensure image_path sits under /react/public
+                $p = $img['image_path'];
+                if (strpos($p, '/react/public/') === false) {
+                    $p = preg_replace('#^/php#', '', $p);
+                    if (strpos($p, '/') !== 0) $p = '/' . $p;
+                    $p = '/react/public' . $p;
+                }
+                $img['image_path'] = rtrim($CPANEL_BASE, '/') . $p;
+            }
+        }
+        unset($img);
         echo json_encode($images);
         return;
     }
@@ -65,6 +81,17 @@ function handleGet($pdo) {
         $image = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($image) {
+            // Prefer cPanel-visible base
+            $CPANEL_BASE = 'https://ketenpnomatik.com';
+            if (isset($image['image_path']) && !preg_match('#^https?://#i', $image['image_path'])) {
+                $p = $image['image_path'];
+                if (strpos($p, '/react/public/') === false) {
+                    $p = preg_replace('#^/php#', '', $p);
+                    if (strpos($p, '/') !== 0) $p = '/' . $p;
+                    $p = '/react/public' . $p;
+                }
+                $image['image_path'] = rtrim($CPANEL_BASE, '/') . $p;
+            }
             echo json_encode($image);
         } else {
             http_response_code(404);
@@ -73,6 +100,20 @@ function handleGet($pdo) {
     } else {
         $stmt = $pdo->query('SELECT * FROM site_images ORDER BY section_key ASC');
         $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Normalize image_path to absolute URLs using cPanel-visible base
+        $CPANEL_BASE = 'https://ketenpnomatik.com';
+        foreach ($images as &$img) {
+            if (isset($img['image_path']) && !preg_match('#^https?://#i', $img['image_path'])) {
+                $p = $img['image_path'];
+                if (strpos($p, '/react/public/') === false) {
+                    $p = preg_replace('#^/php#', '', $p);
+                    if (strpos($p, '/') !== 0) $p = '/' . $p;
+                    $p = '/react/public' . $p;
+                }
+                $img['image_path'] = rtrim($CPANEL_BASE, '/') . $p;
+            }
+        }
+        unset($img);
         echo json_encode($images);
     }
 }
@@ -87,10 +128,10 @@ function handlePost($pdo) {
         return;
     }
     
-    $stmt = $pdo->prepare("
-        INSERT INTO site_images (section_key, image_path, width, height, alt_text, updated_at)
-        VALUES (:section_key, :image_path, :width, :height, :alt_text, datetime('now'))
-    ");
+    $stmt = $pdo->prepare(
+        "INSERT INTO site_images (section_key, image_path, width, height, alt_text, updated_at) " .
+        "VALUES (:section_key, :image_path, :width, :height, :alt_text, NOW())"
+    );
     
     $stmt->execute([
         ':section_key' => $data['section_key'],
@@ -129,15 +170,10 @@ function handlePut($pdo) {
         return;
     }
     
-    $stmt = $pdo->prepare("
-        UPDATE site_images 
-        SET image_path = :image_path,
-            width = :width,
-            height = :height,
-            alt_text = :alt_text,
-            updated_at = datetime('now')
-        WHERE section_key = :section_key
-    ");
+    $stmt = $pdo->prepare(
+        "UPDATE site_images SET image_path = :image_path, width = :width, height = :height, " .
+        "alt_text = :alt_text, updated_at = NOW() WHERE section_key = :section_key"
+    );
     
     $stmt->execute([
         ':section_key' => $data['section_key'],

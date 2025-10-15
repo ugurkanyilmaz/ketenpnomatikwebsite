@@ -10,8 +10,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     exit;
 }
 
-// Upload directory
-$uploadDir = __DIR__ . '/../uploads/products/';
+// Upload directory: put uploaded product images into the frontend public folder so they are served
+// from the same place as other static uploads (react/public/uploads/products)
+$uploadDir = __DIR__ . '/../../react/public/uploads/products/';
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
@@ -58,12 +59,19 @@ if (!move_uploaded_file($tmpName, $filePath)) {
     exit;
 }
 
-// Generate URL (relative to web root)
-$fileUrl = '/php/uploads/products/' . $fileName;
+// Generate a public URL (absolute) for the uploaded file so clients don't have to prefix
+// NOTE: files are saved under react/public/uploads/products/ on disk; cPanel exposes them under
+// https://ketenpnomatik.com/react/public/uploads/products/...
+$relativePath = '/react/public/uploads/products/' . $fileName;
+
+// Force returned absolute URL to the cPanel-visible path (no www, include /react/public)
+$CANONICAL_BASE = 'https://ketenpnomatik.com';
+$absoluteUrl = rtrim($CANONICAL_BASE, '/') . $relativePath;
 
 echo json_encode([
     'success' => true,
-    'url' => $fileUrl,
+    'url' => $absoluteUrl,
+    'relative_url' => $relativePath,
     'filename' => $fileName,
     'size' => $fileSize,
     'type' => $fileType

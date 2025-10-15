@@ -86,11 +86,19 @@ export default function Urunler() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [products])
 
+  // When products load, apply filters but do NOT update the URL (we want to respect any existing ?page)
+  useEffect(() => {
+    filterProducts()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [products])
+
+  // When the user changes filter inputs, update the URL and reset to page 1
   useEffect(() => {
     filterProducts()
     updateURL()
+    setCurrentPage(1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [products, searchTerm, selectedParent, selectedChild, selectedSubchild, selectedBrand])
+  }, [searchTerm, selectedParent, selectedChild, selectedSubchild, selectedBrand])
 
   // Keep URL page param in sync when currentPage changes
   useEffect(() => {
@@ -165,21 +173,16 @@ export default function Urunler() {
 
     // No sorting - show products as they come from database
     setFilteredProducts(filtered)
-    // Reset to first page when filters change, but if URL contains page keep it within bounds
-    const pageFromUrl = parseInt(searchParams.get('page') || '1', 10)
-    if (!isNaN(pageFromUrl) && pageFromUrl > 1) {
-      setCurrentPage(1) // prefer resetting to 1 after filters change
-    } else {
-      setCurrentPage(1)
-    }
   }
 
   // If filteredProducts length or totalPages changes, clamp currentPage
+  // Wait for products to finish loading before clamping so direct links like ?page=84 are respected
   useEffect(() => {
-    const total = Math.ceil(filteredProducts.length / itemsPerPage) || 1
+    if (loading) return
+    const total = Math.max(1, Math.ceil(filteredProducts.length / itemsPerPage))
     if (currentPage > total) setCurrentPage(total)
     if (currentPage < 1) setCurrentPage(1)
-  }, [filteredProducts.length])
+  }, [filteredProducts.length, loading])
 
   const clearFilters = () => {
     setSearchTerm('')

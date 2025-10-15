@@ -75,29 +75,25 @@ try {
     // Get image dimensions
     list($width, $height) = getimagesize($uploadPath);
 
-    $imagePath = '/uploads/site_images/' . $filename;
+    // Force the stored path and returned URL to match cPanel visible structure
+    $imagePath = '/react/public/uploads/site_images/' . $filename;
 
     // Update or insert into database
     $check = $pdo->prepare('SELECT id FROM site_images WHERE section_key = :section_key');
     $check->execute([':section_key' => $section_key]);
     
     if ($check->fetch()) {
-        // Update existing
-        $stmt = $pdo->prepare("
-            UPDATE site_images 
-            SET image_path = :image_path,
-                width = :width,
-                height = :height,
-                alt_text = :alt_text,
-                updated_at = datetime('now')
-            WHERE section_key = :section_key
-        ");
+        // Update existing (MySQL/MariaDB compatible)
+        $stmt = $pdo->prepare(
+            "UPDATE site_images SET image_path = :image_path, width = :width, height = :height, " .
+            "alt_text = :alt_text, updated_at = NOW() WHERE section_key = :section_key"
+        );
     } else {
-        // Insert new
-        $stmt = $pdo->prepare("
-            INSERT INTO site_images (section_key, image_path, width, height, alt_text, updated_at)
-            VALUES (:section_key, :image_path, :width, :height, :alt_text, datetime('now'))
-        ");
+        // Insert new (MySQL/MariaDB compatible)
+        $stmt = $pdo->prepare(
+            "INSERT INTO site_images (section_key, image_path, width, height, alt_text, updated_at) " .
+            "VALUES (:section_key, :image_path, :width, :height, :alt_text, NOW())"
+        );
     }
 
     $success = $stmt->execute([
@@ -112,11 +108,19 @@ try {
     error_log("Image upload - section_key: $section_key, success: " . ($success ? 'yes' : 'no'));
     error_log("Image path: $imagePath, width: $width, height: $height");
 
-    // Fetch and return the updated record
+    // Fetch and return the updated record (do not change DB stored path)
     $result = $pdo->prepare('SELECT * FROM site_images WHERE section_key = :section_key');
     $result->execute([':section_key' => $section_key]);
     $image = $result->fetch(PDO::FETCH_ASSOC);
-    
+
+    // Convert returned image_path to absolute URL for clients using cPanel-visible base
+    if ($image && isset($image['image_path'])) {
+        $CPANEL_BASE = 'https://ketenpnomatik.com';
+        if (!preg_match('#^https?://#i', $image['image_path'])) {
+            $image['image_path'] = $CPANEL_BASE . $image['image_path'];
+        }
+    }
+
     error_log("Fetched image: " . json_encode($image));
 
     // --- Automatic sync: if uploading to a "base" key (not already _hero or _showcase),
@@ -126,8 +130,14 @@ try {
         if (!preg_match('/_(hero|showcase)$/', $section_key)) {
             $targets = [$section_key . '_hero', $section_key . '_showcase'];
             $sel = $pdo->prepare('SELECT id FROM site_images WHERE section_key = :section_key');
-            $up = $pdo->prepare("UPDATE site_images SET image_path = :image_path, width = :width, height = :height, alt_text = :alt_text, updated_at = datetime('now') WHERE section_key = :section_key");
-            $ins = $pdo->prepare("INSERT INTO site_images (section_key, image_path, width, height, alt_text, updated_at) VALUES (:section_key, :image_path, :width, :height, :alt_text, datetime('now'))");
+            $up = $pdo->prepare(
+                "UPDATE site_images SET image_path = :image_path, width = :width, height = :height, " .
+                "alt_text = :alt_text, updated_at = NOW() WHERE section_key = :section_key"
+            );
+            $ins = $pdo->prepare(
+                "INSERT INTO site_images (section_key, image_path, width, height, alt_text, updated_at) " .
+                "VALUES (:section_key, :image_path, :width, :height, :alt_text, NOW())"
+            );
 
             foreach ($targets as $t) {
                 $sel->execute([':section_key' => $t]);

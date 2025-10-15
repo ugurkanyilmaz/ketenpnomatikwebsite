@@ -571,8 +571,9 @@ function PhotoModal({
       if (!res.ok || !data || !data.url) {
         throw new Error(data?.error || data?.message || 'Yükleme başarısız')
       }
-      // server returns relative url like /php/uploads/products/...
-      setFormData({ ...formData, photo_url: data.url })
+  // server returns relative url like /php/uploads/products/...
+  const normalizedUrl = data.url?.startsWith('http') ? data.url : `https://www.ketenpnomatik.com${data.url}`
+      setFormData({ ...formData, photo_url: normalizedUrl })
       alert('Dosya yüklendi ve URL form alanına yerleştirildi.')
       setFile(null)
     } catch (err) {

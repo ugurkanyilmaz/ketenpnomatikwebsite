@@ -4,11 +4,10 @@ import { useSectionImages } from '../../hooks/useSectionImages'
 import { useEffect } from 'react'
 import { applyPageSEO } from '../../utils/other_seo'
 
-export default function Apac() {
-  // Use section gallery first (apac_section*), fallback to about_apac
-  const { hero: apacHero, showcase: apacShowcase } = useSectionImages('apac_section', 'about_apac')
+export default function DeltaRegis() {
+  const { images, hero: brandHero, showcase: brandShowcase } = useSectionImages('delta_regis_section', 'about_delta_regis')
   useEffect(() => {
-    applyPageSEO('about_apac')
+    applyPageSEO('about_deltaregis')
   }, [])
   return (
     <div className="space-y-20">
@@ -23,10 +22,9 @@ export default function Apac() {
         <div className="max-w-7xl mx-auto px-4 py-14 grid lg:grid-cols-2 gap-10 items-center">
           <div>
             <div className="badge badge-primary mb-3">Yetkili Distribütör</div>
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">APAC - Tayvan</h1>
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">Delta Regis(ABD)</h1>
             <p className="mt-4 text-gray-300 max-w-3xl">
-              1978 yılında Tayvan'da kurulan APAC, pnömatik el aletleri ve endüstriyel güç aletleri konusunda dünya çapında lider bir üreticidir. 
-              40 yılı aşkın deneyimi ile otomotiv, elektronik, mobilya ve metal işleme sektörlerinde yüksek kaliteli, dayanıklı ve ergonomik ürünler sunmaktadır.
+              Delta Regis Tools Inc., kökleri ve merkezi Amerika Birleşik Devletleri'nde (ABD) bulunan, tork kontrol sistemleri alanında global çapta tanınan bir Amerikan üreticisidir. Florida, Fort Pierce'taki ana merkezinde tasarlanan ve geliştirilen her bir Delta Regis ürünü, Amerikan mühendisliğinin getirdiği kalite, dayanıklılık ve yenilikçilik standartlarını taşır.
             </p>
             <div className="mt-6">
               <div className="mt-4 flex gap-3">
@@ -36,7 +34,7 @@ export default function Apac() {
             </div>
           </div>
           <div>
-            <img src={apacHero?.image_path || '/professional_banner.png'} alt={apacHero?.alt_text || 'APAC hero'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src={brandHero?.image_path || '/professional_banner.png'} alt={brandHero?.alt_text || 'Delta Regis Ürünleri'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
         </div>
       </motion.section>
@@ -50,20 +48,21 @@ export default function Apac() {
         className="max-w-7xl mx-auto px-4"
       >
         <div className="prose max-w-none mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">APAC Hakkında</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">Delta Regis Hakkında</h2>
           <div className="grid lg:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">📍 Küresel Varlık</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">🎯 Hassasiyet ve Doğruluk</h3>
               <p className="text-gray-700">
-                APAC ürünleri 80'den fazla ülkede distribütör ağı ile satılmaktadır. ISO 9001 kalite yönetim sistemi 
-                sertifikasına sahip olan firma, dünya çapında güvenilir ve kaliteli ürünler sunmaktadır.
+                Delta Regis, elektronik montaj hatları için tork kontrollü vidalama çözümleri sunar.
+                ±%1 hassasiyetinde tork kontrolü ile kusursuz montaj kalitesi garantiler.
+                Her işlem tam kaydedilir ve raporlanabilir.
               </p>
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">🔧 Teknik Mükemmellik</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">📊 Dijital Dönüşüm</h3>
               <p className="text-gray-700">
-                APAC'ın Ar-Ge departmanı sürekli ürün geliştirme ve inovasyon çalışmaları yapmaktadır. 
-                Ergonomik tasarım, düşük titreşim, yüksek performans ve uzun ömür markanın temel değerleridir.
+                Endüstri 4.0 uyumlu sistemler, üretim verilerinizi gerçek zamanlı takip eder.
+                MES/ERP entegrasyonu ile tam izlenebilirlik sağlar. Kalite kontrol ve raporlama otomasyonu sunar.
               </p>
             </div>
           </div>
@@ -71,58 +70,59 @@ export default function Apac() {
 
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           <div>
-            <img src={apacShowcase?.image_path || '/keten_banner.jpg'} alt={apacShowcase?.alt_text || 'APAC Pnömatik Aletler'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src={(images[1]?.image_path) || brandShowcase?.image_path || '/endus.jpg'} alt={brandShowcase?.alt_text || 'Delta Regis Çözümleri'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
           <div>
-            <h3 className="text-xl md:text-2xl font-bold text-gray-900">Endüstriyel Dayanıklılık</h3>
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900">İleri Teknoloji</h3>
             <p className="mt-3 text-gray-700">
-              APAC ürünleri, ağır sanayi koşullarında uzun süreli kullanım için tasarlanmıştır. 
-              Yüksek kaliteli malzemeler ve hassas üretim teknikleri ile her ürün maksimum performans sunar.
+              Delta Regis sistemleri, elektronik ve beyaz eşya montajında yeni standartlar belirler.
+              Mikro işlemcili kontrol sistemleri ile her operasyon kusursuz gerçekleşir.
             </p>
             <ul className="mt-4 space-y-2">
               <li className="flex items-center gap-2">
                 <span className="text-primary">✓</span>
-                <span className="text-gray-700">7/24 endüstriyel kullanıma uygun</span>
+                <span className="text-gray-700">Hassas tork kontrolü (±%1)</span>
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-primary">✓</span>
-                <span className="text-gray-700">Düşük bakım maliyeti</span>
+                <span className="text-gray-700">İzlenebilirlik ve veri kaydı</span>
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-primary">✓</span>
-                <span className="text-gray-700">Yüksek verimlilik</span>
+                <span className="text-gray-700">Endüstri 4.0 entegrasyonu</span>
               </li>
             </ul>
           </div>
         </div>
+
         <div className="grid lg:grid-cols-2 gap-8 items-center mt-10">
           <div className="order-1 lg:order-none">
-            <h3 className="text-xl md:text-2xl font-bold text-gray-900">Geniş Ürün Portföyü</h3>
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900">Uygulama Alanları</h3>
             <p className="mt-3 text-gray-700">
-              Vidalama, delme, taşlama, zımparalama ve kesme uygulamaları için kapsamlı çözümler. 
-              Her sektörün ihtiyacına özel tasarlanmış 500'den fazla model ile yanınızdayız.
+              Elektronik montaj, beyaz eşya ve otomotiv elektroniklerinde hassas vidalama.
+              Kritik uygulamalarda %100 kalite güvencesi sağlar.
             </p>
             <div className="mt-4 grid grid-cols-2 gap-3">
               <div className="bg-base-200 p-4 rounded-lg">
-                <div className="text-2xl font-bold text-primary">500+</div>
-                <div className="text-sm text-gray-600">Farklı Model</div>
+                <div className="text-2xl font-bold text-primary">±%1</div>
+                <div className="text-sm text-gray-600">Tork Doğruluğu</div>
               </div>
               <div className="bg-base-200 p-4 rounded-lg">
-                <div className="text-2xl font-bold text-primary">80+</div>
-                <div className="text-sm text-gray-600">Ülkede Satış</div>
+                <div className="text-2xl font-bold text-primary">100%</div>
+                <div className="text-sm text-gray-600">İşlem Kaydı</div>
               </div>
               <div className="bg-base-200 p-4 rounded-lg">
-                <div className="text-2xl font-bold text-primary">40+</div>
-                <div className="text-sm text-gray-600">Yıllık Tecrübe</div>
+                <div className="text-2xl font-bold text-primary">Real-time</div>
+                <div className="text-sm text-gray-600">Veri İzleme</div>
               </div>
               <div className="bg-base-200 p-4 rounded-lg">
-                <div className="text-2xl font-bold text-primary">ISO 9001</div>
-                <div className="text-sm text-gray-600">Sertifikalı</div>
+                <div className="text-2xl font-bold text-primary">Smart</div>
+                <div className="text-sm text-gray-600">Üretim Yönetimi</div>
               </div>
             </div>
           </div>
           <div>
-            <img src={apacShowcase?.image_path || '/endus.jpg'} alt={apacShowcase?.alt_text || 'APAC Endüstriyel Uygulamalar'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img src={(images[2]?.image_path) || '/professional_banner.png'} alt="Delta Regis Uygulamalar" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
         </div>
       </motion.section>
@@ -138,8 +138,8 @@ export default function Apac() {
         <div className="max-w-7xl mx-auto px-4 py-10 rounded-2xl">
           <div className="grid lg:grid-cols-3 gap-6 items-center rounded-2xl border border-base-300 bg-base-100 p-8">
             <div className="lg:col-span-2">
-              <h3 className="text-2xl font-extrabold text-gray-900">Sorununuzu paylaşın, çözüm önerelim</h3>
-              <p className="mt-2 text-gray-700">Uygulama analizi, ürün seçimi ve devreye alma için iletişime geçin.</p>
+              <h3 className="text-2xl font-extrabold text-gray-900">Hassas montaj çözümleri için bizi arayın</h3>
+              <p className="mt-2 text-gray-700">Tork kontrolü, izlenebilirlik ve entegrasyon için uzman ekibimizle iletişime geçin.</p>
             </div>
             <div className="flex gap-3 lg:justify-end">
               <ScrollToTopLink to="/iletisim" className="btn btn-primary">İletişim</ScrollToTopLink>

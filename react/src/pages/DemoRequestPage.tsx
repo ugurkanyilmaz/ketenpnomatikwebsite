@@ -58,22 +58,37 @@ export default function DemoRequestPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
-    // Form validasyonu
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone) {
+    // Zorunlu alanlar
+    if (!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim() || !formData.phone.trim()) {
       alert('Lütfen zorunlu alanları doldurun')
       return
     }
-
-
-    const hasEmptyProduct = formData.products.some(p => !p.name)
-    if (hasEmptyProduct) {
+    // E-posta formatı
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formData.email)) {
+      alert('Geçerli bir e-posta adresi girin')
+      return
+    }
+    // Telefon formatı (basit TR mobil): normalize to digits then accept
+    // examples: 05XXXXXXXXX, +905XXXXXXXXX, 905XXXXXXXXX
+    const cleanedPhone = formData.phone.replace(/\D/g, '')
+    const phoneRegex = /^(?:90|0)?5\d{9}$/
+    if (!phoneRegex.test(cleanedPhone)) {
+      alert('Geçerli bir telefon numarası girin (05XXXXXXXXX)')
+      return
+    }
+    // Ürünler: isim ve adet > 0
+    if (formData.products.some(p => !p.name.trim())) {
       alert('Lütfen tüm ürünleri seçin')
       return
     }
-    
-    // POST to backend demo_request endpoint. If it doesn't exist yet, the request will 404.
-    const payload = { ...formData }
+    if (formData.products.some(p => !p.quantity || p.quantity < 1)) {
+      alert('Her ürün için adet en az 1 olmalı')
+      return
+    }
+    // POST to backend demo_request endpoint
+  // send normalized phone (digits only) to backend
+  const payload = { ...formData, phone: cleanedPhone }
     fetch('/php/api/demo_request.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -81,11 +96,7 @@ export default function DemoRequestPage() {
     }).catch(() => {
       // ignore network errors; still show success UI as fallback
     })
-    
-    // Başarılı gönderim simülasyonu
     setSubmitted(true)
-    
-    // 3 saniye sonra formu sıfırla
     setTimeout(() => {
       setSubmitted(false)
       setFormData({

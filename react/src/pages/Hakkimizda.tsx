@@ -16,6 +16,9 @@ export default function Hakkimizda() {
     { id: "kolver", name: "Kolver", img: "/kolver.jpg", desc: "Kolver hakkında açıklama buraya gelecek." },
     { id: "apac", name: "APAC", img: "/apac.jpg", desc: "APAC hakkında açıklama buraya gelecek." },
     { id: "hiyoki", name: "Hiyoki", img: "/hiyoki.jpg", desc: "Hiyoki hakkında açıklama buraya gelecek." },
+    { id: "hawanox", name: "Hawanox", img: "/hawanox.jpg", desc: "Hawanox hakkında açıklama." },
+    { id: "asa", name: "ASA", img: "/asa.jpg", desc: "ASA hakkında açıklama." },
+    { id: "delta-regis", name: "Delta Regis", img: "/delta_regis.jpg", desc: "Delta Regis hakkında açıklama." },
   ]
 
   return (
@@ -46,7 +49,7 @@ export default function Hakkimizda() {
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
-                      <span className="text-sm font-semibold">Yetkili Distribütör</span>
+                      <span className="text-sm font-semibold" style={{ display: 'inline-block', padding: '0.25rem 0.6rem', borderRadius: '9999px', background: 'linear-gradient(90deg,#ff8c42,#f97316)', color: '#fff' }}>Yetkili Distribütör</span>
                     </div>
 
                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white mb-6 leading-tight">

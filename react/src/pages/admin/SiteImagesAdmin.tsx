@@ -19,6 +19,11 @@ const SECTIONS: { key: string; label: string; count?: number }[] = [
   { key: 'about_hiyoki', label: 'Hakkımızda - Hiyoki' },
   { key: 'about_service', label: 'Hakkımızda - Servis' },
 
+  // New brands - Hakkımızda index
+  { key: 'about_hawanox', label: 'Hakkımızda - Hawanox' },
+  { key: 'about_asa', label: 'Hakkımızda - ASA' },
+  { key: 'about_delta_regis', label: 'Hakkımızda - Delta Regis' },
+
   // Details pages (3 photos each)
   { key: 'kolver_section_1', label: 'Kolver detay 1' },
   { key: 'kolver_section_2', label: 'Kolver detay 2' },
@@ -31,6 +36,19 @@ const SECTIONS: { key: string; label: string; count?: number }[] = [
   { key: 'hiyoki_section_1', label: 'Hiyoki detay 1' },
   { key: 'hiyoki_section_2', label: 'Hiyoki detal 2' },
   { key: 'hiyoki_section_3', label: 'Hiyoki detay 3' },
+
+  // New brand detail pages (3 photos each)
+  { key: 'hawanox_section_1', label: 'Hawanox detay 1' },
+  { key: 'hawanox_section_2', label: 'Hawanox detay 2' },
+  { key: 'hawanox_section_3', label: 'Hawanox detay 3' },
+
+  { key: 'asa_section_1', label: 'ASA detay 1' },
+  { key: 'asa_section_2', label: 'ASA detay 2' },
+  { key: 'asa_section_3', label: 'ASA detay 3' },
+
+  { key: 'delta_regis_section_1', label: 'Delta Regis detay 1' },
+  { key: 'delta_regis_section_2', label: 'Delta Regis detay 2' },
+  { key: 'delta_regis_section_3', label: 'Delta Regis detay 3' },
 ]
 
   function ImageRow({ sectionKey, image, onUpload, onUpdateAlt, onDelete }: {

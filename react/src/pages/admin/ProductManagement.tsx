@@ -146,6 +146,30 @@ export default function ProductManagement() {
   const brands = Array.from(new Set(products.map(p => p.brand).filter(Boolean)))
   const totalPages = Math.ceil(totalProducts / itemsPerPage)
 
+  // Helper: return an array of pages to show (numbers and '...')
+  const getVisiblePages = (total: number, current: number, maxButtons = 7) => {
+    const pages: Array<number | string> = []
+    if (total <= maxButtons) {
+      for (let i = 1; i <= total; i++) pages.push(i)
+      return pages
+    }
+
+    const side = Math.floor((maxButtons - 3) / 2) // buttons beside current
+    const left = Math.max(2, current - side)
+    const right = Math.min(total - 1, current + side)
+
+    pages.push(1)
+    if (left > 2) pages.push('...')
+
+    for (let i = left; i <= right; i++) pages.push(i)
+
+    if (right < total - 1) pages.push('...')
+    pages.push(total)
+
+    // Ensure current is visible; if near edges, adjust window
+    return pages
+  }
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -160,6 +184,28 @@ export default function ProductManagement() {
           >
             <Upload size={20} />
             Toplu Yükle
+          </button>
+          <button
+            className="btn btn-sm btn-primary"
+            onClick={async () => {
+              try {
+                const res = await fetch('/php/api/products.php?limit=1000000')
+                if (!res.ok) throw new Error('Export failed')
+                const data = await res.json()
+                const blob = new Blob([JSON.stringify(data.products || [], null, 2)], { type: 'application/json' })
+                const a = document.createElement('a')
+                a.href = URL.createObjectURL(blob)
+                a.download = `products_export_${new Date().toISOString().split('T')[0]}.json`
+                a.click()
+                URL.revokeObjectURL(a.href)
+              } catch (err) {
+                console.error('Export failed', err)
+                alert('Dışa aktarma başarısız: ' + (err instanceof Error ? err.message : 'Hata'))
+              }
+            }}
+          >
+            <Upload size={20} />
+            Export All
           </button>
           <button
             onClick={() => {
@@ -401,30 +447,40 @@ export default function ProductManagement() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center mt-6">
-          <div className="join">
-            <button
-              className="join-item btn"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(currentPage - 1)}
-            >
-              «
-            </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <div className="w-full max-w-xl overflow-x-auto">
+            <div className="flex items-center gap-2 px-2">
               <button
-                key={page}
-                className={`join-item btn ${page === currentPage ? 'btn-active' : ''}`}
-                onClick={() => setCurrentPage(page)}
+                className="btn btn-sm"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
               >
-                {page}
+                «
               </button>
-            ))}
-            <button
-              className="join-item btn"
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(currentPage + 1)}
-            >
-              »
-            </button>
+
+              {/* Compute a compact set of page buttons with ellipses */}
+              {getVisiblePages(totalPages, currentPage, 7).map((p, idx) => (
+                <span key={idx}>
+                  {p === '...' ? (
+                    <span className="px-2 text-sm text-base-content/70">{p}</span>
+                  ) : (
+                    <button
+                      className={`btn btn-sm ${p === currentPage ? 'btn-active' : ''}`}
+                      onClick={() => setCurrentPage(Number(p))}
+                    >
+                      {p}
+                    </button>
+                  )}
+                </span>
+              ))}
+
+              <button
+                className="btn btn-sm"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+              >
+                »
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -864,7 +920,8 @@ function ImageUploadField({
       const data = await res.json()
 
       if (data.success && data.url) {
-        onChange(data.url)
+  const normalized = data.url?.startsWith('http') ? data.url : `https://www.ketenpnomatik.com${data.url}`
+        onChange(normalized)
         alert('Görsel başarıyla yüklendi!')
       } else {
         throw new Error(data.error || 'Upload failed')

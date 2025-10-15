@@ -26,18 +26,19 @@ $notes = isset($data['notes']) ? trim((string)$data['notes']) : '';
 $products = isset($data['products']) ? json_encode($data['products'], JSON_UNESCAPED_UNICODE) : '[]';
 
 try {
+    // Ensure demo_requests table exists (MySQL-compatible DDL)
     $pdo->beginTransaction();
     $pdo->exec("CREATE TABLE IF NOT EXISTS demo_requests (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        first_name TEXT,
-        last_name TEXT,
-        email TEXT,
-        phone TEXT,
-        company TEXT,
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        first_name VARCHAR(255),
+        last_name VARCHAR(255),
+        email VARCHAR(255),
+        phone VARCHAR(255),
+        company VARCHAR(255),
         products TEXT,
         notes TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )");
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 
     $stmt = $pdo->prepare('INSERT INTO demo_requests (first_name,last_name,email,phone,company,products,notes) VALUES (:first,:last,:email,:phone,:company,:products,:notes)');
     $stmt->execute([

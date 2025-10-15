@@ -187,7 +187,7 @@ export default function Article() {
     }
 
     tryFetchProducts()
-  }, [seriesId])
+  }, [seriesId, catRows])
 
   useEffect(() => {
     if (!tier || !categoryId) return
@@ -214,6 +214,58 @@ export default function Article() {
     return result
   }, [catRows])
 
+  // Return a usable src or empty string; also accept malformed inputs and sanitize them
+  const getImgOrFallback = (raw: any, fallback: string) => {
+    try {
+      if (!raw) return fallback
+      let s = String(raw).trim()
+      if (s === '' || s.toUpperCase() === 'NULL') return fallback
+
+      // Remove backslash-escapes from JSON-encoded values
+      s = s.replace(/\\\//g, '/')
+      s = s.replace(/\\/g, '')
+
+      // collapse duplicate protocols like https://https://
+      s = s.replace(/^(https?:\/\/)+/i, (m) => m.replace(/(https?:\/\/)+/i, '$1'))
+
+      // If it looks like a protocol-relative path
+      if (s.startsWith('//')) s = 'https:' + s
+
+      // If still doesn't start with http and starts with '/', prefix canonical host
+      if (!/^https?:\/\//i.test(s) && s.startsWith('/')) {
+        // Some APIs return paths like '/uploads/products/...' (missing the '/react/public' segment)
+        // Normalize those to the cPanel-visible path used on the site: '/react/public/uploads/...'
+        if (s.includes('/uploads/') && s.indexOf('/react/public') === -1) {
+          s = 'https://ketenpnomatik.com' + '/react/public' + s.replace(/^\/+/, '/')
+        } else {
+          s = 'https://ketenpnomatik.com' + s
+        }
+      }
+
+      // If hostname is ketenpnomatik.* force canonical host
+      try {
+        const u = new URL(s)
+        if (u.hostname && u.hostname.endsWith('ketenpnomatik.com')) {
+          // Ensure the path uses the cPanel-visible '/react/public' prefix when dealing with uploads
+          let path = u.pathname || '/'
+          if (path.includes('/uploads/') && path.indexOf('/react/public') === -1) {
+            // insert '/react/public' before the first '/uploads/' segment
+            path = '/react/public' + path.replace(/^\/+/, '/')
+          }
+          s = 'https://ketenpnomatik.com' + path + u.search + u.hash
+        }
+      } catch (e) {
+        // ignore URL parse errors
+      }
+
+      // final sanity check
+      if (!s || s.toUpperCase() === 'NULL') return fallback
+      return s
+    } catch (e) {
+      return fallback
+    }
+  }
+
   useEffect(() => {
     if (!cat) return
 
@@ -236,6 +288,174 @@ export default function Article() {
     applyArticleSEOWithProducts(seoData, products)
   }, [cat, products, tier, categoryId, seriesId])
 
+  const visibleFeatures = useMemo(() => {
+    return Array.from({ length: 11 }, (_, i) => i + 1).filter((num) => {
+      return products.some(p => {
+        const val = p[`feature${num}` as keyof Product]
+        return val && String(val).trim() !== '' && String(val).toUpperCase() !== 'NULL'
+      })
+    })
+  }, [products])
+
+  // (usable areas are derived inline where needed via getUniqueCategoriesFromAreas)
+  
+  // --- NEW: client-side mobile detection ---
+  const [isMobile, setIsMobile] = useState<boolean>(false)
+  useEffect(() => {
+    const check = () => setIsMobile(typeof window !== 'undefined' ? window.innerWidth <= 768 : false)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  // --- NEW: compact mobile view using same data (minimal, mobile-friendly) ---
+  const MobileArticle = ({ cat, products, relatedSeries }: { cat: any; products: Product[]; relatedSeries: any[] }) => {
+    return (
+      <section className="bg-base-100">
+        <div className="max-w-xl mx-auto px-4 py-6">
+          <div className="text-center mb-4">
+            <h1 className="text-xl font-bold">{cat.title}</h1>
+            <p className="text-sm text-muted mt-1">{cat.title_subtext}</p>
+          </div>
+
+          {/* Öne Çıkan Özellikler - mobile */}
+          <div className="mb-4">
+            <div className="card bg-base-200 shadow">
+              <div className="card-body p-3">
+                <h3 className="font-semibold mb-2">Öne Çıkan Özellikler</h3>
+                <div className="text-sm whitespace-pre-line">{cat.featured || 'Öne çıkan özellikler burada gösterilecektir.'}</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <img
+              src={getImgOrFallback(cat.main_image, `https://picsum.photos/seed/${seriesId}/800/300`)}
+              alt={cat.title}
+              className="w-full h-auto rounded object-cover"
+              style={{ maxHeight: 220 }}
+              loading="lazy"
+            />
+          </div>
+
+          {/* Destek - mobile */}
+          <div className="mb-4">
+            <div className="card bg-base-200 shadow">
+              <div className="card-body p-3">
+                <h3 className="font-semibold mb-2">Destek</h3>
+                <p className="text-sm">Teknik belgeler ve kullanım kılavuzları için bizimle iletişime geçin.</p>
+                <div className="mt-3">
+                  <Link to="/iletisim" className="btn btn-primary btn-sm">İletişim</Link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <h2 className="font-semibold mb-2">Seri Bilgileri</h2>
+            <div className="text-sm whitespace-pre-line">{cat.info || cat.about}</div>
+          </div>
+
+          {/* Nasıl Kullanılır? - mobile (video if present, otherwise CTA card) */}
+          <div className="mb-4">
+            <h2 className="font-semibold mb-2">Nasıl Kullanılır?</h2>
+            {cat.video_url && cat.video_url.trim() !== '' ? (
+              <div className="rounded-box overflow-hidden shadow">
+                <iframe className="w-full" style={{ minHeight: 180 }} src={cat.video_url} title="Çalışma Videosu" allowFullScreen></iframe>
+              </div>
+            ) : (
+              <div className="card bg-warning/10 shadow">
+                <div className="card-body p-3 text-center">
+                  <p className="text-sm mb-3">Çalışma videosu yakında eklenecek. Detaylı bilgi için iletişime geçin.</p>
+                  <Link to="/iletisim" className="btn btn-warning btn-sm">İletişime Geç</Link>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <h2 className="font-semibold mb-2">Ürünler</h2>
+            {products.length === 0 ? (
+              <div className="alert alert-info">Bu seri için henüz ürün eklenmemiş.</div>
+            ) : (
+              products.map(p => (
+                <div key={p.id} className="card mb-3">
+                  <div className="card-body p-3 flex gap-3 items-start">
+                    <img src={getImgOrFallback(p.main_img, `https://picsum.photos/seed/${encodeURIComponent(p.sku)}/120/90`)} alt={p.sku} className="w-20 h-14 object-contain rounded" />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold truncate">{p.sku}</div>
+                      <div className="text-xs text-base-content/70 mt-1 line-clamp-3">
+                        {p.paragraph || p.description || '-'}
+                      </div>
+                      <div className="mt-2">
+                        <Link to={`/urun/${p.sku}`} className="btn btn-primary btn-sm">Detay</Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Aynı Kategorideki Diğer Seriler - mobile */}
+          {relatedSeries && relatedSeries.length > 0 && (
+            <div className="mb-4">
+              <h2 className="font-semibold mb-2">Aynı Kategorideki Diğer Seriler</h2>
+              <div className="flex gap-3 overflow-x-auto py-2">
+                {relatedSeries.map((s) => {
+                  const key = s.subchild_id ?? s.subchild ?? s.id ?? s.title
+                  const img = getImgOrFallback(s.main_image, `https://picsum.photos/seed/${encodeURIComponent(String(key))}/300/180`)
+                  return (
+                    <Link key={key} to={`/kategoriler/${tier}/${categoryId}/${encodeURIComponent(String(key))}`} className="card w-[200px] shrink-0">
+                      <div className="card-body p-2">
+                        <img src={img} alt={s.title} className="w-full h-28 object-cover rounded mb-2" />
+                        <div className="text-sm font-medium truncate">{s.title}</div>
+                      </div>
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {cat.usable_areas && (() => {
+            const areas = getUniqueCategoriesFromAreas(cat.usable_areas)
+            const containerClass = areas.length === 3
+              ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'
+              : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'
+            return (
+              <div className="mt-8 sm:mt-12 px-2 sm:px-0">
+                <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Nerelerde Kullanılır?</h2>
+                <div className={containerClass}>
+                  {areas.map((area: any) => {
+                    const Icon = iconMap[area.icon] ?? null
+                    return (
+                      <div
+                        key={area.id}
+                        className="flex flex-col items-center justify-center text-center p-6 bg-[#f8f7ff] rounded-2xl shadow-sm transition hover:shadow-md"
+                      >
+                        {Icon && <Icon className="w-10 h-10 text-primary mb-2" />}
+                        <div className="font-medium">{area.title}</div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })()}
+
+          <div className="text-center mt-6">
+            <Link to="/kategoriler" className="btn btn-outline btn-sm">Kategorilere Dön</Link>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  // Render mobile simplified view early
+  // NOTE: mobile rendering must happen after loading / not-found checks
+  // (moved below to avoid using `cat` when it's null)
+
   if (loading) {
     return (
       <section className="bg-base-100">
@@ -252,11 +472,12 @@ export default function Article() {
     return (
       <section className="bg-base-100">
         <div className="max-w-7xl mx-auto px-4 py-20">
-          <div className="breadcrumbs text-sm py-4">
-            <ul>
+          <div className="breadcrumbs text-sm py-4 overflow-x-auto">
+            <ul className="flex flex-wrap">
               <li><Link to="/">Ana sayfa</Link></li>
               <li><Link to="/kategoriler">Kategoriler</Link></li>
-              <li>Bulunamadı</li>
+              <li>{cat?.tier || 'Kategori'}</li>
+              <li className="whitespace-nowrap">{cat?.title || 'Alt Kategori'}</li>
             </ul>
           </div>
           <div className="alert alert-warning">
@@ -267,9 +488,14 @@ export default function Article() {
     )
   }
 
+  // Safe place to render mobile view (cat and loading are valid)
+  if (isMobile) {
+    return <MobileArticle cat={cat} products={products} relatedSeries={relatedSeries} />
+  }
+
   return (
     <section className="bg-base-100">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="breadcrumbs text-sm py-4">
           <ul>
             <li><Link to="/">Ana sayfa</Link></li>
@@ -278,27 +504,35 @@ export default function Article() {
           </ul>
         </div>
 
-        <div className="hero rounded-box overflow-hidden shadow mb-6 sm:mb-10">
-          <div style={{ position: 'relative', paddingBottom: '33.333%', height: 0 }}>
-            <img
-              src={cat.main_image && cat.main_image.trim() !== '' ? cat.main_image : `https://picsum.photos/seed/${seriesId}/1200/400`}
-              alt={`${cat.title} - Kategori Görseli`}
-              title={cat.title}
-              width={1200}
-              height={400}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          </div>
-          <div className="hero-overlay bg-black/50" />
-          <div className="hero-content text-neutral-content text-center px-4">
-            <div className="max-w-2xl">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">{cat.title}</h1>
-              <p className="mt-2 sm:mt-4 text-sm sm:text-base">{cat.title_subtext || 'Kategori detayları'}</p>
+    <div className="hero rounded-box overflow-hidden shadow mb-6 sm:mb-10 max-w-4xl mx-auto">
+      <div className="w-full" style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ paddingTop: '75%', position: 'relative' }}>
+          <img
+            src={getImgOrFallback(cat.main_image, `https://picsum.photos/seed/${seriesId}/600/450`)}
+            alt={`${cat.title} - Kategori Görseli`}
+            title={cat.title}
+            width={600}
+            height={450}
+            className="absolute inset-0 w-full h-full object-contain"
+            loading="lazy"
+            onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${seriesId}/600/450` }}
+          />
+          
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent p-4 sm:p-6">
+            <div className="text-center">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
+                {cat.title}
+              </h1>
+              <p className="mt-2 text-sm sm:text-base text-white/90 drop-shadow-md">
+                {cat.title_subtext || 'Kategori detayları'}
+              </p>
             </div>
           </div>
         </div>
+      </div>
+    </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+  <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           <main className="lg:col-span-3">
             <article className="prose max-w-none px-2 sm:px-0">
               <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">{cat.title} Hakkında:</h2>
@@ -308,18 +542,22 @@ export default function Article() {
             </article>
 
             <div className="mt-6 sm:mt-8 grid md:grid-cols-2 gap-4 sm:gap-6 items-start px-2 sm:px-0">
-              <div style={{ position: 'relative', paddingBottom: '75%', height: 0 }}>
-                <img
-                  src={cat?.img1 && cat.img1.trim() !== '' ? cat.img1 : `https://picsum.photos/seed/${seriesId}-hero/600/400`}
-                  alt={`${cat.title} - Ürün Detay Görseli`}
-                  title={cat.title}
-                  width={800}
-                  height={600}
-                  className="absolute inset-0 w-full h-full object-contain rounded-box shadow"
-                  loading="lazy"
-                />
-              </div>
-              <div className="flex flex-col items-stretch gap-2 sm:gap-3 w-full">
+                {/* Simplified image container: make image larger and fill the box (responsive) */}
+                <div className="w-full px-2 sm:px-0">
+                  <div className="w-full max-w-[420px] mx-auto">
+                  <img
+                    src={getImgOrFallback(cat?.img1, `https://picsum.photos/seed/${seriesId}-hero/420/315`) }
+                    alt={`${cat.title} - Ürün Detay Görseli`}
+                    title={cat.title}
+                    className="w-full h-auto object-cover rounded-box shadow"
+                    loading="lazy"
+                    style={{ display: 'block', maxWidth: '100%' }}
+                    onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${seriesId}-hero/420/315` }}
+                  />
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-stretch gap-2 sm:gap-3 w-full">
                 <div className="w-full py-0.5 sm:py-1">
                   <svg className="w-full h-4 sm:h-6 md:h-8" viewBox="0 0 100 10" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0 10 C20 0 40 0 60 10 C80 20 100 10 100 10 L100 0 L0 0 Z" fill="#f97316" />
@@ -373,83 +611,62 @@ export default function Article() {
                     <span className="loading loading-spinner loading-md"></span>
                   </div>
                 ) : products.length > 0 ? (
-                  (() => {
-                    const visibleFeatures = Array.from({ length: 11 }, (_, i) => i + 1).filter((num) => {
-                      return products.some(p => {
-                        const val = p[`feature${num}` as keyof Product]
-                        return val && String(val).trim() !== '' && String(val).toUpperCase() !== 'NULL'
-                      })
-                    })
-                    const totalColumns = visibleFeatures.length + 2
-                    
-                    let textSize = 'text-sm'
-                    if (totalColumns > 8) textSize = 'text-xs'
-                    if (totalColumns > 10) textSize = 'text-[10px]'
-                    
-                    return (
-                      <div className="rounded-lg shadow-xl border border-base-300 w-full">
-                        {/* Responsive table wrapper: allows horizontal scroll on small screens but keeps desktop layout */}
-                        <div className="w-full overflow-x-auto touch-pan-x -mx-2 px-2">
-                          <table className={`w-full ${textSize} article-table-responsive`} style={{ tableLayout: 'fixed' }}>
-                            <thead>
-                              <tr className="bg-neutral text-neutral-content">
-                                <th className="font-bold px-1 py-3 text-left" style={{ minWidth: '80px' }}>Model (SKU)</th>
-                                {Array.from({ length: 11 }, (_, i) => i + 1).map((num) => {
-                              const hasFeature = products.some(p => {
-                                const featureValue = p[`feature${num}` as keyof Product]
-                                return featureValue && String(featureValue).trim() !== '' && String(featureValue).toUpperCase() !== 'NULL'
-                              })
-                              
-                              if (!hasFeature) return null
-                              
-                              const firstProduct = products.find(p => {
-                                const val = p[`feature${num}` as keyof Product]
-                                return val && String(val).trim() !== '' && String(val).toUpperCase() !== 'NULL'
-                              })
-                              const featureText = firstProduct?.[`feature${num}` as keyof Product] as string || ''
-                              const featureName = featureText.includes(':') 
-                                ? featureText.split(':')[0].trim() 
-                                : `Özellik ${num}`
-                              
-                              return <th key={num} className="font-bold px-1 py-3 text-left">{featureName}</th>
-                            })}
-                            <th className="px-1 py-3"></th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-base-100">
-                          {products.map((product, idx) => (
-                            <tr key={product.id} className={`hover:bg-primary/5 transition-colors border-b border-base-200 ${idx % 2 === 0 ? 'bg-base-50' : 'bg-white'}`}>
-                              <td className="font-semibold px-1 py-3 text-primary">{product.sku}</td>
-                              {Array.from({ length: 11 }, (_, i) => i + 1).map((num) => {
-                                const hasFeature = products.some(p => {
-                                  const val = p[`feature${num}` as keyof Product]
-                                  return val && String(val).trim() !== '' && String(val).toUpperCase() !== 'NULL'
-                                })
-                                
-                                if (!hasFeature) return null
-                                
-                                const featureValue = product[`feature${num}` as keyof Product] as string || ''
-                                const displayValue = featureValue.includes(':')
-                                  ? featureValue.split(':').slice(1).join(':').trim()
-                                  : featureValue
-                                
-                                return (
-                                  <td key={num} className="px-1 py-3 text-base-content/80">{displayValue || '-'}</td>
-                                )
-                              })}
-                              <td className="px-1 py-3">
-                                <Link to={`/urun/${product.sku}`} className="btn btn-primary btn-xs whitespace-nowrap shadow-sm hover:shadow-md transition-shadow">
-                                  Detay
-                                </Link>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                    )
-                  })()
+                  <div className="rounded-lg shadow-xl border border-base-300 w-full">
+                    {/* Responsive table wrapper: allows horizontal scroll on small screens but keeps desktop layout */}
+                    <div className="w-full table-wrapper">
+                      <table className={`w-full text-sm article-table-responsive`} style={{ tableLayout: 'fixed' }}>
+                        <thead>
+                  <tr className="bg-neutral text-neutral-content">
+                    <th className="font-bold px-2 py-3 text-left" style={{ minWidth: '60px' }}>Görsel</th>
+                    <th className="font-bold px-2 py-3 text-left" style={{ minWidth: '120px' }}>Model (SKU)</th>
+                                  {visibleFeatures.map((num) => {
+                                    const firstProduct = products.find(p => {
+                                      const val = p[`feature${num}` as keyof Product]
+                                      return val && String(val).trim() !== '' && String(val).toUpperCase() !== 'NULL'
+                                    })
+                                    const featureText = firstProduct?.[`feature${num}` as keyof Product] as string || ''
+                                    const featureName = featureText.includes(':')
+                                      ? featureText.split(':')[0].trim()
+                                      : `Özellik ${num}`
+                                    return <th key={num} className="font-bold px-2 py-3 text-left">{featureName}</th>
+                                  })}
+                                <th className="px-2 py-3"></th>
+                              </tr>
+                            </thead>
+                            <tbody className="bg-base-100">
+                              {products.map((product, idx) => (
+                                <tr key={product.id} className={`hover:bg-primary/5 transition-colors border-b border-base-200 ${idx % 2 === 0 ? 'bg-base-50' : 'bg-white'}`}>
+                                  <td className="px-2 py-2 align-top">
+                                    <img
+                                      src={getImgOrFallback(product.main_img, `https://picsum.photos/seed/${encodeURIComponent(product.sku)}/80/60`) }
+                                      alt={product.sku}
+                                      className="w-20 h-14 object-contain rounded"
+                                      loading="lazy"
+                                      onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${encodeURIComponent(product.sku)}/80/60` }}
+                                      style={{ maxWidth: '100%', height: 'auto' }}
+                                    />
+                                  </td>
+                                  <td className="font-semibold px-2 py-3 text-primary truncate max-w-[160px]">{product.sku}</td>
+                                  {visibleFeatures.map((num) => {
+                                    const featureValue = product[`feature${num}` as keyof Product] as string || ''
+                                    const displayValue = featureValue.includes(':')
+                                      ? featureValue.split(':').slice(1).join(':').trim()
+                                      : featureValue
+                                    return (
+                                      <td key={num} className="px-2 py-3 text-base-content/80 break-words">{displayValue || '-'}</td>
+                                    )
+                                  })}
+                                  <td className="px-2 py-3">
+                                    <Link to={`/urun/${product.sku}`} className="btn btn-primary btn-xs whitespace-nowrap shadow-sm hover:shadow-md transition-shadow">
+                                      Detay
+                                    </Link>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
                 ) : (
                   <div className="alert alert-info">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6">
@@ -494,27 +711,31 @@ export default function Article() {
               </div>
             </div>
 
-            {cat?.usable_areas && (
-            <div className="mt-8 sm:mt-12 px-2 sm:px-0">
-              <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Nerelerde Kullanılır?</h2>
-              <div className="grid gap-3 sm:gap-4 md:gap-6 justify-center"
-                style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 260px))', justifyContent: 'center' }}>
-                {getUniqueCategoriesFromAreas(cat.usable_areas).map((category) => {
-                  const IconComponent = iconMap[category.icon]
-                  return (
-                    <div key={category.id} className="card bg-gradient-to-br from-primary/10 to-primary/5 shadow-lg hover:shadow-xl transition-shadow max-w-[260px] mx-auto">
-                      <div className="card-body p-3 sm:p-4 md:p-6 text-center">
-                        <div className="flex justify-center mb-2">
-                          {IconComponent && <IconComponent className="text-primary w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />}
-                        </div>
-                        <h3 className="font-bold text-xs sm:text-sm md:text-base lg:text-lg text-black leading-tight">{category.title}</h3>
+            {cat?.usable_areas && (() => {
+            const areas = getUniqueCategoriesFromAreas(cat.usable_areas)
+            const containerClass = areas.length === 3
+              ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'
+              : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'
+            return (
+              <div className="mt-8 sm:mt-12 px-2 sm:px-0">
+                <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Nerelerde Kullanılır?</h2>
+                <div className={containerClass}>
+                  {areas.map((area: any) => {
+                    const Icon = iconMap[area.icon] ?? null
+                    return (
+                      <div
+                        key={area.id}
+                        className="flex flex-col items-center justify-center text-center p-6 bg-[#f8f7ff] rounded-2xl shadow-sm transition hover:shadow-md"
+                      >
+                        {Icon && <Icon className="w-10 h-10 text-primary mb-2" />}
+                        <div className="font-medium">{area.title}</div>
                       </div>
-                    </div>
-                  )
-                })}
+                    )
+                  })}
+                </div>
               </div>
-            </div>
-            )}
+            )
+            })()}
 
             <div className="mt-8 sm:mt-12 px-2 sm:px-0">
               <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Nasıl Kullanılır?</h2>
@@ -532,7 +753,7 @@ export default function Article() {
                   <div className="card-body text-center p-4 sm:p-6">
                     <div className="flex justify-center mb-3 sm:mb-4">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 sm:h-16 sm:w-16 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                     </div>
                     <h3 className="text-lg sm:text-xl font-bold mb-2">Çalışma Videosu Yakında Eklenecek</h3>
@@ -557,29 +778,31 @@ export default function Article() {
             {relatedSeries.length > 0 && (
               <div className="mt-8 sm:mt-12 px-2 sm:px-0">
                 <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6">Aynı Kategorideki Diğer Seriler</h2>
-                <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-                  {relatedSeries.map((series) => {
-                    const seriesKey = series.subchild_id ?? series.subchild ?? series.id ?? series.title
-                    const seriesKeyEncoded = encodeURIComponent(String(seriesKey))
-                    const imgSeed = series.subchild_id ?? series.id ?? seriesKey
-                    const linkKey = series.id ?? seriesKey
-                    const imgUrl = series.main_image && series.main_image.trim() !== '' ? series.main_image : `https://picsum.photos/seed/${encodeURIComponent(String(imgSeed))}/300/225`
 
-                    return (
-                      <Link
-                        key={linkKey}
-                        to={`/kategoriler/${tier}/${categoryId}/${seriesKeyEncoded}`}
-                        className="group block rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105 border-2 bg-transparent w-full"
-                        style={{ borderColor: 'rgba(255,140,66,0.18)' }}
-                      >
-                        <div className="relative" style={{ paddingBottom: '75%', height: 0 }}>
-                          <img src={imgUrl} alt={`${series.title} - Seri Görseli`} title={series.title} className="absolute inset-0 w-full h-full object-contain bg-gray-50" onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${encodeURIComponent(String(imgSeed))}/300/225` }} />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-                          <div className="absolute left-3 bottom-3 text-white"><div className="text-sm font-semibold drop-shadow-md">{series.title}</div></div>
+                {/* Compact centered grid: responsive card widths with min-width to avoid overflow issues */}
+                <div style={{ position: 'relative' }}>
+                  <div className="flex gap-4 overflow-x-auto py-2 px-2 touch-pan-x related-snap">
+                    {relatedSeries.map((series) => {
+                      const seriesKey = series.subchild_id ?? series.subchild ?? series.id ?? series.title
+                      const seriesKeyEncoded = encodeURIComponent(String(seriesKey))
+                      const imgSeed = series.subchild_id ?? series.id ?? seriesKey
+                      const linkKey = series.id ?? seriesKey
+                      const imgUrl = getImgOrFallback(series.main_image, `https://picsum.photos/seed/${encodeURIComponent(String(imgSeed))}/300/225`)
+
+                      return (
+                        <div key={linkKey} style={{ scrollSnapAlign: 'center', flex: '0 0 auto', minWidth: 220, maxWidth: 320 }}>
+                          <Link to={`/kategoriler/${tier}/${categoryId}/${seriesKeyEncoded}`} className="block rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-transform duration-200 transform hover:-translate-y-1" style={{ width: '100%', maxWidth: '100%' }}>
+                                <div style={{ width: '100%', display: 'block' }}>
+                                  <img src={imgUrl} alt={`${series.title} - Seri Görseli`} title={series.title} className="w-full h-auto object-cover" onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${encodeURIComponent(String(imgSeed))}/300/225` }} />
+                                </div>
+                            <div className="p-3 bg-base-100 text-center">
+                              <div className="text-sm font-semibold truncate">{series.title}</div>
+                            </div>
+                          </Link>
                         </div>
-                      </Link>
-                    )
-                  })}
+                      )
+                    })}
+                  </div>
                 </div>
               </div>
             )}
@@ -600,9 +823,18 @@ export default function Article() {
           -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
         }
 
-        /* Responsive table: mobile keeps horizontal scroll; desktop uses fixed layout and wraps cells */
+        /* table wrapper: scroll on small, visible on desktop */
+        .table-wrapper { overflow-x: auto; }
+        .article-table-responsive { min-width: 720px; }
+        @media (min-width: 1024px) {
+          .table-wrapper { overflow: visible; }
+          .article-table-responsive { min-width: 0; table-layout: auto; }
+        }
+
+        /* Responsive table: allow horizontal scroll on small screens */
         .article-table-responsive {
           border-collapse: collapse;
+          width: 100%;
         }
 
         .article-table-responsive th,
@@ -611,16 +843,59 @@ export default function Article() {
           word-break: break-word !important;
           vertical-align: top;
           padding: 0.5rem 0.5rem;
+          hyphens: auto;
+          overflow-wrap: anywhere;
         }
 
         /* On larger screens use a fixed table layout so the table adapts to container width */
         @media (min-width: 1024px) {
-          .article-table-responsive { table-layout: fixed; }
+          /* overridden above: desktop shows full table, allow normal table layout */
           .article-table-responsive th:first-child,
           .article-table-responsive td:first-child { width: 12%; min-width: 120px; }
-          .article-table-responsive th:not(:first-child),
-          .article-table-responsive td:not(:first-child) { width: auto; }
         }
+
+        /* Mobile table tweaks: reduce padding and font-size, keep horizontal scroll */
+        @media (max-width: 767px) {
+          .article-table-responsive { font-size: 12px; }
+          .article-table-responsive th, .article-table-responsive td { padding: 0.25rem 0.5rem; }
+          .article-table-responsive img { width: 64px !important; height: 48px !important; }
+          .article-table-responsive td .btn { padding: 0.25rem 0.5rem; font-size: 11px; }
+        }
+
+        /* Usable areas responsive grid */
+        .usable-areas-grid {
+          grid-template-columns: 1fr;
+          justify-items: center;
+        }
+        .usable-areas-card {
+          width: 100%;
+          max-width: 420px;
+        }
+
+        @media (min-width: 768px) {
+          /* On tablet & up: show two columns fixed width */
+          .usable-areas-grid {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 320px));
+            justify-content: center;
+            justify-items: center;
+          }
+          .usable-areas-card { max-width: 320px; }
+        }
+
+        @media (min-width: 1024px) {
+          /* On desktop keep desired fixed 320px cards */
+          .usable-areas-grid {
+            grid-template-columns: repeat(auto-fit, minmax(320px, 320px));
+            justify-content: center;
+          }
+          .usable-areas-card { max-width: 320px; }
+        }
+
+        /* related-snap improvements */
+        .related-snap {
+          scroll-snap-type: x mandatory;
+        }
+
       `}</style>
     </section>
   )

@@ -57,6 +57,11 @@ export function useSiteImage(sectionKey: string) {
         }
 
         const data: SiteImage = await response.json();
+        // Normalize image_path to absolute URL if backend returned a relative path
+        if (data && data.image_path && !/^https?:\/\//i.test(data.image_path)) {
+          const origin = typeof window !== 'undefined' ? (window.location.protocol + '//' + window.location.host) : 'https://ketenpnomatik.com';
+          data.image_path = origin + data.image_path;
+        }
         imageCache.set(sectionKey, { data, timestamp: Date.now() });
         setImage(data);
       } catch (err) {
@@ -88,6 +93,13 @@ export function useSiteImages() {
       }
 
       const data: SiteImage[] = await response.json();
+      // Normalize image_path on each returned record
+  const origin = typeof window !== 'undefined' ? (window.location.protocol + '//' + window.location.host) : 'https://ketenpnomatik.com';
+      data.forEach(img => {
+        if (img && img.image_path && !/^https?:\/\//i.test(img.image_path)) {
+          img.image_path = origin + img.image_path;
+        }
+      });
       
       // Update cache with timestamp
       const now = Date.now();
@@ -178,6 +190,11 @@ export function useSiteImages() {
 
       const result = await response.json();
       const uploadedImage: SiteImage = result.image;
+      // Normalize returned image_path as absolute URL (server may return relative)
+      if (uploadedImage && uploadedImage.image_path && !/^https?:\/\//i.test(uploadedImage.image_path)) {
+        const origin = typeof window !== 'undefined' ? (window.location.protocol + '//' + window.location.host) : 'https://ketenpnomatik.com';
+        uploadedImage.image_path = origin + uploadedImage.image_path;
+      }
       
       // Update cache and state with new timestamp
       imageCache.set(sectionKey, { data: uploadedImage, timestamp: Date.now() });

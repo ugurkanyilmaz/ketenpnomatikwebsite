@@ -25,13 +25,22 @@ try {
     
     $photos = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     
-    // Ensure photo_url is absolute (prefix domain if relative)
-    $baseDomain = 'https://ketenpnomatik.com';
+    // Ensure photo_url is absolute (prefix canonical domain if relative)
+    // Normalize photo_url to cPanel-visible path: https://ketenpnomatik.com/react/public/uploads/...
+    $CPANEL_BASE = 'https://ketenpnomatik.com';
     foreach ($photos as &$ph) {
         if (!empty($ph['photo_url']) && !preg_match('#^https?://#i', $ph['photo_url'])) {
             $u = $ph['photo_url'];
-            if (strpos($u, '/') !== 0) $u = '/' . $u;
-            $ph['photo_url'] = rtrim($baseDomain, '/') . $u;
+            // If stored path doesn't already include /react/public, ensure it does
+            if (strpos($u, '/react/public/') === false) {
+                // strip leading /php if present
+                $u = preg_replace('#^/php#', '', $u);
+                // ensure leading slash
+                if (strpos($u, '/') !== 0) $u = '/' . $u;
+                // place under /react/public
+                $u = '/react/public' . $u;
+            }
+            $ph['photo_url'] = rtrim($CPANEL_BASE, '/') . $u;
         }
     }
     unset($ph);

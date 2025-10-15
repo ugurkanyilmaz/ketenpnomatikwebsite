@@ -16,13 +16,18 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute([':parent' => $parent, ':child' => $child]);
 $photos = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
-// Ensure photo_url is absolute (prefix domain if relative)
-$baseDomain = 'https://ketenpnomatik.com';
+// Ensure photo_url is absolute (prefix canonical domain if relative)
+// Normalize to cPanel-visible URLs
+$CPANEL_BASE = 'https://ketenpnomatik.com';
 foreach ($photos as &$ph) {
     if (!empty($ph['photo_url']) && !preg_match('#^https?://#i', $ph['photo_url'])) {
         $u = $ph['photo_url'];
-        if (strpos($u, '/') !== 0) $u = '/' . $u;
-        $ph['photo_url'] = rtrim($baseDomain, '/') . $u;
+        if (strpos($u, '/react/public/') === false) {
+            $u = preg_replace('#^/php#', '', $u);
+            if (strpos($u, '/') !== 0) $u = '/' . $u;
+            $u = '/react/public' . $u;
+        }
+        $ph['photo_url'] = rtrim($CPANEL_BASE, '/') . $u;
     }
 }
 unset($ph);

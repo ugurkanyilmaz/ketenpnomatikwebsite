@@ -388,6 +388,28 @@ export default function CategoryManagement() {
                   <Upload size={16} />
                   JSON İndir
                 </button>
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={async () => {
+                    try {
+                      const res = await fetch('/php/api/articles_find.php')
+                      if (!res.ok) throw new Error('Export failed')
+                      const data = await res.json()
+                      const blob = new Blob([JSON.stringify(data.items || [], null, 2)], { type: 'application/json' })
+                      const a = document.createElement('a')
+                      a.href = URL.createObjectURL(blob)
+                      a.download = `articles_export_${new Date().toISOString().split('T')[0]}.json`
+                      a.click()
+                      URL.revokeObjectURL(a.href)
+                    } catch (err) {
+                      console.error('Export failed', err)
+                      alert('Dışa aktarma başarısız: ' + (err instanceof Error ? err.message : 'Hata'))
+                    }
+                  }}
+                >
+                  <Upload size={16} />
+                  Export All
+                </button>
               </div>
             </div>
           )}
@@ -501,9 +523,10 @@ function CategoryModal({
       const res = await fetch('/php/api/upload_image.php', { method: 'POST', body: fd })
       const data = await res.json()
       if (!res.ok || !data?.url) throw new Error(data?.error || data?.message || 'Upload failed')
-      const url = data.url
-      if (target === 'main') setFormData({ ...formData, main_image: url })
-      else setFormData({ ...formData, img1: url })
+  const url = data.url
+  const normalized = url?.startsWith('http') ? url : `https://www.ketenpnomatik.com${url}`
+  if (target === 'main') setFormData({ ...formData, main_image: normalized })
+  else setFormData({ ...formData, img1: normalized })
       alert('Yükleme başarılı. URL form alanına yerleştirildi.')
       if (target === 'main') setMainFile(null)
       else setImg1File(null)

@@ -2,7 +2,7 @@
 // (we used to import applySEOToHead from blog_seo but product/article pages
 // use their own implementations — provide the same here to avoid mismatches)
 
-const SITE_DOMAIN = 'https://ketenpnomatik.com'
+const SITE_DOMAIN = 'https://www.ketenpnomatik.com'
 const SITE_NAME = 'Keten Pnömatik'
 const DEFAULT_IMAGE = `${SITE_DOMAIN}/weblogo.jpg`
 
@@ -34,6 +34,9 @@ type PageKey =
   | 'about_apac'
   | 'about_hiyoki'
   | 'about_kolver'
+  | 'about_hawanox'
+  | 'about_deltaregis'
+  | 'about_asa'
   | 'categories'
   | 'products'
 
@@ -143,9 +146,9 @@ function buildPageSEO(key: PageKey, opts?: PageOpts) {
 
     case 'about_hiyoki':
       return buildBase(
-        opts?.title || 'Hiyoki Ölçüm Cihazları | Güvenilir Test ve Ölçüm Çözümleri – Keten Pnömatik',
-        opts?.description || 'Hiyoki, elektriksel test ve ölçüm çözümleriyle global ölçekte tanınan bir markadır. Keten Pnömatik olarak Hiyoki ürünlerinin satış ve teknik servis desteğini sunuyoruz. Ölçüm cihazlarında doğruluk, dayanıklılık ve güvenilir performansla endüstride fark yaratmaktadır.',
-        opts?.keywords || 'hiyoki, hiyoki türkiye, hiyoki ölçüm cihazı, test cihazı, elektrik ölçüm, hiyoki distribütör, hiyoki servis',
+        opts?.title || 'Hiyoki | Endüstriyel Ölçüm Sistemleri ve Tork Kontrollü El Aletleri',
+        opts?.description || 'Hiyoki, en zorlu endüstriyel ortamlar ve kritik montaj hatları için üstün kaliteli, premium ölçüm sistemleri ve tork kontrollü el aletleri sunar. 24/7 kesintisiz çalışma, ±0.02% hassasiyet ve uzun ömürlü performans ile üretim sürekliliğini garanti altına alır.',
+        opts?.keywords || 'hiyoki, endüstriyel ölçüm sistemleri, tork ölçüm cihazı, elektrikli sıkıcı, pnömatik el aletleri, endüstriyel dayanıklılık, tork kontrolü, kalibrasyon hizmeti, teknik destek, üretim hatları',
         path,
         opts?.image,
       )
@@ -175,6 +178,33 @@ function buildPageSEO(key: PageKey, opts?: PageOpts) {
         opts?.keywords || 'kolver ürünleri, apac ürünleri, hiyoki ürünleri, havalı alet, endüstriyel ekipman, tork anahtarı, elektrikli el aleti, ölçüm cihazı, pnömatik sistem',
         path || '/urunler',
         opts?.image,
+      )
+    
+    case 'about_hawanox':
+      return buildBase(
+        opts?.title || 'Hawanox Havalı Yağ Pompaları ve Gres Pompaları | Güvenilir Yağlama Çözümleri',
+        opts?.description || 'Hawanox, endüstriyel yağlama sistemleri ve ekipmanları alanında uzmanlaşmış bir markadır. Havalı yağ pompaları, gres pompaları ve diğer yağlama ürünleriyle güvenilir ve verimli çözümler sunar. Keten Pnömatik, Hawanox ürünlerinin satış ve teknik servis desteğini sağlamaktadır.',
+        opts?.keywords || 'hawanox, hawanox türkiye, hawanox yağ pompası, hawanox gres pompası, havalı yağlama, yağlama ekipmanları, hawanox distribütör, hawanox servis',
+        path,
+        opts?.image,
+      )
+
+    case 'about_deltaregis':
+      return buildBase(
+       opts?.title || 'Delta Regis | Tork Kontrollü Vidalama Sistemleri ve Endüstri 4.0 Çözümleri',
+       opts?.description || 'Delta Regis Tools Inc. (ABD), elektronik montaj hatları için ±%1 hassasiyetli tork kontrollü vidalama çözümleri sunar. Endüstri 4.0 uyumlu sistemleriyle üretim verilerini gerçek zamanlı takip eder, kalite kontrol ve raporlama otomasyonu sağlar.',
+       opts?.keywords || 'delta regis, tork kontrollü vidalama, endüstri 4.0, dijital tork sistemi, elektronik montaj, tork kontrolü, üretim izlenebilirliği, MES entegrasyonu, endüstriyel otomasyon, fort pierce',
+       path,
+       opts?.image,
+      )
+
+    case 'about_asa':
+      return buildBase(
+       opts?.title || 'ASA | Ergonomik Montaj ve Endüstriyel Proses Çözümleri',
+       opts?.description || 'ASA, otomotiv, elektronik ve genel endüstride kullanılan ergonomik ve güvenilir montaj çözümleri sunar. Operatör konforu, üretim sürekliliği ve uzun ömürlü bileşenleriyle kesintisiz performans sağlar.',
+       opts?.keywords || 'asa, montaj çözümleri, endüstriyel proses ekipmanları, ergonomik el aletleri, otomotiv montaj hattı, endüstriyel otomasyon, verimli üretim, dayanıklı ekipman, kullanıcı dostu sistemler',
+       path,
+       opts?.image,
       )
 
     default:

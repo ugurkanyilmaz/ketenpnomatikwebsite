@@ -4,9 +4,8 @@ require __DIR__ . '/bootstrap.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-// Base URL for product images (cPanel'den yüklenecek görsellerin base URL'i)
-// Bu URL'i kendi cPanel klasörünüze göre güncelleyin
-$baseImageUrl = 'https://www.ketenpnomatik.com.tr/uploads/products/';
+// Base URL for product images (canonical domain used for returned URLs)
+$baseImageUrl = 'https://ketenpnomatik.com/react/public/uploads/products/';
 
 // Alternatif olarak localhost için:
 // $baseImageUrl = '/php/uploads/products/';
@@ -42,10 +41,11 @@ $extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 // Check main image
 foreach ($extensions as $ext) {
     $filename = "{$safeSku}-main.{$ext}";
-    $localPath = __DIR__ . '/../uploads/products/' . $filename;
+    // Stored in react/public/uploads/products/
+    $localPath = __DIR__ . '/../../react/public/uploads/products/' . $filename;
     
     if (file_exists($localPath)) {
-        $images['main_img'] = $baseImageUrl . $filename;
+    $images['main_img'] = $baseImageUrl . $filename;
         break;
     }
 }
@@ -54,7 +54,7 @@ foreach ($extensions as $ext) {
 for ($i = 1; $i <= 4; $i++) {
     foreach ($extensions as $ext) {
         $filename = "{$safeSku}-{$i}.{$ext}";
-        $localPath = __DIR__ . '/../uploads/products/' . $filename;
+    $localPath = __DIR__ . '/../../react/public/uploads/products/' . $filename;
         
         if (file_exists($localPath)) {
             $images["p_img{$i}"] = $baseImageUrl . $filename;
