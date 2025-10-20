@@ -281,6 +281,7 @@ export default function Article() {
       schema_description: cat.schema_desc,
       keywords: cat.meta_keywords,
       main_img: cat.main_image,
+      video_url: cat.video_url,
       created_at: cat.created_at,
       updated_at: cat.updated_at
     }
@@ -504,29 +505,22 @@ export default function Article() {
           </ul>
         </div>
 
-    <div className="hero rounded-box overflow-hidden shadow mb-6 sm:mb-10 max-w-4xl mx-auto">
-      <div className="w-full" style={{ maxWidth: '800px', margin: '0 auto' }}>
-        <div style={{ paddingTop: '75%', position: 'relative' }}>
-          <img
-            src={getImgOrFallback(cat.main_image, `https://picsum.photos/seed/${seriesId}/600/450`)}
-            alt={`${cat.title} - Kategori Görseli`}
-            title={cat.title}
-            width={600}
-            height={450}
-            className="absolute inset-0 w-full h-full object-contain"
-            loading="lazy"
-            onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${seriesId}/600/450` }}
-          />
-          
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent p-4 sm:p-6">
-            <div className="text-center">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
-                {cat.title}
-              </h1>
-              <p className="mt-2 text-sm sm:text-base text-white/90 drop-shadow-md">
-                {cat.title_subtext || 'Kategori detayları'}
-              </p>
-            </div>
+    {/* Use the shared HeroBanner for article header */}
+    <div className="max-w-4xl mx-auto mb-6 sm:mb-10">
+      <div>
+        <img
+          src={getImgOrFallback(cat.main_image, `https://picsum.photos/seed/${seriesId}/600/450`) }
+          alt={`${cat.title} - Kategori Görseli`}
+          title={cat.title}
+          className="w-full h-auto rounded-box shadow object-cover"
+          loading="lazy"
+          onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${seriesId}/600/450` }}
+          style={{ maxHeight: 450, width: '100%', objectFit: 'cover' }}
+        />
+        <div className="-mt-20 relative">
+          <div className="bg-black/60 backdrop-blur-sm rounded-t-3xl p-6 text-white max-w-3xl mx-auto">
+            <h1 className="text-2xl md:text-3xl font-bold">{cat.title}</h1>
+            <p className="mt-2 text-sm md:text-base text-white/90">{cat.title_subtext || 'Kategori detayları'}</p>
           </div>
         </div>
       </div>

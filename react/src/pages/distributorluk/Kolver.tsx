@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 import { applyPageSEO } from '../../utils/other_seo'
 
 export default function Kolver() {
-  const { hero: kolverHero, showcase: kolverShowcase } = useSectionImages('kolver_section', 'about_kolver')
+  const { images, hero: kolverHero, showcase: kolverShowcase } = useSectionImages('kolver_section', 'about_kolver')
   useEffect(() => {
     applyPageSEO('about_kolver')
   }, [])
@@ -47,7 +47,10 @@ export default function Kolver() {
             </div>
           </div>
           <div>
-            <img src={kolverHero?.image_path || '/professional_banner.png'} alt={kolverHero?.alt_text || 'Kolver tork çözümleri'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            {/* Sadece hero varsa göster, fallback yok */}
+            {kolverHero?.image_path && (
+              <img src={kolverHero.image_path} alt={kolverHero.alt_text || 'Kolver tork çözümleri'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            )}
           </div>
         </div>
       </motion.section>
@@ -128,7 +131,10 @@ export default function Kolver() {
       >
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           <div>
-            <img src={kolverShowcase?.image_path || '/keten_banner.jpg'} alt={kolverShowcase?.alt_text || 'Kolver Ergonomik Tasarım'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            {/* Sadece showcase varsa göster, fallback yok */}
+            {kolverShowcase?.image_path && (
+              <img src={kolverShowcase.image_path} alt={kolverShowcase.alt_text || 'Kolver Ergonomik Tasarım'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            )}
           </div>
           <div>
             <h3 className="text-xl md:text-2xl font-bold text-gray-900">Ergonomi ve Verimlilik</h3>
@@ -180,7 +186,10 @@ export default function Kolver() {
             </div>
           </div>
           <div>
-            <img src={kolverShowcase?.image_path || '/endus.jpg'} alt={kolverShowcase?.alt_text || 'Kolver Endüstriyel Uygulamalar'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            {/* Sadece 3. resim varsa göster, fallback yok */}
+            {images?.[2]?.image_path && (
+              <img src={images[2].image_path} alt={images[2].alt_text || 'Kolver Endüstriyel Uygulamalar'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            )}
           </div>
         </div>
       </motion.section>

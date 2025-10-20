@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion, useScroll, useSpring } from 'framer-motion'
+import useShouldAnimate from '../hooks/useShouldAnimate'
 import { fetchProducts, fetchArticleRows } from '../utils/api'
 import { slugifyForApi } from '../utils/search'
 
@@ -147,30 +149,48 @@ function MobileMenu() {
 }
 
 export default function Header() {
+  const shouldAnimate = useShouldAnimate()
+  const { scrollYProgress } = useScroll()
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, mass: 0.2 })
+
   return (
-    <header className="sticky top-0 z-40 bg-slate-800 border-b border-slate-700 shadow-lg">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <ScrollToTopLink to="/" aria-label="Keten Pnömatik" className="flex items-center gap-2 flex-shrink-0">
-            <img src="/ketenlogoson.fw_.png" alt="Keten Pnömatik" className="h-8 md:h-10 w-auto" />
-          </ScrollToTopLink>
+    <>
+      <motion.div
+        aria-hidden
+        style={shouldAnimate ? { scaleX } : undefined}
+        className="fixed left-0 right-0 top-0 h-1 origin-left bg-primary z-[100]"
+      />
+
+      <header className="sticky top-0 relative z-40 bg-slate-800 border-b border-slate-700 shadow-lg">
+  <div className="max-w-7xl mx-auto px-4 pl-2 md:pl-4 lg:pl-6">
+          <div className="flex items-center justify-between h-16 flex-nowrap">
+          {/* 28.yıl badge (md+ far-left of logo) */}
+          <div className="flex items-center flex-shrink-0">
+            {/* Badge moved into normal flow so header reserves space and prevents overlap */}
+            <div className="hidden md:inline-flex items-center mr-0 md:-ml-8 lg:-ml-12 pointer-events-none">
+              <img src="/28.yil.png" alt="28. Yıl" className="h-8 md:h-10 lg:h-12 w-auto object-contain" />
+            </div>
+            {/* Logo - nudged left to sit closer to absolute badge */}
+            <ScrollToTopLink to="/" aria-label="Keten Pnömatik" className="flex items-center gap-2 ml-0">
+              <img src="/ketenlogoson.fw_.png" alt="Keten Pnömatik" className="h-8 md:h-10 w-auto" />
+            </ScrollToTopLink>
+          </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1 mx-6">
-            <ScrollToTopLink to="/" className="px-4 py-2 text-white hover:bg-slate-700 rounded-lg transition-colors">
+              <ScrollToTopLink to="/" className="px-4 py-2 text-white hover:bg-slate-700 rounded-lg transition-colors whitespace-nowrap">
               Ana Sayfa
             </ScrollToTopLink>
-            <ScrollToTopLink to="/hakkimizda" className="px-4 py-2 text-white hover:bg-slate-700 rounded-lg transition-colors">
+              <ScrollToTopLink to="/hakkimizda" className="px-4 py-2 text-white hover:bg-slate-700 rounded-lg transition-colors whitespace-nowrap">
               Hakkımızda
             </ScrollToTopLink>
-            <ScrollToTopLink to="/kategoriler" className="px-4 py-2 text-white hover:bg-slate-700 rounded-lg transition-colors">
+              <ScrollToTopLink to="/kategoriler" className="px-4 py-2 text-white hover:bg-slate-700 rounded-lg transition-colors whitespace-nowrap">
               Ürünlerimiz
             </ScrollToTopLink>
-            <ScrollToTopLink to="/iletisim" className="px-4 py-2 text-white hover:bg-slate-700 rounded-lg transition-colors">
+              <ScrollToTopLink to="/iletisim" className="px-4 py-2 text-white hover:bg-slate-700 rounded-lg transition-colors whitespace-nowrap">
               İletişim
             </ScrollToTopLink>
-            <ScrollToTopLink to="/teknik-servis" className="px-4 py-2 text-white hover:bg-slate-700 rounded-lg transition-colors">
+              <ScrollToTopLink to="/teknik-servis" className="px-4 py-2 text-white hover:bg-slate-700 rounded-lg transition-colors whitespace-nowrap">
               Teknik Servis
             </ScrollToTopLink>
           </nav>
@@ -202,7 +222,8 @@ export default function Header() {
           </div>
         </div>
       </div>
-    </header>
+      </header>
+    </>
   )
 }
 

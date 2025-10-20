@@ -36,7 +36,9 @@ export default function Hawanox() {
             </div>
           </div>
           <div>
-            <img src={brandHero?.image_path || '/keten_banner.jpg'} alt={brandHero?.alt_text || 'Hawanox Ürünleri'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            {brandHero?.image_path ? (
+              <img src={brandHero.image_path} alt={brandHero.alt_text || 'Hawanox Ürünleri'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            ) : null}
           </div>
         </div>
       </motion.section>
@@ -71,7 +73,10 @@ export default function Hawanox() {
 
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           <div>
-            <img src={(images[1]?.image_path) || brandShowcase?.image_path || '/professional_banner.png'} alt={brandShowcase?.alt_text || 'Hawanox Çözümleri'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            {/* Sadece showcase varsa göster */}
+            {brandShowcase?.image_path ? (
+              <img src={brandShowcase.image_path} alt={brandShowcase.alt_text || 'Hawanox Çözümleri'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            ) : null}
           </div>
           <div>
             <h3 className="text-xl md:text-2xl font-bold text-gray-900">Yüksek Performans</h3>
@@ -123,7 +128,9 @@ export default function Hawanox() {
             </div>
           </div>
           <div>
-            <img src={(images[2]?.image_path) || '/endus.jpg'} alt="Hawanox Uygulamalar" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            {images?.[2]?.image_path ? (
+              <img src={images[2].image_path} alt={images[2]?.alt_text || 'Hawanox Uygulamalar'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            ) : null}
           </div>
         </div>
       </motion.section>

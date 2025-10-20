@@ -41,8 +41,9 @@ export default function CategoryGrid() {
         <div className="grid gap-5 mt-6 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((c) => (
             <a key={c.title} className="group block rounded-box overflow-hidden ring-1 ring-base-200 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:ring-base-300">
-              <div className="overflow-hidden rounded-t-box">
-                <img src={c.image} alt={c.title} className="h-52 w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+              {/* Image wrapper enforcing 2:1 aspect ratio (300x150) */}
+              <div className="overflow-hidden rounded-t-box" style={{ position: 'relative', width: '100%', paddingTop: '50%' }}>
+                <img src={c.image} alt={c.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" style={{ width: '100%', height: '100%' }} />
               </div>
               <div className="p-3">
                 <h3 className="text-lg font-semibold">{c.title}</h3>

@@ -26,9 +26,9 @@ function escape_like(string $s): string {
 }
 
 if ($q !== '') {
-    $safeQ = escape_like($q);
-    $sql .= " AND (title LIKE :q ESCAPE '\\' OR description LIKE :q ESCAPE '\\' OR paragraph LIKE :q ESCAPE '\\' OR brand LIKE :q ESCAPE '\\' OR sku LIKE :q ESCAPE '\\')";
-    $params[':q'] = "%{$safeQ}%";
+    // We'll perform normalized, Turkish-insensitive matching in PHP after fetching
+    // rows from the DB so admin search matches the client-side behavior.
+    // Do not add SQL LIKE clauses for q to avoid differing normalization rules.
 }
 if ($parent !== '') {
     $sql .= ' AND parent = :parent';
@@ -55,13 +55,26 @@ if ($url !== '') {
     $params[':url'] = $url;
 }
 
-$sql .= ' ORDER BY id DESC LIMIT :limit OFFSET :offset';
-$stmt = $pdo->prepare($sql);
-$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-foreach ($params as $k => $v) { $stmt->bindValue($k, $v, PDO::PARAM_STR); }
-$stmt->execute();
-$rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+$sql .= ' ORDER BY id DESC';
+if ($q === '') {
+    // Prepare SQL with LIMIT/OFFSET for normal (no-q) listing to avoid fetching
+    // the entire table. This avoids binding :limit/:offset on a statement
+    // that doesn't contain those placeholders.
+    $sqlLimited = $sql . ' LIMIT :limit OFFSET :offset';
+    $stmt = $pdo->prepare($sqlLimited);
+    foreach ($params as $k => $v) { $stmt->bindValue($k, $v, PDO::PARAM_STR); }
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+} else {
+    // q present: fetch candidate rows by non-q filters and apply PHP-side
+    // normalized filtering below.
+    $stmt = $pdo->prepare($sql);
+    foreach ($params as $k => $v) { $stmt->bindValue($k, $v, PDO::PARAM_STR); }
+    $stmt->execute();
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+}
 
 // Sanitize image URL fields to avoid broken URLs (e.g. "https://https://...")
 function normalize_image_url(?string $url): string {
@@ -98,20 +111,56 @@ foreach ($rows as $idx => $r) {
     }
 }
 
-// Get total count for pagination
-$countSql = 'SELECT COUNT(*) as total FROM products WHERE 1=1';
-if ($q !== '') $countSql .= " AND (title LIKE :q ESCAPE '\\' OR description LIKE :q ESCAPE '\\' OR paragraph LIKE :q ESCAPE '\\' OR brand LIKE :q ESCAPE '\\' OR sku LIKE :q ESCAPE '\\')";
-if ($parent !== '') $countSql .= ' AND parent = :parent';
-if ($child !== '') $countSql .= ' AND child = :child';
-if ($subchild !== '') $countSql .= ' AND subchild = :subchild';
-if ($brand !== '') $countSql .= ' AND brand = :brand';
-if ($sku !== '') $countSql .= ' AND sku = :sku';
-if ($url !== '') $countSql .= ' AND url = :url';
+// If q is provided, we normalize Turkish characters and perform filtering
+// in PHP to match the client-side behavior. Otherwise use SQL COUNT for total.
+function normalize_search_str(?string $s): string {
+    if ($s === null) return '';
+    $s = mb_strtolower(trim($s), 'UTF-8');
+    $map = [
+        'ı' => 'i', 'İ' => 'i',
+        'ş' => 's', 'Ş' => 's',
+        'ğ' => 'g', 'Ğ' => 'g',
+        'ü' => 'u', 'Ü' => 'u',
+        'ö' => 'o', 'Ö' => 'o',
+        'ç' => 'c', 'Ç' => 'c'
+    ];
+    $s = strtr($s, $map);
+    $s = preg_replace('/\s+/', ' ', $s);
+    return $s;
+}
 
-$countStmt = $pdo->prepare($countSql);
-foreach ($params as $k => $v) { $countStmt->bindValue($k, $v, PDO::PARAM_STR); }
-$countStmt->execute();
-$total = (int)$countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+if ($q !== '') {
+    $normQ = normalize_search_str($q);
+    $filtered = array_filter($rows, function($r) use ($normQ) {
+        $hay = sprintf("%s %s %s %s %s",
+            $r['title'] ?? '',
+            $r['sku'] ?? '',
+            $r['description'] ?? '',
+            $r['paragraph'] ?? '',
+            $r['brand'] ?? ''
+        );
+        $hayNorm = normalize_search_str($hay);
+        return $normQ === '' ? true : (mb_strpos($hayNorm, $normQ) !== false);
+    });
+    $rows = array_values($filtered);
+    $total = count($rows);
+    // Apply pagination in PHP
+    $rows = array_slice($rows, $offset, $limit);
+} else {
+    // No query: compute total via SQL using non-q filters
+    $countSql = 'SELECT COUNT(*) as total FROM products WHERE 1=1';
+    if ($parent !== '') $countSql .= ' AND parent = :parent';
+    if ($child !== '') $countSql .= ' AND child = :child';
+    if ($subchild !== '') $countSql .= ' AND subchild = :subchild';
+    if ($brand !== '') $countSql .= ' AND brand = :brand';
+    if ($sku !== '') $countSql .= ' AND sku = :sku';
+    if ($url !== '') $countSql .= ' AND url = :url';
+
+    $countStmt = $pdo->prepare($countSql);
+    foreach ($params as $k => $v) { $countStmt->bindValue($k, $v, PDO::PARAM_STR); }
+    $countStmt->execute();
+    $total = (int)$countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+}
 
 header('Content-Type: application/json; charset=utf-8');
 echo json_encode(['success' => true, 'count' => count($rows), 'total' => $total, 'products' => $rows], JSON_UNESCAPED_UNICODE);

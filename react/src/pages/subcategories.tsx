@@ -82,34 +82,31 @@ export default function Subcategories() {
     <div className="grid gap-7 mt-6 card-grid-300 justify-items-center">
       {displayChildren.map((s) => {
         const photo = getPhotoForChild(s.title)
-        const imageUrl = photo?.photo_url || `https://picsum.photos/seed/${s.id}/480/360`
+        const title = s.title
+        const desc = s.subchildren?.length ? `${s.subchildren.length} seri` : 'Alt kategoriler yakında'
 
-        const item = (
-          <div className="group block rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105 border-2 bg-transparent focus:outline-none focus:ring-4 ring-offset-0" style={{ borderColor: 'rgba(255,140,66,0.18)', width: 300, maxWidth: 300 }}>
-            <div className="relative" style={{ paddingBottom: '75%', height: 0 }}>
-              <img
-                src={imageUrl}
-                alt={`${s.title} - Alt Kategori Görseli`}
-                title={s.title}
-                width={300}
-                height={225}
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 w-full h-full object-contain bg-gray-50"
-                onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${s.id}/480/360` }}
-              />
+        return (
+          <Link key={s.id} to={`/kategoriler/${tier}/${s.id}`}>
+            <div style={{ width: 300, maxWidth: 300 }}>
+              <div className="rounded-lg overflow-hidden shadow-lg">
+                {photo && photo.photo_url ? (
+                  <div style={{ position: 'relative', width: '100%', paddingTop: '50%' }}>
+                    <img src={photo.photo_url} alt={photo.alt_text || title} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  // No dynamic photo: show a neutral empty box (no placeholder image)
+                  <div style={{ width: '100%', paddingTop: '50%' }} className="bg-base-200 flex items-center justify-center">
+                    <span className="text-base-content/40">&nbsp;</span>
+                  </div>
+                )}
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-
-              <div className="absolute left-4 bottom-4 text-white">
-                <div className="text-xl font-bold drop-shadow-md">{s.title}</div>
-                <div className="text-sm text-white/85">{s.subchildren?.length ? `${s.subchildren.length} seri` : 'Alt kategoriler yakında'}</div>
+                <div className="p-4 bg-base-100">
+                  <div className="text-lg font-semibold">{title}</div>
+                  <div className="text-sm text-base-content/70 mt-1">{desc}</div>
+                </div>
               </div>
             </div>
-          </div>
-        )
-        return (
-          <Link key={s.id} to={`/kategoriler/${tier}/${s.id}`}>{item}</Link>
+          </Link>
         )
       })}
     </div>

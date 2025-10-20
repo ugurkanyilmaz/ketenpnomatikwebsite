@@ -79,32 +79,28 @@ export default function Series() {
               <div className="grid gap-5 card-grid-300 justify-items-center">
               {catData.series.map((s) => {
                 // Get main_image for this subchild from the imageMap
-                const mainImage = subchildImages[s.title]
-                const imageUrl = mainImage || `https://picsum.photos/seed/${s.id}/800/600`
+                const mainImage = subchildImages[s.title] || subchildImages[s.id] || subchildImages[s.title]
 
                 return (
                   <Link
                     key={s.id}
                     to={`/kategoriler/${tierKey}/${categoryId}/${encodeURIComponent(s.title)}`}
-                    className="group block rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105 border-2 bg-transparent w-full"
-                    style={{ borderColor: 'rgba(255,140,66,0.18)', width: 300, maxWidth: 300 }}
+                    className="block w-full"
+                    style={{ width: 300, maxWidth: 300 }}
                   >
-                    <div className="relative" style={{ paddingBottom: '75%', height: 0 }}>
-                      <img
-                        src={imageUrl}
-                        alt={`${s.title} - Seri Görseli`}
-                        title={s.title}
-                        width={300}
-                        height={225}
-                        className="absolute inset-0 w-full h-full object-contain bg-gray-50"
-                        loading="lazy"
-                        onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${s.id}/800/600` }}
-                      />
+                    <div className="rounded-lg overflow-hidden shadow-lg">
+                      {mainImage ? (
+                        <div style={{ position: 'relative', width: '100%', paddingTop: '50%' }}>
+                          <img src={mainImage} alt={s.title} title={s.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                        </div>
+                      ) : (
+                        <div style={{ width: '100%', paddingTop: '50%' }} className="bg-base-200 flex items-center justify-center">
+                          <span className="text-base-content/40">&nbsp;</span>
+                        </div>
+                      )}
 
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-
-                      <div className="absolute left-3 bottom-3 text-white">
-                        <div className="text-sm font-semibold drop-shadow-md">{s.title}</div>
+                      <div className="p-3 bg-base-100">
+                        <div className="text-sm font-semibold truncate">{s.title}</div>
                       </div>
                     </div>
                   </Link>

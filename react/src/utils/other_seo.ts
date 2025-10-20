@@ -4,7 +4,7 @@
 
 const SITE_DOMAIN = 'https://www.ketenpnomatik.com'
 const SITE_NAME = 'Keten Pnömatik'
-const DEFAULT_IMAGE = `${SITE_DOMAIN}/weblogo.jpg`
+const DEFAULT_IMAGE = 'https://ketenpnomatik.com/weblogo.jpg'
 
 function absUrl(p?: string) {
   if (!p) return DEFAULT_IMAGE
@@ -173,9 +173,9 @@ function buildPageSEO(key: PageKey, opts?: PageOpts) {
 
     case 'products':
       return buildBase(
-        opts?.title || 'Kolver, Apac ve Hiyoki Ürünleri | Dayanıklı ve Profesyonel Endüstriyel Aletler',
-        opts?.description || 'Kolver, Apac ve Hiyoki markalarının havalı, elektrikli ve ölçüm ekipmanlarını tek platformda bulabilirsiniz. Tüm ürünlerimiz orijinal, dayanıklı ve profesyonel kullanım için tasarlanmıştır. Endüstriyel üretimde kalite ve verimlilik sağlayan çözümlerimizle tanışın.',
-        opts?.keywords || 'kolver ürünleri, apac ürünleri, hiyoki ürünleri, havalı alet, endüstriyel ekipman, tork anahtarı, elektrikli el aleti, ölçüm cihazı, pnömatik sistem',
+        opts?.title || 'Kolver, Apac, ASA, ve Hiyoki Ürünleri | Dayanıklı ve Profesyonel Endüstriyel Aletler',
+        opts?.description || 'Kolver, Apac, ASA ve Hiyoki markalarının havalı, elektrikli ve ölçüm ekipmanlarını tek platformda bulabilirsiniz. Tüm ürünlerimiz orijinal, dayanıklı ve profesyonel kullanım için tasarlanmıştır. Endüstriyel üretimde kalite ve verimlilik sağlayan çözümlerimizle tanışın.',
+        opts?.keywords || 'kolver ürünleri, apac ürünleri, asa ürünleri, hiyoki ürünleri, havalı alet, endüstriyel ekipman, tork anahtarı, elektrikli el aleti, ölçüm cihazı, pnömatik sistem',
         path || '/urunler',
         opts?.image,
       )
@@ -234,7 +234,7 @@ function enhanceStructuredDataForKey(key: PageKey, base: any, opts?: PageOpts) {
     '@type': 'Organization',
     'name': SITE_NAME,
     'url': SITE_DOMAIN,
-    'logo': { '@type': 'ImageObject', 'url': DEFAULT_IMAGE, 'width': 1200, 'height': 630 },
+    'logo': { '@type': 'ImageObject', 'url': DEFAULT_IMAGE, 'width': 520, 'height': 480 },
     // Placeholder contact info - DO NOT ship fake numbers. Remove telephone or set to real value.
     'contactPoint': {
       '@type': 'ContactPoint',
@@ -464,5 +464,150 @@ export function applySEOToHead(seoData: any) {
     script.setAttribute('type', 'application/ld+json')
     script.textContent = JSON.stringify(seoData.structuredData, null, 2)
     document.head.appendChild(script)
+  }
+
+  // Global head additions and structuredData enrichment (non-invasive)
+  try {
+  const canonicalHref = (seoData.link || []).find((l: any) => l.rel === 'canonical')?.href || (typeof window !== 'undefined' ? `${SITE_DOMAIN}${window.location.pathname}` : SITE_DOMAIN)
+
+    // http-equiv content-language
+    const httpLang = document.createElement('meta')
+    httpLang.setAttribute('data-seo', 'true')
+    httpLang.setAttribute('http-equiv', 'content-language')
+    httpLang.setAttribute('content', 'tr')
+    document.head.appendChild(httpLang)
+
+    // Robots
+    const robots = document.createElement('meta')
+    robots.setAttribute('data-seo', 'true')
+    robots.setAttribute('name', 'robots')
+    robots.setAttribute('content', 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1')
+    document.head.appendChild(robots)
+
+    // Sitemap
+    const sitemap = document.createElement('link')
+    sitemap.setAttribute('data-seo', 'true')
+    sitemap.setAttribute('rel', 'sitemap')
+    sitemap.setAttribute('type', 'application/xml')
+    sitemap.setAttribute('href', 'https://www.ketenpnomatik.com/sitemap.xml')
+    document.head.appendChild(sitemap)
+
+    // preconnect / dns-prefetch
+    const pre = document.createElement('link')
+    pre.setAttribute('data-seo', 'true')
+    pre.setAttribute('rel', 'preconnect')
+    pre.setAttribute('href', 'https://www.googletagmanager.com')
+    document.head.appendChild(pre)
+
+    const dns = document.createElement('link')
+    dns.setAttribute('data-seo', 'true')
+    dns.setAttribute('rel', 'dns-prefetch')
+    dns.setAttribute('href', 'https://www.googletagmanager.com')
+    document.head.appendChild(dns)
+
+    // favicons
+  const f32 = document.createElement('link')
+  f32.setAttribute('data-seo', 'true')
+  f32.setAttribute('rel', 'icon')
+  f32.setAttribute('type', 'image/png')
+  f32.setAttribute('sizes', '32x32')
+  f32.setAttribute('href', '/favicon-32x32.png')
+  document.head.appendChild(f32)
+
+  const f16 = document.createElement('link')
+  f16.setAttribute('data-seo', 'true')
+  f16.setAttribute('rel', 'icon')
+  f16.setAttribute('type', 'image/png')
+  f16.setAttribute('sizes', '16x16')
+  f16.setAttribute('href', '/favicon-16x16.png')
+  document.head.appendChild(f16)
+
+  const ico = document.createElement('link')
+  ico.setAttribute('data-seo', 'true')
+  ico.setAttribute('rel', 'shortcut icon')
+  ico.setAttribute('href', '/favicon.ico')
+  document.head.appendChild(ico)
+
+  const apple = document.createElement('link')
+  apple.setAttribute('data-seo', 'true')
+  apple.setAttribute('rel', 'apple-touch-icon')
+  apple.setAttribute('href', '/apple-touch-icon.png')
+  document.head.appendChild(apple)
+
+  const android192 = document.createElement('link')
+  android192.setAttribute('data-seo', 'true')
+  android192.setAttribute('rel', 'icon')
+  android192.setAttribute('sizes', '192x192')
+  android192.setAttribute('href', '/android-chrome-192x192.png')
+  document.head.appendChild(android192)
+
+  const android512 = document.createElement('link')
+  android512.setAttribute('data-seo', 'true')
+  android512.setAttribute('rel', 'icon')
+  android512.setAttribute('sizes', '512x512')
+  android512.setAttribute('href', '/android-chrome-512x512.png')
+  document.head.appendChild(android512)
+
+    const manifest = document.createElement('link')
+    manifest.setAttribute('data-seo', 'true')
+    manifest.setAttribute('rel', 'manifest')
+    manifest.setAttribute('href', '/site.webmanifest')
+    document.head.appendChild(manifest)
+
+    const theme = document.createElement('meta')
+    theme.setAttribute('data-seo', 'true')
+    theme.setAttribute('name', 'theme-color')
+    theme.setAttribute('content', '#0b5561')
+    document.head.appendChild(theme)
+
+    const alt = document.createElement('link')
+    alt.setAttribute('data-seo', 'true')
+    alt.setAttribute('rel', 'alternate')
+    alt.setAttribute('hreflang', 'tr')
+    alt.setAttribute('href', canonicalHref)
+    document.head.appendChild(alt)
+  } catch (e) {
+    // ignore non-browser environments
+  }
+
+  // Enrich structuredData: add Organization details and BreadcrumbList if missing
+  try {
+    if (seoData.structuredData) {
+      const graph = seoData.structuredData['@graph'] || []
+      const org = graph.find((g: any) => g['@type'] === 'Organization' || (Array.isArray(g['@type']) && g['@type'].includes('Organization')))
+      if (org) {
+        const o: any = org
+        o.founder = o.founder || 'Aşkın Keten'
+        o.foundingDate = o.foundingDate || '1998'
+        o.numberOfEmployees = o.numberOfEmployees || '25'
+        o.paymentAccepted = o.paymentAccepted || 'Nakit, Kredi Kartı, Havale'
+        o.openingHours = o.openingHours || 'Mo-Fr 08:00-18:15'
+        o.areaServed = o.areaServed || { '@type': 'Country', 'name': 'Turkey' }
+      }
+
+      const hasBreadcrumb = graph.some((g: any) => g['@type'] === 'BreadcrumbList')
+      if (!hasBreadcrumb) {
+  const canonicalHref = (seoData.link || []).find((l: any) => l.rel === 'canonical')?.href || (typeof window !== 'undefined' ? `${SITE_DOMAIN}${window.location.pathname}` : SITE_DOMAIN)
+        graph.push({
+          '@type': 'BreadcrumbList',
+          '@id': `${canonicalHref}#breadcrumb`,
+          'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Ana Sayfa', 'item': 'https://www.ketenpnomatik.com' },
+            { '@type': 'ListItem', 'position': 2, 'name': seoData.title || document.title, 'item': canonicalHref }
+          ]
+        })
+      }
+
+      seoData.structuredData['@graph'] = graph
+      const existing = document.querySelectorAll('script[data-seo="true"][type="application/ld+json"]')
+      existing.forEach(s => s.remove())
+      const script = document.createElement('script')
+      script.setAttribute('data-seo', 'true')
+      script.setAttribute('type', 'application/ld+json')
+      script.textContent = JSON.stringify(seoData.structuredData, null, 2)
+      document.head.appendChild(script)
+    }
+  } catch (err) {
+    // ignore
   }
 }

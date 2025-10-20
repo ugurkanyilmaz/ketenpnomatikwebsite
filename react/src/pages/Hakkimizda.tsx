@@ -2,24 +2,36 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useEffect } from 'react'
 import useShouldAnimate from '../hooks/useShouldAnimate'
+// useSectionImages removed: Hiyoki preview moved to distributorluk index to avoid duplicates
 import { applyPageSEO } from '../utils/other_seo'
+// Note: image hooks were removed because buttons don't use thumbnails
 
 export default function Hakkimizda() {
   const location = useLocation()
   const path = location.pathname.replace(/\/+$/g, '')
   const isIndex = path === '/hakkimizda'
   useEffect(() => {
-    applyPageSEO('about')
-  }, [])
+    // Apply the generic 'about' SEO only when we're on the main /hakkimizda page.
+    // This prevents the parent from overwriting child (e.g. /hakkimizda/apac) SEO when
+    // a child route is mounted directly via a deep link.
+    if (isIndex) applyPageSEO('about')
+  }, [isIndex])
   const shouldAnimate = useShouldAnimate()
-  const brands = [
-    { id: "kolver", name: "Kolver", img: "/kolver.jpg", desc: "Kolver hakkında açıklama buraya gelecek." },
+  // (previously loaded Hiyoki images here; now handled in distributorluk Index)
+  // Use useSectionImages to fetch brand-specific hero/showcase images when available
+  // Order intentionally set so banner buttons prioritize our top partners
+  const brandsStatic = [
     { id: "apac", name: "APAC", img: "/apac.jpg", desc: "APAC hakkında açıklama buraya gelecek." },
     { id: "hiyoki", name: "Hiyoki", img: "/hiyoki.jpg", desc: "Hiyoki hakkında açıklama buraya gelecek." },
     { id: "hawanox", name: "Hawanox", img: "/hawanox.jpg", desc: "Hawanox hakkında açıklama." },
+    { id: "kolver", name: "Kolver", img: "/kolver.jpg", desc: "Kolver hakkında açıklama buraya gelecek." },
     { id: "asa", name: "ASA", img: "/asa.jpg", desc: "ASA hakkında açıklama." },
     { id: "delta-regis", name: "Delta Regis", img: "/delta_regis.jpg", desc: "Delta Regis hakkında açıklama." },
   ]
+
+  // We intentionally do not show thumbnails in the buttons. Keep hooks removed to avoid
+  // unused-variable warnings. If you later want thumbnails, re-enable useSectionImages
+  // calls above and use `brandHeroMap` when rendering the buttons.
 
   return (
     <div className="bg-base-100">
@@ -67,7 +79,7 @@ export default function Hakkimizda() {
 
                 const buttonsInner = (
                   <>
-                    {brands.map((b) => (
+                    {brandsStatic.map((b) => (
                       <button
                         key={b.id}
                         type="button"
@@ -114,6 +126,8 @@ export default function Hakkimizda() {
           <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-base-100 to-transparent" />
         </section>
       )}
+
+        {/* removed inline Hiyoki preview to avoid duplicate Hiyoki sections; Hiyoki is rendered via distributorluk index */}
 
       {/* Brands are provided by nested routes (Outlet) to avoid duplication */}
 

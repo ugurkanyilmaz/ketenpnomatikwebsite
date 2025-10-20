@@ -6,7 +6,7 @@ import { applyPageSEO } from '../../utils/other_seo'
 
 export default function Apac() {
   // Use section gallery first (apac_section*), fallback to about_apac
-  const { hero: apacHero, showcase: apacShowcase } = useSectionImages('apac_section', 'about_apac')
+  const { images, hero: apacHero, showcase: apacShowcase } = useSectionImages('apac_section', 'about_apac')
   useEffect(() => {
     applyPageSEO('about_apac')
   }, [])
@@ -36,7 +36,10 @@ export default function Apac() {
             </div>
           </div>
           <div>
-            <img src={apacHero?.image_path || '/professional_banner.png'} alt={apacHero?.alt_text || 'APAC hero'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            {/* Sadece hero varsa göster (fallback yok) */}
+            {apacHero?.image_path ? (
+              <img src={apacHero.image_path} alt={apacHero.alt_text || 'APAC hero'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            ) : null}
           </div>
         </div>
       </motion.section>
@@ -71,7 +74,10 @@ export default function Apac() {
 
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           <div>
-            <img src={apacShowcase?.image_path || '/keten_banner.jpg'} alt={apacShowcase?.alt_text || 'APAC Pnömatik Aletler'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            {/* Sadece showcase varsa göster (fallback yok) */}
+            {apacShowcase?.image_path ? (
+              <img src={apacShowcase.image_path} alt={apacShowcase.alt_text || 'APAC Pnömatik Aletler'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            ) : null}
           </div>
           <div>
             <h3 className="text-xl md:text-2xl font-bold text-gray-900">Endüstriyel Dayanıklılık</h3>
@@ -122,7 +128,10 @@ export default function Apac() {
             </div>
           </div>
           <div>
-            <img src={apacShowcase?.image_path || '/endus.jpg'} alt={apacShowcase?.alt_text || 'APAC Endüstriyel Uygulamalar'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            {/* Sadece üçüncü resim varsa göster (fallback yok) */}
+            {images?.[2]?.image_path ? (
+              <img src={images[2].image_path} alt={images[2].alt_text || 'APAC Endüstriyel Uygulamalar'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            ) : null}
           </div>
         </div>
       </motion.section>

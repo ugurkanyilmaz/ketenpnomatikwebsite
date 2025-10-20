@@ -152,14 +152,7 @@ export default function Hero() {
               <MobileSlider slides={slides} />
             </div>
             <div ref={textRef} className="hidden lg:block max-w-xl md:pl-6 lg:pl-10 text-right relative">
-              {/* 28. yıl batch görseli */}
-              <img 
-                src="/28.yil.png" 
-                alt="28. Yıl" 
-                className="absolute -top-8 -right-8 w-28 h-28 object-contain drop-shadow-xl select-none pointer-events-none z-20 hidden lg:block"
-                style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.18))' }}
-                draggable="false"
-              />
+              {/* 28. yıl görseli moved to Header for consistent placement */}
               <div className="backdrop-blur-sm bg-white/5 rounded-2xl p-8 border border-white/10 shadow-2xl">
                 {slides.length > 0 && (
                   <>

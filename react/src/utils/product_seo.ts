@@ -51,18 +51,15 @@ export interface ProductSEOData {
 const SITE_DOMAIN = 'https://www.ketenpnomatik.com'
 const SITE_NAME = 'Keten Pnömatik'
 // Use weblogo.jpg as site logo for social previews by default
-const SITE_LOGO = `${SITE_DOMAIN}/weblogo.jpg`
+const SITE_LOGO = 'https://ketenpnomatik.com/weblogo.jpg'
 const DEFAULT_IMAGE = `${SITE_DOMAIN}/weblogo.jpg`
 
-function absUrl(p?: string) {
-  if (!p) return DEFAULT_IMAGE
-  if (p.startsWith('http')) return p
-  return `${SITE_DOMAIN}${p}`
-}
 
 /**
  * Builds complete head metadata for product pages
  */
+import { normalizeImageUrl } from './seo_utils'
+
 export function buildProductSEO(product: ProductSEOData) {
   // Meta Title - used for <title> tag
   const pageTitle = product.meta_title || `${product.title} - ${product.brand || 'Endüstriyel Alet'}`
@@ -76,13 +73,7 @@ export function buildProductSEO(product: ProductSEOData) {
   // Meta Keywords - used for <meta name="keywords">
   const metaKeywords = product.keywords || `${product.title}, ${product.brand}, ${product.parent}, ${product.child}, ${product.subchild}, pnömatik, endüstriyel`
   
-  function absUrl(p?: string) {
-    if (!p) return DEFAULT_IMAGE
-    if (p.startsWith('http')) return p
-    return `${SITE_DOMAIN}${p}`
-  }
-
-  const pageImage = absUrl(product.main_img)
+  const pageImage = normalizeImageUrl(product.main_img, DEFAULT_IMAGE)
   const canonicalUrl = `${SITE_DOMAIN}/urun/${product.sku}`
   
   return {
@@ -162,7 +153,7 @@ function buildStructuredData(
     product.p_img7
   ]
     .filter(Boolean)
-    .map(img => absUrl(img as string))
+    .map(img => normalizeImageUrl(img as string, DEFAULT_IMAGE))
 
   return {
     '@context': 'https://schema.org',
@@ -187,6 +178,9 @@ function buildStructuredData(
           '@type': 'ImageObject',
           'url': SITE_LOGO,
           '@id': `${SITE_DOMAIN}/#logo`
+        ,
+        'width': 520,
+        'height': 480
         },
         'image': { '@id': `${SITE_DOMAIN}/#logo` },
         'contactPoint': {
@@ -359,8 +353,18 @@ function buildOfferObject(product: ProductSEOData, canonicalUrl: string) {
     baseOffer.price = String(product.price)
     baseOffer.priceCurrency = product.price_currency || 'TRY'
   } else {
-    // No numeric price - prompt users to contact. Keep availability as mapped.
-    baseOffer.description = 'Fiyat bilgisi için lütfen iletişime geçiniz.'
+    // No numeric price - emit price as 0 and add a PriceSpecification indicating PriceOnRequest
+    // This keeps a numeric price for consumers (e.g. Google Shopping) while signalling it's on request.
+    const currency = product.price_currency || 'TRY'
+    baseOffer.price = '0'
+    baseOffer.priceCurrency = currency
+    baseOffer.priceSpecification = {
+      '@type': 'PriceSpecification',
+      'type': 'PriceOnRequest',
+      'price': '0',
+      'priceCurrency': currency,
+      'description': 'Price on request — iletişime geçiniz.'
+    }
   }
 
   return baseOffer
@@ -433,31 +437,36 @@ function buildBreadcrumbs(product: ProductSEOData, canonicalUrl: string) {
 
   let position = 3
 
+
+  const slugify = (text?: string) => {
+    if (!text) return ''
+    let s = String(text).toLowerCase()
+    s = s.replace(/[ıİ]/g, 'i')
+    s = s.replace(/[şŞ]/g, 's')
+    s = s.replace(/[ğĞ]/g, 'g')
+    s = s.replace(/[üÜ]/g, 'u')
+    s = s.replace(/[öÖ]/g, 'o')
+    s = s.replace(/[çÇ]/g, 'c')
+    s = s.replace(/[^a-z0-9]+/g, '-')
+    s = s.replace(/(^-|-$)/g, '')
+    return s
+  }
+
   if (product.parent) {
-    breadcrumbs.push({
-      '@type': 'ListItem',
-      'position': position++,
-      'name': product.parent,
-      'item': `${SITE_DOMAIN}/kategoriler/parent`
-    })
+    breadcrumbs.push({ '@type': 'ListItem', 'position': position++, 'name': product.parent, 'item': `${SITE_DOMAIN}/kategoriler/${encodeURIComponent(slugify(String(product.parent)))}` })
   }
 
   if (product.child) {
-    breadcrumbs.push({
-      '@type': 'ListItem',
-      'position': position++,
-      'name': product.child,
-      'item': `${SITE_DOMAIN}/kategoriler/child/${product.parent}`
-    })
+    const p = encodeURIComponent(slugify(String(product.parent)))
+    const c = encodeURIComponent(slugify(String(product.child)))
+    breadcrumbs.push({ '@type': 'ListItem', 'position': position++, 'name': product.child, 'item': `${SITE_DOMAIN}/kategoriler/${p}/${c}` })
   }
 
   if (product.subchild) {
-    breadcrumbs.push({
-      '@type': 'ListItem',
-      'position': position++,
-      'name': product.subchild,
-      'item': `${SITE_DOMAIN}/kategoriler/subchild/${product.parent}/${product.child}`
-    })
+    const p = encodeURIComponent(slugify(String(product.parent)))
+    const c = encodeURIComponent(slugify(String(product.child)))
+    const s = encodeURIComponent(slugify(String(product.subchild)))
+    breadcrumbs.push({ '@type': 'ListItem', 'position': position++, 'name': product.subchild, 'item': `${SITE_DOMAIN}/kategoriler/${p}/${c}/${s}` })
   }
 
   breadcrumbs.push({
@@ -522,4 +531,203 @@ export function applySEOToHead(seoData: ReturnType<typeof buildProductSEO>) {
   script.setAttribute('type', 'application/ld+json')
   script.textContent = JSON.stringify(seoData.structuredData, null, 2)
   document.head.appendChild(script)
+}
+
+// Enhanced entry that also injects global head assets and enriches JSON-LD
+export function applyProductSEOEnhanced(seoData: ReturnType<typeof buildProductSEO>) {
+  applySEOToHead(seoData)
+
+  try {
+  const canonicalHref = (seoData.link || []).find((l: any) => l.rel === 'canonical')?.href || (typeof window !== 'undefined' ? `${SITE_DOMAIN}${window.location.pathname}` : SITE_DOMAIN)
+
+    const httpLang = document.createElement('meta')
+    httpLang.setAttribute('data-seo', 'true')
+    httpLang.setAttribute('http-equiv', 'content-language')
+    httpLang.setAttribute('content', 'tr')
+    document.head.appendChild(httpLang)
+
+    const robots = document.createElement('meta')
+    robots.setAttribute('data-seo', 'true')
+    robots.setAttribute('name', 'robots')
+    robots.setAttribute('content', 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1')
+    document.head.appendChild(robots)
+
+    const sitemap = document.createElement('link')
+    sitemap.setAttribute('data-seo', 'true')
+    sitemap.setAttribute('rel', 'sitemap')
+    sitemap.setAttribute('type', 'application/xml')
+    sitemap.setAttribute('href', 'https://www.ketenpnomatik.com/sitemap.xml')
+    document.head.appendChild(sitemap)
+
+    const pre = document.createElement('link')
+    pre.setAttribute('data-seo', 'true')
+    pre.setAttribute('rel', 'preconnect')
+    pre.setAttribute('href', 'https://www.googletagmanager.com')
+    document.head.appendChild(pre)
+
+    const dns = document.createElement('link')
+    dns.setAttribute('data-seo', 'true')
+    dns.setAttribute('rel', 'dns-prefetch')
+    dns.setAttribute('href', 'https://www.googletagmanager.com')
+    document.head.appendChild(dns)
+
+    const f32 = document.createElement('link')
+    f32.setAttribute('data-seo', 'true')
+    f32.setAttribute('rel', 'icon')
+    f32.setAttribute('type', 'image/png')
+    f32.setAttribute('sizes', '32x32')
+  f32.setAttribute('href', '/favicon-32x32.png')
+    document.head.appendChild(f32)
+
+    const f16 = document.createElement('link')
+    f16.setAttribute('data-seo', 'true')
+    f16.setAttribute('rel', 'icon')
+    f16.setAttribute('type', 'image/png')
+    f16.setAttribute('sizes', '16x16')
+  f16.setAttribute('href', '/favicon-16x16.png')
+    document.head.appendChild(f16)
+
+  const ico = document.createElement('link')
+  ico.setAttribute('data-seo', 'true')
+  ico.setAttribute('rel', 'shortcut icon')
+  ico.setAttribute('href', '/favicon.ico')
+  document.head.appendChild(ico)
+
+  const apple = document.createElement('link')
+  apple.setAttribute('data-seo', 'true')
+  apple.setAttribute('rel', 'apple-touch-icon')
+  apple.setAttribute('href', '/apple-touch-icon.png')
+  document.head.appendChild(apple)
+
+  const android192 = document.createElement('link')
+  android192.setAttribute('data-seo', 'true')
+  android192.setAttribute('rel', 'icon')
+  android192.setAttribute('sizes', '192x192')
+  android192.setAttribute('href', '/android-chrome-192x192.png')
+  document.head.appendChild(android192)
+
+  const android512 = document.createElement('link')
+  android512.setAttribute('data-seo', 'true')
+  android512.setAttribute('rel', 'icon')
+  android512.setAttribute('sizes', '512x512')
+  android512.setAttribute('href', '/android-chrome-512x512.png')
+  document.head.appendChild(android512)
+
+    const manifest = document.createElement('link')
+    manifest.setAttribute('data-seo', 'true')
+    manifest.setAttribute('rel', 'manifest')
+    manifest.setAttribute('href', '/site.webmanifest')
+    document.head.appendChild(manifest)
+
+    const theme = document.createElement('meta')
+    theme.setAttribute('data-seo', 'true')
+    theme.setAttribute('name', 'theme-color')
+    theme.setAttribute('content', '#0b5561')
+    document.head.appendChild(theme)
+
+    const alt = document.createElement('link')
+    alt.setAttribute('data-seo', 'true')
+    alt.setAttribute('rel', 'alternate')
+    alt.setAttribute('hreflang', 'tr')
+    alt.setAttribute('href', canonicalHref)
+    document.head.appendChild(alt)
+  } catch (e) {
+    // ignore
+  }
+
+  // Enrich structuredData
+  try {
+    if (seoData.structuredData) {
+      const graph = seoData.structuredData['@graph'] || []
+      const org = graph.find((g: any) => g['@type'] === 'Organization' || (Array.isArray(g['@type']) && g['@type'].includes('Organization')))
+      if (org) {
+        const o: any = org
+        o.founder = o.founder || 'Aşkın Keten'
+        o.foundingDate = o.foundingDate || '1998'
+        o.numberOfEmployees = o.numberOfEmployees || '25'
+        o.paymentAccepted = o.paymentAccepted || 'Nakit, Kredi Kartı, Havale'
+        o.openingHours = o.openingHours || 'Mo-Fr 08:00-18:15'
+        o.areaServed = o.areaServed || { '@type': 'Country', 'name': 'Turkey' }
+      }
+
+      // Ensure Product node includes 'description', 'brand' and 'offers'
+      const productNode = graph.find((g: any) => g['@type'] === 'Product' || (Array.isArray(g['@type']) && g['@type'].includes('Product')))
+      if (productNode) {
+        const p: any = productNode
+        // prefer existing description on Product node, fall back to meta description if present
+        p.description = p.description || seoData?.meta?.find((m: any) => m.name === 'description')?.content || undefined
+        if (!p.brand) {
+          // Add brand as Brand node object
+          const brandName = (seoData as any).brand || ((p && p.manufacturer && p.manufacturer.name) ? p.manufacturer.name : undefined) || undefined
+          if (brandName) p.brand = { '@type': 'Brand', 'name': brandName }
+        }
+        if (!p.offers || (typeof p.offers === 'object' && Object.keys(p.offers).length === 0)) {
+          // Build a minimal offers object from available fields in seoData
+          const offer = findOfferInGraph(graph)
+          if (offer) p.offers = offer
+          else {
+            // fallback: create a lightweight Offer if price info exists in seoData
+            const price = (seoData as any)?.meta?.find((m: any) => m.property === 'product:price:amount')?.content || (seoData as any)?.price
+            if (price) {
+              p.offers = { '@type': 'Offer', 'price': String(price), 'priceCurrency': (seoData as any)?.meta?.find((m: any) => m.property === 'product:price:currency')?.content || (seoData as any)?.price_currency || 'TRY', 'availability': mapSchemaAvailabilityPlaceholder(p) }
+            }
+          }
+        }
+      }
+
+      const hasBreadcrumb = graph.some((g: any) => g['@type'] === 'BreadcrumbList')
+      if (!hasBreadcrumb) {
+  const canonicalHref = (seoData.link || []).find((l: any) => l.rel === 'canonical')?.href || (typeof window !== 'undefined' ? `${SITE_DOMAIN}${window.location.pathname}` : SITE_DOMAIN)
+        graph.push({
+          '@type': 'BreadcrumbList',
+          '@id': `${canonicalHref}#breadcrumb`,
+          'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Ana Sayfa', 'item': 'https://www.ketenpnomatik.com' },
+            { '@type': 'ListItem', 'position': 2, 'name': seoData.title || document.title, 'item': canonicalHref }
+          ]
+        })
+      }
+
+      seoData.structuredData['@graph'] = graph
+      const existing = document.querySelectorAll('script[data-seo="true"][type="application/ld+json"]')
+      existing.forEach(s => s.remove())
+      const script = document.createElement('script')
+      script.setAttribute('data-seo', 'true')
+      script.setAttribute('type', 'application/ld+json')
+      script.textContent = JSON.stringify(seoData.structuredData, null, 2)
+      document.head.appendChild(script)
+    }
+  } catch (err) {
+    // ignore
+  }
+}
+
+// Find a top-level Offer node in the graph (used when Product.offers missing)
+function findOfferInGraph(graph: any[]): any | null {
+  for (const node of graph) {
+    if (!node) continue
+    const t = node['@type']
+    if (Array.isArray(t) ? t.includes('Offer') : t === 'Offer') return node
+    // Sometimes Offer is nested under Product as a direct property object
+    if (node['offers']) {
+      const o = node['offers']
+      if (o['@type'] === 'Offer' || (Array.isArray(o) && (o[0] && o[0]['@type'] === 'Offer'))) return o
+    }
+  }
+  return null
+}
+
+// Lightweight availability mapper when only partial data exists on the product node
+function mapSchemaAvailabilityPlaceholder(p: any): string {
+  try {
+    const a = (p && (p.availability || p.stock || p['offers'] && p['offers'].availability)) || ''
+    const s = String(a).toLowerCase()
+    if (s.includes('in') || s.includes('stok') || s.includes('var')) return 'https://schema.org/InStock'
+    if (s.includes('out') || s.includes('yok') || s.includes('tükendi')) return 'https://schema.org/OutOfStock'
+    if (s.includes('pre') || s.includes('ön')) return 'https://schema.org/PreOrder'
+    if (typeof p?.stock === 'number') return p.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'
+  } catch (e) {
+    // ignore
+  }
+  return 'https://schema.org/InStock'
 }

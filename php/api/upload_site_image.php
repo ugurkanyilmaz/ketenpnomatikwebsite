@@ -123,48 +123,10 @@ try {
 
     error_log("Fetched image: " . json_encode($image));
 
-    // --- Automatic sync: if uploading to a "base" key (not already _hero or _showcase),
-    // also update/insert corresponding _hero and _showcase records so pages that expect
-    // dedicated hero/showcase keys reflect the new image automatically.
-    try {
-        if (!preg_match('/_(hero|showcase)$/', $section_key)) {
-            $targets = [$section_key . '_hero', $section_key . '_showcase'];
-            $sel = $pdo->prepare('SELECT id FROM site_images WHERE section_key = :section_key');
-            $up = $pdo->prepare(
-                "UPDATE site_images SET image_path = :image_path, width = :width, height = :height, " .
-                "alt_text = :alt_text, updated_at = NOW() WHERE section_key = :section_key"
-            );
-            $ins = $pdo->prepare(
-                "INSERT INTO site_images (section_key, image_path, width, height, alt_text, updated_at) " .
-                "VALUES (:section_key, :image_path, :width, :height, :alt_text, NOW())"
-            );
-
-            foreach ($targets as $t) {
-                $sel->execute([':section_key' => $t]);
-                if ($sel->fetch()) {
-                    $up->execute([
-                        ':image_path' => $imagePath,
-                        ':width' => $width,
-                        ':height' => $height,
-                        ':alt_text' => $alt_text,
-                        ':section_key' => $t
-                    ]);
-                    error_log("Auto-updated site_images: $t -> $imagePath");
-                } else {
-                    $ins->execute([
-                        ':section_key' => $t,
-                        ':image_path' => $imagePath,
-                        ':width' => $width,
-                        ':height' => $height,
-                        ':alt_text' => $alt_text
-                    ]);
-                    error_log("Auto-inserted site_images: $t -> $imagePath");
-                }
-            }
-        }
-    } catch (Exception $e) {
-        error_log('Error auto-syncing hero/showcase keys: ' . $e->getMessage());
-    }
+    // Note: Automatic syncing to "_hero" and "_showcase" keys was removed intentionally.
+    // Uploading now inserts/updates only the exact provided `section_key`. If you need
+    // to propagate the uploaded base key to hero/showcase keys, run the separate
+    // `sync_section_images.php` tool or implement an explicit admin action.
 
     echo json_encode([
         'success' => true,

@@ -6,6 +6,7 @@
 export interface ArticleSEOData {
   id: number
   tier: string
+  video_url?: string
   parent_id?: string
   parent_slug?: string
   child_id?: string
@@ -22,10 +23,11 @@ export interface ArticleSEOData {
   created_at?: string
   updated_at?: string
 }
+import { normalizeImageUrl } from './seo_utils'
 
 const SITE_DOMAIN = 'https://www.ketenpnomatik.com'
 const SITE_NAME = 'Keten Pnömatik'
-const SITE_LOGO = `${SITE_DOMAIN}/ketenlogoson.fw_.png`
+const SITE_LOGO = 'https://ketenpnomatik.com/weblogo.jpg'
 const DEFAULT_IMAGE = `${SITE_DOMAIN}/keten_banner.jpg`
 
 /**
@@ -38,13 +40,12 @@ export function buildArticleSEO(article: ArticleSEOData) {
   // Meta Description - used for <meta name="description">
   const metaDescription = article.meta_description || `${article.title} kategorisine ait ürünler ve detaylı bilgiler.`
   
-  // Schema Description - used for Schema.org structured data only
   const schemaDescription = article.schema_description || metaDescription
   
   // Meta Keywords - used for <meta name="keywords">
   const metaKeywords = article.keywords || `${article.title}, pnömatik, endüstriyel, alet`
   
-  const pageImage = article.main_img ? `${SITE_DOMAIN}${article.main_img}` : DEFAULT_IMAGE
+  const pageImage = article.main_img ? normalizeImageUrl(article.main_img, DEFAULT_IMAGE) : DEFAULT_IMAGE
   
   // Build canonical URL based on tier structure
   const canonicalUrl = buildCanonicalUrl(article)
@@ -127,82 +128,110 @@ function buildStructuredData(
   const datePublished = article.created_at || now
   const dateModified = article.updated_at || datePublished
 
+  // Place the primary image before product entries and explicitly reference it from the WebPage
+  const graph: any[] = [
+    // Website
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_DOMAIN}/#website`,
+      'url': SITE_DOMAIN,
+      'name': SITE_NAME,
+      'description': 'Endüstriyel pnömatik el aletleri ve ekipmanları',
+      'inLanguage': 'tr-TR'
+    },
+
+    // Organization
+    {
+      '@type': 'Organization',
+      '@id': `${SITE_DOMAIN}/#organization`,
+      'name': SITE_NAME,
+      'url': SITE_DOMAIN,
+      'logo': {
+        '@type': 'ImageObject',
+        'url': SITE_LOGO,
+        '@id': `${SITE_DOMAIN}/#logo`,
+        'width': 520,
+        'height': 480
+      },
+      'image': { '@id': `${SITE_DOMAIN}/#logo` },
+      'sameAs': [
+        'https://www.facebook.com/ketenpnomatik',
+        'https://www.linkedin.com/company/ketenpnomatik',
+        'https://www.instagram.com/ketenpnomatik'
+      ],
+      'contactPoint': {
+        '@type': 'ContactPoint',
+        'contactType': 'Müşteri Hizmetleri',
+        'availableLanguage': 'Turkish',
+        'telephone': '+90 (262) 643 43 39'
+      }
+    },
+
+    // Primary Image - ensure this appears early in the graph
+    {
+      '@type': 'ImageObject',
+      '@id': `${canonicalUrl}#primaryimage`,
+      'url': imageUrl,
+      'contentUrl': imageUrl,
+      'width': 1200,
+      'height': 630,
+      'inLanguage': 'tr-TR'
+    },
+
+    // Use WebPage as primary page type for category/article listings.
+    // The list of products is exposed as the page's mainEntity (ItemList).
+    {
+      '@type': 'WebPage',
+      '@id': `${canonicalUrl}#webpage`,
+      'url': canonicalUrl,
+      'name': article.meta_title || article.title,
+      'description': description,
+      'inLanguage': 'tr-TR',
+      'isPartOf': { '@id': `${SITE_DOMAIN}/#website` },
+      'mainEntity': {
+        '@type': 'ItemList',
+        '@id': `${canonicalUrl}#itemlist`,
+        'itemListElement': []
+      },
+      'about': { '@id': `${SITE_DOMAIN}/#organization` },
+      'primaryImageOfPage': { '@id': `${canonicalUrl}#primaryimage` },
+      // also reference primary image via 'image' for compatibility
+      'image': { '@id': `${canonicalUrl}#primaryimage` },
+      'datePublished': datePublished,
+      'dateModified': dateModified
+    }
+  ]
+
+  // If the article has a video_url, add a VideoObject node and reference it from the WebPage
+  if (article.video_url && String(article.video_url).trim() !== '') {
+    const videoId = `${canonicalUrl}#video`
+    // reference by id from the WebPage node
+    try {
+      const wp = graph.find(g => g['@type'] === 'WebPage' && g['@id'] === `${canonicalUrl}#webpage`)
+      if (wp) wp.video = { '@id': videoId }
+    } catch (e) {
+      // ignore
+    }
+
+    graph.push({
+      '@type': 'VideoObject',
+      '@id': `${canonicalUrl}#video`,
+      'name': article.title,
+      'description': description,
+      'thumbnailUrl': imageUrl,
+      'uploadDate': article.created_at || undefined,
+      'contentUrl': article.video_url,
+      'embedUrl': article.video_url,
+      'inLanguage': 'tr-TR'
+    })
+  }
+
+  // BreadcrumbList (ensure current page is included)
+  graph.push(buildBreadcrumbs(article, canonicalUrl))
+
   return {
     '@context': 'https://schema.org',
-    '@graph': [
-      // Website
-      {
-        '@type': 'WebSite',
-        '@id': `${SITE_DOMAIN}/#website`,
-        'url': SITE_DOMAIN,
-        'name': SITE_NAME,
-        'description': 'Endüstriyel pnömatik el aletleri ve ekipmanları',
-        'inLanguage': 'tr-TR'
-      },
-      
-      // Organization
-      {
-        '@type': 'Organization',
-        '@id': `${SITE_DOMAIN}/#organization`,
-        'name': SITE_NAME,
-        'url': SITE_DOMAIN,
-        'logo': {
-          '@type': 'ImageObject',
-          'url': SITE_LOGO,
-          '@id': `${SITE_DOMAIN}/#logo`
-        },
-        'image': { '@id': `${SITE_DOMAIN}/#logo` },
-        'sameAs': [
-          'https://www.facebook.com/ketenpnomatik',
-          'https://www.linkedin.com/company/ketenpnomatik',
-          'https://www.instagram.com/ketenpnomatik'
-        ],
-        'contactPoint': {
-          '@type': 'ContactPoint',
-          'contactType': 'Müşteri Hizmetleri',
-          'availableLanguage': 'Turkish',
-          'telephone': '+90 (262) 643 43 39'
-        }
-      },
-      
-      // Use WebPage as primary page type for category/article listings.
-      // The list of products is exposed as the page's mainEntity (ItemList).
-      {
-        '@type': 'WebPage',
-        '@id': `${canonicalUrl}#webpage`,
-        'url': canonicalUrl,
-        'name': article.meta_title || article.title,
-        'description': description,
-        'inLanguage': 'tr-TR',
-        'isPartOf': { '@id': `${SITE_DOMAIN}/#website` },
-        'mainEntity': {
-          '@type': 'ItemList',
-          '@id': `${canonicalUrl}#itemlist`,
-          'itemListElement': []
-        },
-        'about': { '@id': `${SITE_DOMAIN}/#organization` },
-        'primaryImageOfPage': { '@id': `${canonicalUrl}#primaryimage` },
-        'datePublished': datePublished,
-        'dateModified': dateModified
-      },
-      
-      // Primary Image
-      {
-        '@type': 'ImageObject',
-        '@id': `${canonicalUrl}#primaryimage`,
-        'url': imageUrl,
-        'contentUrl': imageUrl,
-        'width': 1200,
-        'height': 630,
-        'inLanguage': 'tr-TR'
-      },
-      
-      // If present, the CollectionPage entry (may be augmented later with products)
-      // Note: primary CollectionPage is already included above to reduce duplication.
-      
-  // BreadcrumbList (ensure current page is included)
-  buildBreadcrumbs(article, canonicalUrl)
-    ]
+    '@graph': graph
   }
 }
 
@@ -210,80 +239,59 @@ function buildStructuredData(
  * Builds breadcrumb structured data based on tier
  */
 function buildBreadcrumbs(article: ArticleSEOData, canonicalUrl: string) {
-  const breadcrumbs = [
-    {
-      '@type': 'ListItem',
-      'position': 1,
-      'name': 'Ana Sayfa',
-      'item': SITE_DOMAIN
-    },
-    {
-      '@type': 'ListItem',
-      'position': 2,
-      'name': 'Kategoriler',
-      'item': `${SITE_DOMAIN}/kategoriler`
-    }
+  // slugify helper mirrors client-side routing behaviour
+  const slugify = (text: string | undefined | null) => {
+    if (!text) return ''
+    let s = String(text).toLowerCase()
+    s = s.replace(/[ıİ]/g, 'i')
+    s = s.replace(/[şŞ]/g, 's')
+    s = s.replace(/[ğĞ]/g, 'g')
+    s = s.replace(/[üÜ]/g, 'u')
+    s = s.replace(/[öÖ]/g, 'o')
+    s = s.replace(/[çÇ]/g, 'c')
+    s = s.replace(/[^a-z0-9]+/g, '-')
+    s = s.replace(/(^-|-$)/g, '')
+    return s
+  }
+
+  const breadcrumbs: any[] = [
+    { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: SITE_DOMAIN },
+    { '@type': 'ListItem', position: 2, name: 'Kategoriler', item: `${SITE_DOMAIN}/kategoriler` }
   ]
 
   let position = 3
-  
+
+  const parentSlug = slugify(article.parent_slug || (article.parent_id ? String(article.parent_id) : undefined))
+  const childSlug = slugify(article.child_slug || (article.child_id ? String(article.child_id) : undefined))
+  const subchildSlug = slugify(article.subchild_slug || (article.subchild_id ? String(article.subchild_id) : undefined))
+
   if (article.tier === 'parent') {
-    breadcrumbs.push({
-      '@type': 'ListItem',
-      'position': position,
-      'name': article.title,
-      'item': canonicalUrl
-    })
-  } else if (article.tier === 'child' && article.parent_id) {
-    breadcrumbs.push({
-      '@type': 'ListItem',
-      'position': position++,
-      'name': 'Ana Kategori',
-      'item': `${SITE_DOMAIN}/kategoriler/${article.parent_id}`
-    })
-    breadcrumbs.push({
-      '@type': 'ListItem',
-      'position': position,
-      'name': article.title,
-      'item': canonicalUrl
-    })
-  } else if (article.tier === 'subchild' && article.parent_id && article.child_id) {
-    breadcrumbs.push({
-      '@type': 'ListItem',
-      'position': position++,
-      'name': 'Ana Kategori',
-      'item': `${SITE_DOMAIN}/kategoriler/${article.parent_id}`
-    })
-    breadcrumbs.push({
-      '@type': 'ListItem',
-      'position': position++,
-      'name': 'Alt Kategori',
-      'item': `${SITE_DOMAIN}/kategoriler/${article.parent_id}/${article.child_id}`
-    })
-    breadcrumbs.push({
-      '@type': 'ListItem',
-      'position': position,
-      'name': article.title,
-      'item': canonicalUrl
-    })
+    const pUrl = parentSlug ? `${SITE_DOMAIN}/kategoriler/${parentSlug}` : canonicalUrl
+    breadcrumbs.push({ '@type': 'ListItem', position, name: article.title, item: pUrl })
+  } else if (article.tier === 'child') {
+    if (parentSlug) {
+      breadcrumbs.push({ '@type': 'ListItem', position: position++, name: article.parent_slug || String(article.parent_id) || 'Ana Kategori', item: `${SITE_DOMAIN}/kategoriler/${parentSlug}` })
+    }
+    const cUrl = parentSlug && childSlug ? `${SITE_DOMAIN}/kategoriler/${parentSlug}/${childSlug}` : canonicalUrl
+    breadcrumbs.push({ '@type': 'ListItem', position, name: article.title, item: cUrl })
+  } else if (article.tier === 'subchild') {
+    if (parentSlug) {
+      breadcrumbs.push({ '@type': 'ListItem', position: position++, name: article.parent_slug || String(article.parent_id) || 'Ana Kategori', item: `${SITE_DOMAIN}/kategoriler/${parentSlug}` })
+    }
+    if (parentSlug && childSlug) {
+      breadcrumbs.push({ '@type': 'ListItem', position: position++, name: article.child_slug || String(article.child_id) || 'Alt Kategori', item: `${SITE_DOMAIN}/kategoriler/${parentSlug}/${childSlug}` })
+    }
+    const sUrl = parentSlug && childSlug && subchildSlug ? `${SITE_DOMAIN}/kategoriler/${parentSlug}/${childSlug}/${subchildSlug}` : canonicalUrl
+    breadcrumbs.push({ '@type': 'ListItem', position, name: article.title, item: sUrl })
   }
 
   // Ensure current page is present as the last breadcrumb if not already
   const last = breadcrumbs[breadcrumbs.length - 1]
   if (!last || last.item !== canonicalUrl) {
-    breadcrumbs.push({
-      '@type': 'ListItem',
-      'position': breadcrumbs.length + 1,
-      'name': article.title,
-      'item': canonicalUrl
-    })
+    breadcrumbs.push({ '@type': 'ListItem', position: breadcrumbs.length + 1, name: article.title, item: canonicalUrl })
   }
 
-  return {
-    '@type': 'BreadcrumbList',
-    '@id': `${canonicalUrl}#breadcrumb`,
-    'itemListElement': breadcrumbs
-  }
+  return { '@type': 'BreadcrumbList', '@id': `${canonicalUrl}#breadcrumb`, itemListElement: breadcrumbs }
 }
 
 /**
@@ -291,23 +299,19 @@ function buildBreadcrumbs(article: ArticleSEOData, canonicalUrl: string) {
  */
 export function applySEOToHead(seoData: ReturnType<typeof buildArticleSEO>) {
   // Set title
-  document.title = seoData.title
-  
-  // Remove old meta tags
+  if (seoData?.title) document.title = seoData.title
+
+  // Remove old tags
   const oldMetas = document.querySelectorAll('meta[data-seo="true"]')
-  oldMetas.forEach(meta => meta.remove())
-  
+  oldMetas.forEach(m => m.remove())
   const oldLinks = document.querySelectorAll('link[data-seo="true"]')
-  oldLinks.forEach(link => link.remove())
-  
+  oldLinks.forEach(l => l.remove())
   const oldScripts = document.querySelectorAll('script[data-seo="true"]')
-  oldScripts.forEach(script => script.remove())
-  
-  // Add new meta tags
-  seoData.meta.forEach(metaData => {
+  oldScripts.forEach(s => s.remove())
+
+  ;(seoData.meta || []).forEach((metaData: any) => {
     const meta = document.createElement('meta')
     meta.setAttribute('data-seo', 'true')
-    
     if ('name' in metaData && metaData.name) {
       meta.setAttribute('name', metaData.name)
       meta.setAttribute('content', metaData.content)
@@ -315,36 +319,195 @@ export function applySEOToHead(seoData: ReturnType<typeof buildArticleSEO>) {
       meta.setAttribute('property', metaData.property)
       meta.setAttribute('content', metaData.content)
     }
-    
     document.head.appendChild(meta)
   })
-  
-  // Add canonical link
-  seoData.link.forEach(linkData => {
-    const link = document.createElement('link')
-    link.setAttribute('data-seo', 'true')
-    link.setAttribute('rel', linkData.rel)
-    link.setAttribute('href', linkData.href)
-    document.head.appendChild(link)
+
+  ;(seoData.link || []).forEach((linkData: any) => {
+    if (linkData.href) {
+      const link = document.createElement('link')
+      link.setAttribute('data-seo', 'true')
+      link.setAttribute('rel', linkData.rel || 'canonical')
+      link.setAttribute('href', linkData.href)
+      document.head.appendChild(link)
+    }
   })
-  
-  // Add structured data
-  const script = document.createElement('script')
-  script.setAttribute('data-seo', 'true')
-  script.setAttribute('type', 'application/ld+json')
-  script.textContent = JSON.stringify(seoData.structuredData, null, 2)
-  document.head.appendChild(script)
+
+  if (seoData.structuredData) {
+    const script = document.createElement('script')
+    script.setAttribute('data-seo', 'true')
+    script.setAttribute('type', 'application/ld+json')
+    script.textContent = JSON.stringify(seoData.structuredData, null, 2)
+    document.head.appendChild(script)
+  }
+}
+
+// Enhance apply to include global head assets and structuredData enrichment
+export function applyArticleSEOEnhanced(seoData: ReturnType<typeof buildArticleSEO>) {
+  // apply basic head changes
+  applySEOToHead(seoData)
+
+  try {
+  const canonicalHref = (seoData.link || []).find((l: any) => l.rel === 'canonical')?.href || (typeof window !== 'undefined' ? `${SITE_DOMAIN}${window.location.pathname}` : SITE_DOMAIN)
+
+    const httpLang = document.createElement('meta')
+    httpLang.setAttribute('data-seo', 'true')
+    httpLang.setAttribute('http-equiv', 'content-language')
+    httpLang.setAttribute('content', 'tr')
+    document.head.appendChild(httpLang)
+
+    const robots = document.createElement('meta')
+    robots.setAttribute('data-seo', 'true')
+    robots.setAttribute('name', 'robots')
+    robots.setAttribute('content', 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1')
+    document.head.appendChild(robots)
+
+    const sitemap = document.createElement('link')
+    sitemap.setAttribute('data-seo', 'true')
+    sitemap.setAttribute('rel', 'sitemap')
+    sitemap.setAttribute('type', 'application/xml')
+    sitemap.setAttribute('href', 'https://www.ketenpnomatik.com/sitemap.xml')
+    document.head.appendChild(sitemap)
+
+    const pre = document.createElement('link')
+    pre.setAttribute('data-seo', 'true')
+    pre.setAttribute('rel', 'preconnect')
+    pre.setAttribute('href', 'https://www.googletagmanager.com')
+    document.head.appendChild(pre)
+
+    const dns = document.createElement('link')
+    dns.setAttribute('data-seo', 'true')
+    dns.setAttribute('rel', 'dns-prefetch')
+    dns.setAttribute('href', 'https://www.googletagmanager.com')
+    document.head.appendChild(dns)
+
+    const f32 = document.createElement('link')
+    f32.setAttribute('data-seo', 'true')
+    f32.setAttribute('rel', 'icon')
+    f32.setAttribute('type', 'image/png')
+    f32.setAttribute('sizes', '32x32')
+  f32.setAttribute('href', '/favicon-32x32.png')
+    document.head.appendChild(f32)
+
+    const f16 = document.createElement('link')
+    f16.setAttribute('data-seo', 'true')
+    f16.setAttribute('rel', 'icon')
+    f16.setAttribute('type', 'image/png')
+    f16.setAttribute('sizes', '16x16')
+  f16.setAttribute('href', '/favicon-16x16.png')
+    document.head.appendChild(f16)
+
+  const ico = document.createElement('link')
+  ico.setAttribute('data-seo', 'true')
+  ico.setAttribute('rel', 'shortcut icon')
+  ico.setAttribute('href', '/favicon.ico')
+  document.head.appendChild(ico)
+
+  const apple = document.createElement('link')
+  apple.setAttribute('data-seo', 'true')
+  apple.setAttribute('rel', 'apple-touch-icon')
+  apple.setAttribute('href', '/apple-touch-icon.png')
+  document.head.appendChild(apple)
+
+  const android192 = document.createElement('link')
+  android192.setAttribute('data-seo', 'true')
+  android192.setAttribute('rel', 'icon')
+  android192.setAttribute('sizes', '192x192')
+  android192.setAttribute('href', '/android-chrome-192x192.png')
+  document.head.appendChild(android192)
+
+  const android512 = document.createElement('link')
+  android512.setAttribute('data-seo', 'true')
+  android512.setAttribute('rel', 'icon')
+  android512.setAttribute('sizes', '512x512')
+  android512.setAttribute('href', '/android-chrome-512x512.png')
+  document.head.appendChild(android512)
+
+    const manifest = document.createElement('link')
+    manifest.setAttribute('data-seo', 'true')
+    manifest.setAttribute('rel', 'manifest')
+    manifest.setAttribute('href', '/site.webmanifest')
+    document.head.appendChild(manifest)
+
+    const theme = document.createElement('meta')
+    theme.setAttribute('data-seo', 'true')
+    theme.setAttribute('name', 'theme-color')
+    theme.setAttribute('content', '#0b5561')
+    document.head.appendChild(theme)
+
+    const alt = document.createElement('link')
+    alt.setAttribute('data-seo', 'true')
+    alt.setAttribute('rel', 'alternate')
+    alt.setAttribute('hreflang', 'tr')
+    alt.setAttribute('href', canonicalHref)
+    document.head.appendChild(alt)
+  } catch (e) {
+    // ignore
+  }
+
+  // Enrich structuredData
+  try {
+    if (seoData.structuredData) {
+      const graph = seoData.structuredData['@graph'] || []
+      const org = graph.find((g: any) => g['@type'] === 'Organization' || (Array.isArray(g['@type']) && g['@type'].includes('Organization')))
+      if (org) {
+        const o: any = org
+        o.founder = o.founder || 'Aşkın Keten'
+        o.foundingDate = o.foundingDate || '1998'
+        o.numberOfEmployees = o.numberOfEmployees || '25'
+        o.paymentAccepted = o.paymentAccepted || 'Nakit, Kredi Kartı, Havale'
+        o.openingHours = o.openingHours || 'Mo-Fr 08:00-18:15'
+        o.areaServed = o.areaServed || { '@type': 'Country', 'name': 'Turkey' }
+      }
+
+      const hasBreadcrumb = graph.some((g: any) => g['@type'] === 'BreadcrumbList')
+      if (!hasBreadcrumb) {
+  const canonicalHref = (seoData.link || []).find((l: any) => l.rel === 'canonical')?.href || (typeof window !== 'undefined' ? `${SITE_DOMAIN}${window.location.pathname}` : SITE_DOMAIN)
+        graph.push({
+          '@type': 'BreadcrumbList',
+          '@id': `${canonicalHref}#breadcrumb`,
+          'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Ana Sayfa', 'item': 'https://www.ketenpnomatik.com' },
+            { '@type': 'ListItem', 'position': 2, 'name': seoData.title || document.title, 'item': canonicalHref }
+          ]
+        })
+      }
+
+      seoData.structuredData['@graph'] = graph
+      // update injected script if any
+      const existing = document.querySelectorAll('script[data-seo="true"][type="application/ld+json"]')
+      existing.forEach(s => s.remove())
+      const script = document.createElement('script')
+      script.setAttribute('data-seo', 'true')
+      script.setAttribute('type', 'application/ld+json')
+      script.textContent = JSON.stringify(seoData.structuredData, null, 2)
+      document.head.appendChild(script)
+    }
+  } catch (err) {
+    // ignore
+  }
 }
 
 // Apply Article SEO and optionally inject product list into CollectionPage JSON-LD
 export function applyArticleSEOWithProducts(article: ArticleSEOData, products?: Array<any>) {
   const seo = buildArticleSEO(article)
 
+  // Ensure canonical is always the category/article canonical (protect against homepage fallback)
+  try {
+    const canonicalUrl = buildCanonicalUrl(article)
+    seo.link = seo.link || []
+    // remove existing canonical(s)
+    seo.link = (seo.link as any[]).filter((l: any) => l.rel !== 'canonical')
+    // prepend our canonical (ensures it's present and prioritized)
+    seo.link.unshift({ rel: 'canonical', href: canonicalUrl })
+  } catch (e) {
+    // ignore errors building canonical
+  }
+
   if (products && products.length > 0 && seo && seo.structuredData) {
     try {
       const graph = seo.structuredData['@graph'] || []
 
-      // Map products to ListItem entries
+      // Map products to ListItem entries and include richer Product schema (description, brand, offers)
       const origin = typeof window !== 'undefined' ? window.location.origin : SITE_DOMAIN
       // Deduplicate products by URL/sku to avoid repeated items in JSON-LD
       const seen = new Set<string>()
@@ -366,17 +529,23 @@ export function applyArticleSEOWithProducts(article: ArticleSEOData, products?: 
         // Normalize image: skip 'NULL' literal and empty values
         let image: string | undefined = undefined
         if (p.main_img && String(p.main_img).toUpperCase() !== 'NULL') {
-          const mi = String(p.main_img)
-          image = mi.startsWith('http') ? mi : `${origin}${mi}`
+          image = normalizeImageUrl(p.main_img, `${origin}/weblogo.jpg`)
         }
 
+        // Build a richer Product entry for ItemList: include description, brand and offers
         const productObj: any = {
           '@type': 'Product',
           'name': p.title || sku,
           'url': productUrl,
-          'sku': sku
+          'sku': sku,
+          'description': p.description || p.meta_description || undefined,
+          'brand': p.brand ? { '@type': 'Brand', 'name': p.brand } : undefined
         }
         if (image) productObj.image = image
+
+        // Offers: include minimal Offer object so ItemList products expose availability/price info
+        const offer: any = buildOfferForItemList(p, productUrl)
+        if (offer) productObj.offers = offer
 
         productItems.push({
           '@type': 'ListItem',
@@ -416,7 +585,34 @@ export function applyArticleSEOWithProducts(article: ArticleSEOData, products?: 
         }
       }
 
-      seo.structuredData['@graph'] = graph
+      // Reorder graph: prefer Website, Organization, PrimaryImage, WebPage before product entries
+      try {
+        const pageId = buildCanonicalUrl(article)
+        const preferIds = [
+          `${SITE_DOMAIN}/#website`,
+          `${SITE_DOMAIN}/#organization`,
+          `${pageId}#primaryimage`,
+          `${pageId}#webpage`,
+          `${pageId}#itemlist`
+        ]
+
+        const ordered: any[] = []
+        // pull preferred nodes out in order if present
+        preferIds.forEach((id) => {
+          const idx = graph.findIndex((g: any) => g['@id'] === id)
+          if (idx !== -1) {
+            ordered.push(graph[idx])
+            graph.splice(idx, 1)
+          }
+        })
+
+        // append remaining nodes (products, collection, breadcrumbs)
+        ordered.push(...graph)
+        seo.structuredData['@graph'] = ordered
+      } catch (e) {
+        // fallback to raw graph
+        seo.structuredData['@graph'] = graph
+      }
     } catch (err) {
       // Non-fatal: if injection fails, still apply SEO with base structured data
       // eslint-disable-next-line no-console
@@ -426,3 +622,50 @@ export function applyArticleSEOWithProducts(article: ArticleSEOData, products?: 
 
   applySEOToHead(seo)
 }
+
+  /**
+   * Build a minimal Offer object for products when injecting into ItemList.
+   * Mirrors product page logic but stays lightweight to avoid large payloads.
+   */
+  function buildOfferForItemList(p: any, productUrl: string) {
+    if (!p) return null
+    const hasPrice = p.price !== undefined && p.price !== null && String(p.price).trim() !== '' && String(p.price).toUpperCase() !== 'NULL'
+    const price = hasPrice ? String(p.price).replace(',', '.') : undefined
+    const currency = p.price_currency || 'TRY'
+
+    const availability = (() => {
+      const a = String(p.availability || '').toLowerCase()
+      if (a.includes('in') || a.includes('stok') || a.includes('var')) return 'https://schema.org/InStock'
+      if (a.includes('out') || a.includes('yok') || a.includes('tükendi')) return 'https://schema.org/OutOfStock'
+      if (a.includes('pre') || a.includes('ön')) return 'https://schema.org/PreOrder'
+      if (typeof p.stock === 'number') return p.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'
+      return 'https://schema.org/InStock'
+    })()
+
+    const baseOffer: any = {
+      '@type': 'Offer',
+      'url': productUrl,
+      'availability': availability,
+      'itemCondition': 'https://schema.org/NewCondition',
+      'seller': { '@type': 'Organization', 'name': p.seller_name || SITE_NAME, 'url': p.seller_url || SITE_DOMAIN }
+    }
+
+    if (hasPrice && !Number.isNaN(Number(price))) {
+      baseOffer.price = price
+      baseOffer.priceCurrency = currency
+    } else {
+      // For compatibility with services that require numeric prices (e.g. Google Shopping),
+      // emit a numeric price of '0' and include a PriceSpecification indicating PriceOnRequest.
+      baseOffer.price = '0'
+      baseOffer.priceCurrency = currency
+      baseOffer.priceSpecification = {
+        '@type': 'PriceSpecification',
+        'type': 'PriceOnRequest',
+        'price': '0',
+        'priceCurrency': currency,
+        'description': 'Price on request — iletişime geçiniz.'
+      }
+    }
+
+    return baseOffer
+  }

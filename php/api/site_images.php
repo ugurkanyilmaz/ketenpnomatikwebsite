@@ -52,8 +52,9 @@ function handleGet($pdo) {
             echo json_encode(['error' => 'invalid_prefix']);
             return;
         }
-    $stmt = $pdo->prepare("SELECT * FROM site_images WHERE section_key LIKE :prefix ESCAPE '\\' ORDER BY section_key ASC");
-        $stmt->execute([':prefix' => $prefix . '%']);
+    // Use CONCAT(:prefix, '%') to avoid needing to escape backslashes in the SQL literal
+    $stmt = $pdo->prepare("SELECT * FROM site_images WHERE section_key LIKE CONCAT(:prefix, '%') ORDER BY section_key ASC");
+        $stmt->execute([':prefix' => $prefix]);
         $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
         // Convert stored relative image_path to absolute URLs for clients
         // Prefer cPanel-visible base so admin sees the same URL as file manager

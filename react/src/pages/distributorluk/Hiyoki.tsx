@@ -20,7 +20,13 @@ export default function Hiyoki() {
         className="bg-slate-800"
       >
         <div className="max-w-7xl mx-auto px-4 py-14 grid lg:grid-cols-2 gap-10 items-center">
-          <div>
+          {/* Image on left for larger screens, stacked above on small screens */}
+          <div className="order-1 lg:order-none">
+            {hiyokiHero?.image_path ? (
+              <img src={hiyokiHero.image_path} alt={hiyokiHero.alt_text || 'Hiyoki Ölçüm Çözümleri'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            ) : null}
+          </div>
+          <div className="order-0 lg:order-none">
             <div className="mb-3" style={{ display: 'inline-block', padding: '0.25rem 0.6rem', borderRadius: '9999px', background: 'linear-gradient(90deg,#ff8c42,#f97316)', color: '#fff', fontWeight: 600 }}>Yetkili Distribütör</div>
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">Hiyoki</h1>
             <p className="mt-4 text-gray-300 max-w-3xl">
@@ -32,9 +38,6 @@ export default function Hiyoki() {
                 <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost text-white">Demo Talep Et</ScrollToTopLink>
               </div>
             </div>
-          </div>
-          <div>
-            <img src={hiyokiHero?.image_path || '/endus.jpg'} alt={hiyokiHero?.alt_text || 'Hiyoki Ölçüm Çözümleri'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
           </div>
         </div>
       </motion.section>
@@ -68,7 +71,10 @@ export default function Hiyoki() {
 
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           <div>
-            <img src={(images[1]?.image_path) || hiyokiShowcase?.image_path || '/professional_banner.png'} alt={hiyokiShowcase?.alt_text || 'Hiyoki Ölçüm Sistemleri'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            {/* Sadece showcase varsa göster */}
+            {hiyokiShowcase?.image_path ? (
+              <img src={hiyokiShowcase.image_path} alt={hiyokiShowcase.alt_text || 'Hiyoki Ölçüm Sistemleri'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            ) : null}
           </div>
           <div>
             <h3 className="text-xl md:text-2xl font-bold text-gray-900">Kesintisiz Üretim Gücü</h3>
@@ -119,13 +125,18 @@ export default function Hiyoki() {
             </div>
           </div>
           <div>
-            <img src={(images[2]?.image_path) || '/keten_banner.jpg'} alt="Hiyoki Uygulamalar" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            {images?.[2]?.image_path ? (
+              <img src={images[2].image_path} alt={images[2]?.alt_text || 'Hiyoki Uygulamalar'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            ) : null}
           </div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 items-center mt-10">
           <div>
-            <img src={(images[3]?.image_path) || hiyokiShowcase?.image_path || '/endus.jpg'} alt="Hiyoki Teknik Destek" className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            {/* Sadece images[3] varsa göster (fallback yok) */}
+            {images?.[3]?.image_path ? (
+              <img src={images[3].image_path} alt={images[3]?.alt_text || 'Hiyoki Teknik Destek'} className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            ) : null}
           </div>
           <div>
             <h3 className="text-xl md:text-2xl font-bold text-gray-900">Kapsamlı Satış Sonrası Destek</h3>
