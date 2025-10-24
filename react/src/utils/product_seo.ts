@@ -50,8 +50,8 @@ export interface ProductSEOData {
 
 const SITE_DOMAIN = 'https://www.ketenpnomatik.com'
 const SITE_NAME = 'Keten Pnömatik'
-// Use weblogo.jpg as site logo for social previews by default
-const SITE_LOGO = 'https://ketenpnomatik.com/weblogo.jpg'
+// Use weblogo.jpg as site logo for social previews by default (ensure same host as SITE_DOMAIN)
+const SITE_LOGO = `${SITE_DOMAIN}/weblogo.jpg`
 const DEFAULT_IMAGE = `${SITE_DOMAIN}/weblogo.jpg`
 
 
@@ -218,35 +218,29 @@ function buildStructuredData(
       },
       
       // Product (Main Schema)
-      {
-        '@type': 'Product',
-        '@id': `${canonicalUrl}#product`,
-        'name': product.title,
-        'description': description,
-        'image': productImages.length > 0 ? productImages : [imageUrl],
-        'sku': product.sku,
-        'mpn': product.sku, // Manufacturer Part Number
-        'brand': {
-          '@type': 'Brand',
-          'name': product.brand || SITE_NAME
-        },
-        'manufacturer': {
-          '@type': 'Organization',
-          'name': product.brand || SITE_NAME
-        },
-        'url': canonicalUrl,
-  'category': buildCategoryPath(product),
-  // Build offers object dynamically based on available product commercial data
-  'offers': buildOfferObject(product, canonicalUrl),
-        'aggregateRating': {
-          '@type': 'AggregateRating',
-          'ratingValue': '5',
-          'reviewCount': '1',
-          'bestRating': '5',
-          'worstRating': '1'
-        },
-        'additionalProperty': buildProductFeatures(product)
-      },
+          {
+            '@type': 'Product',
+            '@id': `${canonicalUrl}#product`,
+            'name': product.title,
+            'description': description,
+            'image': productImages.length > 0 ? productImages : [imageUrl],
+            'sku': product.sku,
+            'mpn': product.sku, // Manufacturer Part Number
+            'brand': {
+              '@type': 'Brand',
+              'name': product.brand || SITE_NAME
+            },
+            'manufacturer': {
+              '@type': 'Organization',
+              'name': product.brand || SITE_NAME
+            },
+            'url': canonicalUrl,
+            'category': buildCategoryPath(product),
+            // Build AggregateOffer object per request (price range in TRY)
+            'offers': buildAggregateOffer(product, canonicalUrl),
+            // intentionally omitting aggregateRating here per requested change
+            'additionalProperty': buildProductFeatures(product)
+          },
       
       // BreadcrumbList
       buildBreadcrumbs(product, canonicalUrl)
@@ -299,75 +293,31 @@ function mapSchemaAvailability(product: ProductSEOData): string {
  * Build Offer object for Product structured data. If price is missing, omit price fields
  * and add a short description asking users to contact for price.
  */
-function buildOfferObject(product: ProductSEOData, canonicalUrl: string) {
-  const baseOffer: any = {
-    '@type': 'Offer',
+/**
+ * Build AggregateOffer object with fixed price range per request.
+ * User requested: lowPrice = 400 TRY, highPrice = 629710 TRY
+ */
+function buildAggregateOffer(product: ProductSEOData, canonicalUrl: string) {
+  const agg: any = {
+    '@type': 'AggregateOffer',
     'url': canonicalUrl,
-    'priceValidUntil': new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 year
-    'availability': mapSchemaAvailability(product),
-    'itemCondition': 'https://schema.org/NewCondition',
-    'seller': {
+    'priceCurrency': 'TRY',
+    'lowPrice': 400,
+    'highPrice': 629710,
+    'offerCount': 1,
+    'availability': mapSchemaAvailability(product)
+  }
+
+  // Include seller info if available
+  if (product.seller_name || product.seller_url) {
+    agg.seller = {
       '@type': 'Organization',
-      '@id': `${SITE_DOMAIN}/#organization`,
       'name': product.seller_name || SITE_NAME,
       'url': product.seller_url || SITE_DOMAIN
-    },
-    'hasMerchantReturnPolicy': {
-      '@type': 'MerchantReturnPolicy',
-      'applicableCountry': 'TR',
-      'returnPolicyCategory': 'https://schema.org/MerchantReturnFiniteReturnWindow',
-      'merchantReturnDays': 14,
-      'returnMethod': 'https://schema.org/ReturnByMail',
-      'returnFees': 'https://schema.org/FreeReturn'
-    },
-    'shippingDetails': {
-      '@type': 'OfferShippingDetails',
-      'shippingRate': {
-        '@type': 'MonetaryAmount',
-        'value': '0',
-        'currency': product.price_currency || 'TRY'
-      },
-      'shippingDestination': {
-        '@type': 'DefinedRegion',
-        'addressCountry': 'TR'
-      },
-      'deliveryTime': {
-        '@type': 'ShippingDeliveryTime',
-        'handlingTime': {
-          '@type': 'QuantitativeValue',
-          'minValue': 0,
-          'maxValue': 1,
-          'unitCode': 'DAY'
-        },
-        'transitTime': {
-          '@type': 'QuantitativeValue',
-          'minValue': 2,
-          'maxValue': 3,
-          'unitCode': 'DAY'
-        }
-      }
     }
   }
 
-  if (hasNumericPrice(product)) {
-    baseOffer.price = String(product.price)
-    baseOffer.priceCurrency = product.price_currency || 'TRY'
-  } else {
-    // No numeric price - emit price as 0 and add a PriceSpecification indicating PriceOnRequest
-    // This keeps a numeric price for consumers (e.g. Google Shopping) while signalling it's on request.
-    const currency = product.price_currency || 'TRY'
-    baseOffer.price = '0'
-    baseOffer.priceCurrency = currency
-    baseOffer.priceSpecification = {
-      '@type': 'PriceSpecification',
-      'type': 'PriceOnRequest',
-      'price': '0',
-      'priceCurrency': currency,
-      'description': 'Price on request — iletişime geçiniz.'
-    }
-  }
-
-  return baseOffer
+  return agg
 }
 
 /**
@@ -430,8 +380,8 @@ function buildBreadcrumbs(product: ProductSEOData, canonicalUrl: string) {
     {
       '@type': 'ListItem',
       'position': 2,
-      'name': 'Ürünler',
-      'item': `${SITE_DOMAIN}/urunler`
+      'name': 'Kategoriler',
+      'item': `${SITE_DOMAIN}/kategoriler`
     }
   ]
 
@@ -469,11 +419,24 @@ function buildBreadcrumbs(product: ProductSEOData, canonicalUrl: string) {
     breadcrumbs.push({ '@type': 'ListItem', 'position': position++, 'name': product.subchild, 'item': `${SITE_DOMAIN}/kategoriler/${p}/${c}/${s}` })
   }
 
+  // Final breadcrumb: product title — point 'item' to the deepest category URL (not the product URL)
+  let deepestCategoryUrl = `${SITE_DOMAIN}/kategoriler`
+  try {
+    const slugParent = product.parent ? encodeURIComponent(slugify(String(product.parent))) : ''
+    const slugChild = product.child ? encodeURIComponent(slugify(String(product.child))) : ''
+    const slugSub = product.subchild ? encodeURIComponent(slugify(String(product.subchild))) : ''
+    if (slugParent && slugChild && slugSub) deepestCategoryUrl = `${SITE_DOMAIN}/kategoriler/${slugParent}/${slugChild}/${slugSub}`
+    else if (slugParent && slugChild) deepestCategoryUrl = `${SITE_DOMAIN}/kategoriler/${slugParent}/${slugChild}`
+    else if (slugParent) deepestCategoryUrl = `${SITE_DOMAIN}/kategoriler/${slugParent}`
+  } catch (e) {
+    // fallback remains
+  }
+
   breadcrumbs.push({
     '@type': 'ListItem',
     'position': position,
     'name': product.title,
-    'item': canonicalUrl
+    'item': deepestCategoryUrl
   })
 
   return {

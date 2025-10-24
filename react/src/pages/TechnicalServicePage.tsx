@@ -44,7 +44,7 @@ export default function TechnicalServicePage() {
               <aside className="bg-neutral-50 p-6 rounded-lg border border-neutral-200">
                 <h4 className="text-lg font-semibold">İletişim & Adres</h4>
                 <p className="text-neutral-700 mt-2">Keten Teknik Servis Merkezi</p>
-                <address className="not-italic text-neutral-700 mt-2">Yenikent, Mehmet Akif Ersoy Cad. No:52<br />41400 Gebze/Kocaeli</address>
+                <address className="not-italic text-neutral-700 mt-2">Osman Yılmaz Mahallesi, Mehmet Akif Ersoy Cad. No:52<br />41400 Gebze/Kocaeli</address>
 
                 <div className="mt-4">
                   <a href="tel:+905414526058" className="block font-semibold text-brand-orange">+90 (541) 452 60 58</a>

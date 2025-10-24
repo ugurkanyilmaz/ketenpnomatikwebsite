@@ -101,7 +101,18 @@ try {
             ]);
             $inserted++;
         } catch (PDOException $e) {
-            if (strpos($e->getMessage(), 'UNIQUE') !== false) {
+            $isDuplicate = false;
+            try {
+                if (isset($e->errorInfo[1]) && (int)$e->errorInfo[1] === 1062) {
+                    $isDuplicate = true;
+                }
+            } catch (Throwable $ex) {
+                // ignore
+            }
+            if (!$isDuplicate && strpos($e->getMessage(), 'Duplicate entry') !== false) {
+                $isDuplicate = true;
+            }
+            if ($isDuplicate) {
                 $upd->execute([
                     $sanitize($nrow['title'] ?? ''),
                     $sanitize($nrow['title_subtext'] ?? ''),

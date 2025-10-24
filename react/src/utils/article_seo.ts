@@ -27,7 +27,7 @@ import { normalizeImageUrl } from './seo_utils'
 
 const SITE_DOMAIN = 'https://www.ketenpnomatik.com'
 const SITE_NAME = 'Keten Pnömatik'
-const SITE_LOGO = 'https://ketenpnomatik.com/weblogo.jpg'
+const SITE_LOGO = `${SITE_DOMAIN}/weblogo.jpg`
 const DEFAULT_IMAGE = `${SITE_DOMAIN}/keten_banner.jpg`
 
 /**
@@ -629,11 +629,7 @@ export function applyArticleSEOWithProducts(article: ArticleSEOData, products?: 
    */
   function buildOfferForItemList(p: any, productUrl: string) {
     if (!p) return null
-    const hasPrice = p.price !== undefined && p.price !== null && String(p.price).trim() !== '' && String(p.price).toUpperCase() !== 'NULL'
-    const price = hasPrice ? String(p.price).replace(',', '.') : undefined
-    const currency = p.price_currency || 'TRY'
-
-    const availability = (() => {
+  const availability = (() => {
       const a = String(p.availability || '').toLowerCase()
       if (a.includes('in') || a.includes('stok') || a.includes('var')) return 'https://schema.org/InStock'
       if (a.includes('out') || a.includes('yok') || a.includes('tükendi')) return 'https://schema.org/OutOfStock'
@@ -642,30 +638,17 @@ export function applyArticleSEOWithProducts(article: ArticleSEOData, products?: 
       return 'https://schema.org/InStock'
     })()
 
-    const baseOffer: any = {
-      '@type': 'Offer',
+    // Per request, use AggregateOffer with fixed low/high price range (TRY)
+    const agg: any = {
+      '@type': 'AggregateOffer',
       'url': productUrl,
+      'priceCurrency': 'TRY',
+      'lowPrice': 400,
+      'highPrice': 629710,
+      'offerCount': 1,
       'availability': availability,
-      'itemCondition': 'https://schema.org/NewCondition',
       'seller': { '@type': 'Organization', 'name': p.seller_name || SITE_NAME, 'url': p.seller_url || SITE_DOMAIN }
     }
 
-    if (hasPrice && !Number.isNaN(Number(price))) {
-      baseOffer.price = price
-      baseOffer.priceCurrency = currency
-    } else {
-      // For compatibility with services that require numeric prices (e.g. Google Shopping),
-      // emit a numeric price of '0' and include a PriceSpecification indicating PriceOnRequest.
-      baseOffer.price = '0'
-      baseOffer.priceCurrency = currency
-      baseOffer.priceSpecification = {
-        '@type': 'PriceSpecification',
-        'type': 'PriceOnRequest',
-        'price': '0',
-        'priceCurrency': currency,
-        'description': 'Price on request — iletişime geçiniz.'
-      }
-    }
-
-    return baseOffer
+    return agg
   }

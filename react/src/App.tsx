@@ -1,7 +1,7 @@
 import Header from './components/Header'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { sendPageView } from './utils/google_codes'
 import { AuthProvider } from './utils/auth'
@@ -84,6 +84,15 @@ function App() {
             </Route>
 
             <Route path="/kategoriler" element={<Categories_page />} />
+            {/* Legacy redirects: map old links to new targets */}
+            <Route
+              path="/kategoriler/endustriyel/kolver-elektrikli-sikicilar/kolver-pluto-kabza-tip-akim-ve-tork-kontrollu-tornavidalar"
+              element={<Navigate to="https://www.ketenpnomatik.com/kategoriler/endustriyel/kolver-elektrikli-tornavidalar/Kolver%20PLUTO%20Kabza%20Tip%20Ak%C4%B1m%20Ve%20Tork%20Kontroll%C3%BC%20Tornavidalar" replace />}
+            />
+            <Route
+              path="/kategoriler/endustriyel/kolver-elektrikli-sikicilar/kolver-pluto-kabza-tip-akim-ve-tork-kontrollu-tornavidalar/"
+              element={<Navigate to="https://www.ketenpnomatik.com/kategoriler/endustriyel/kolver-elektrikli-tornavidalar/Kolver%20PLUTO%20Kabza%20Tip%20Ak%C4%B1m%20Ve%20Tork%20Kontroll%C3%BC%20Tornavidalar" replace />}
+            />
             <Route path="/urunler" element={<Urunler />} />
             <Route path="/kategoriler/:tier" element={<Subcategories />} />
             <Route path="/kategoriler/:tier/:categoryId" element={<Series />} />

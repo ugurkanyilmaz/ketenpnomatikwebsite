@@ -48,6 +48,20 @@ interface Product {
 
 export default function Article() {
   const { seriesId, tier, categoryId } = useParams()
+  // helper: decode slug and make human-friendly label
+  const humanize = (s?: string | null) => {
+    if (!s) return ''
+    try {
+      const decoded = decodeURIComponent(String(s))
+      // replace hyphens/underscores with space, collapse multiple spaces
+      const spaced = decoded.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim()
+      // Title case each word
+      return spaced.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+    } catch (e) {
+      const fallback = String(s).replace(/[-_]+/g, ' ')
+      return fallback
+    }
+  }
   const [catRows, setCatRows] = useState<any[] | null>(null)
   const [loading, setLoading] = useState(true)
   const [products, setProducts] = useState<Product[]>([])
@@ -289,13 +303,36 @@ export default function Article() {
     applyArticleSEOWithProducts(seoData, products)
   }, [cat, products, tier, categoryId, seriesId])
 
-  const visibleFeatures = useMemo(() => {
-    return Array.from({ length: 11 }, (_, i) => i + 1).filter((num) => {
-      return products.some(p => {
-        const val = p[`feature${num}` as keyof Product]
-        return val && String(val).trim() !== '' && String(val).toUpperCase() !== 'NULL'
-      })
-    })
+  
+
+  // Build exact feature label columns for desktop table.
+  // For each product.featureN that contains a colon, we take the exact left-hand side
+  // (trimmed) as the column label. If a feature string has no colon, we fall back to
+  // the header `Özellik X`. IMPORTANT: do NOT normalize similar labels — different
+  // spellings or whitespace produce distinct columns per your requirement.
+  const desktopFeatureColumns = useMemo(() => {
+    const labels: string[] = []
+    const addLabel = (label: string) => {
+      if (!labels.includes(label)) labels.push(label)
+    }
+
+    for (const p of products) {
+      for (let i = 1; i <= 11; i++) {
+        const raw = p[`feature${i}` as keyof Product] as unknown as string
+        if (!raw) continue
+        const v = String(raw).trim()
+        if (v === '' || v.toUpperCase() === 'NULL') continue
+        const parts = v.split(':')
+        if (parts.length > 1) {
+          const label = parts[0].trim()
+          addLabel(label)
+        } else {
+          addLabel(`Özellik ${i}`)
+        }
+      }
+    }
+
+    return labels
   }, [products])
 
   // (usable areas are derived inline where needed via getUniqueCategoriesFromAreas)
@@ -477,8 +514,9 @@ export default function Article() {
             <ul className="flex flex-wrap">
               <li><Link to="/">Ana sayfa</Link></li>
               <li><Link to="/kategoriler">Kategoriler</Link></li>
-              <li>{cat?.tier || 'Kategori'}</li>
-              <li className="whitespace-nowrap">{cat?.title || 'Alt Kategori'}</li>
+              {/* Show partial path even when cat is null */}
+              <li>{tier ? humanize(tier) : 'Kategori'}</li>
+              <li className="whitespace-nowrap">{categoryId ? humanize(categoryId) : (cat?.title || 'Alt Kategori')}</li>
             </ul>
           </div>
           <div className="alert alert-warning">
@@ -501,7 +539,33 @@ export default function Article() {
           <ul>
             <li><Link to="/">Ana sayfa</Link></li>
             <li><Link to="/kategoriler">Kategoriler</Link></li>
-            <li>Seri</li>
+            {/* tier (e.g. endustriyel) */}
+            {tier ? (
+              <li>
+                <Link to={`/kategoriler/${encodeURIComponent(String(tier))}/`}>
+                  {humanize(tier)}
+                </Link>
+              </li>
+            ) : null}
+            {/* categoryId (e.g. kolver-elektrikli-tornavidalar) */}
+            {categoryId ? (
+              <li>
+                <Link to={`/kategoriler/${encodeURIComponent(String(tier))}/${encodeURIComponent(String(categoryId))}/`}>
+                  {humanize(categoryId)}
+                </Link>
+              </li>
+            ) : null}
+            {/* current article / series */}
+            <li className="whitespace-nowrap">
+              {(() => {
+                const lastSegment = cat.subchild ?? cat.title ?? seriesId ?? ''
+                return (
+                  <Link to={`/kategoriler/${encodeURIComponent(String(tier))}/${encodeURIComponent(String(categoryId))}/${encodeURIComponent(String(lastSegment))}`}>
+                    {humanize(String(lastSegment))}
+                  </Link>
+                )
+              })()}
+            </li>
           </ul>
         </div>
 
@@ -613,17 +677,9 @@ export default function Article() {
                   <tr className="bg-neutral text-neutral-content">
                     <th className="font-bold px-2 py-3 text-left" style={{ minWidth: '60px' }}>Görsel</th>
                     <th className="font-bold px-2 py-3 text-left" style={{ minWidth: '120px' }}>Model (SKU)</th>
-                                  {visibleFeatures.map((num) => {
-                                    const firstProduct = products.find(p => {
-                                      const val = p[`feature${num}` as keyof Product]
-                                      return val && String(val).trim() !== '' && String(val).toUpperCase() !== 'NULL'
-                                    })
-                                    const featureText = firstProduct?.[`feature${num}` as keyof Product] as string || ''
-                                    const featureName = featureText.includes(':')
-                                      ? featureText.split(':')[0].trim()
-                                      : `Özellik ${num}`
-                                    return <th key={num} className="font-bold px-2 py-3 text-left">{featureName}</th>
-                                  })}
+                                  {desktopFeatureColumns.map((label, colIdx) => (
+                                    <th key={colIdx} className="font-bold px-2 py-3 text-left">{label}</th>
+                                  ))}
                                 <th className="px-2 py-3"></th>
                               </tr>
                             </thead>
@@ -641,13 +697,23 @@ export default function Article() {
                                     />
                                   </td>
                                   <td className="font-semibold px-2 py-3 text-primary truncate max-w-[160px]">{product.sku}</td>
-                                  {visibleFeatures.map((num) => {
-                                    const featureValue = product[`feature${num}` as keyof Product] as string || ''
-                                    const displayValue = featureValue.includes(':')
-                                      ? featureValue.split(':').slice(1).join(':').trim()
-                                      : featureValue
+                                  {desktopFeatureColumns.map((label, colIdx) => {
+                                    // find the first feature in this product whose LHS label matches this column label
+                                    let cellVal = ''
+                                    for (let i = 1; i <= 11; i++) {
+                                      const raw = product[`feature${i}` as keyof Product] as unknown as string || ''
+                                      if (!raw) continue
+                                      const v = String(raw).trim()
+                                      if (v === '' || v.toUpperCase() === 'NULL') continue
+                                      const parts = v.split(':')
+                                      const lhs = parts.length > 1 ? parts[0].trim() : `Özellik ${i}`
+                                      if (lhs === label) {
+                                        cellVal = parts.length > 1 ? parts.slice(1).join(':').trim() : ''
+                                        break
+                                      }
+                                    }
                                     return (
-                                      <td key={num} className="px-2 py-3 text-base-content/80 break-words">{displayValue || '-'}</td>
+                                      <td key={colIdx} className="px-2 py-3 text-base-content/80 break-words">{cellVal || '-'}</td>
                                     )
                                   })}
                                   <td className="px-2 py-3">

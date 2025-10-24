@@ -1,5 +1,4 @@
 const SITE_CANONICAL = 'https://www.ketenpnomatik.com'
-const SITE_LEGACY = 'https://ketenpnomatik.com'
 
 /**
  * Normalize image/path values coming from the API so SEO helpers and page renderers
@@ -20,11 +19,11 @@ export function normalizeImageUrl(raw?: any, fallback = `${SITE_CANONICAL}/weblo
     // protocol-relative
     if (s.startsWith('//')) s = 'https:' + s
 
-    // If it starts with '/', prefer canonical host. For uploads, insert legacy '/react/public' prefix
+    // If it starts with '/', prefer canonical host. For uploads, insert '/react/public' prefix
     if (!/^https?:\/\//i.test(s) && s.startsWith('/')) {
       if (s.includes('/uploads/') && s.indexOf('/react/public') === -1) {
-        // Use legacy host + react/public for paths coming from cPanel
-        return SITE_LEGACY + '/react/public' + s.replace(/^\/+/, '/')
+        // Prefer canonical host for final URLs but keep '/react/public' path used on server
+        return SITE_CANONICAL + '/react/public' + s.replace(/^\/+/, '/')
       }
       return SITE_CANONICAL + s
     }
@@ -37,7 +36,8 @@ export function normalizeImageUrl(raw?: any, fallback = `${SITE_CANONICAL}/weblo
         if (path.includes('/uploads/') && path.indexOf('/react/public') === -1) {
           path = '/react/public' + path.replace(/^\/+/, '/')
         }
-        return SITE_LEGACY + path + u.search + u.hash
+        // Normalize to canonical host (www) for consistency in OG and structured data
+        return SITE_CANONICAL + path + u.search + u.hash
       }
     } catch (e) {
       // ignore

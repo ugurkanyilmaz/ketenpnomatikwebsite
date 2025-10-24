@@ -13,7 +13,7 @@ export default function Footer() {
             Keten <span className="text-primary">Pnömatik</span>
           </h2>
           <p className="mt-3 text-sm text-gray-400">
-            Endüstriyel pnömatik el aletleri ve ekipmanları
+            Endüstriyel Pnömatik El Aletleri Ve Ekipmanları
           </p>
         </div>
 

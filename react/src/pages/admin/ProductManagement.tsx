@@ -106,16 +106,27 @@ export default function ProductManagement() {
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         body: JSON.stringify([product])
       })
-      
-      if (!res.ok) throw new Error('Save failed')
-      
+
+      // Try to parse JSON result from the API (bulk endpoint returns counts)
+      const result: any = await res.json().catch(() => ({}))
+      if (!res.ok || (result && result.success === false)) {
+        throw new Error(result.message || 'Save failed')
+      }
+
       await loadProducts()
       setShowModal(false)
       setEditingProduct(null)
-      alert('Ürün kaydedildi!')
+
+      // Show admin a short summary (inserted/updated/skipped) if provided
+      const inserted = result.inserted ?? 0
+      const updated = result.updated ?? 0
+      const skipped = result.skipped ?? 0
+      const info = `Eklenen: ${inserted}\nGüncellenen: ${updated}\nAtlanan: ${skipped}`
+
+      alert('Ürün kaydedildi!\n' + info)
     } catch (err) {
       console.error('Failed to save product:', err)
-      alert('Kaydetme başarısız!')
+      alert('Kaydetme başarısız: ' + (err instanceof Error ? err.message : 'Bilinmeyen hata'))
     }
   }
 

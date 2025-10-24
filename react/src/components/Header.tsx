@@ -167,7 +167,8 @@ export default function Header() {
           {/* 28.yıl badge (md+ far-left of logo) */}
           <div className="flex items-center flex-shrink-0">
             {/* Badge moved into normal flow so header reserves space and prevents overlap */}
-            <div className="hidden md:inline-flex items-center mr-0 md:-ml-8 lg:-ml-12 pointer-events-none">
+            {/* show only on large screens; nudge further left and add separation from logo */}
+            <div className="hidden lg:inline-flex items-center mr-4 lg:-ml-20 xl:-ml-24 pointer-events-none">
               <img src="/28.yil.png" alt="28. Yıl" className="h-8 md:h-10 lg:h-12 w-auto object-contain" />
             </div>
             {/* Logo - nudged left to sit closer to absolute badge */}
