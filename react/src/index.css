@@ -417,3 +417,40 @@ select:focus-visible {
 }
 
 /* Links */
+
+/*
+  Zoom shortcut for intermediate desktop sizes
+  Apply a site-wide 0.8 scale for viewports roughly between 1024x768 and 1400x800
+  — this uses transform: scale for consistent rendering and falls back to CSS zoom in
+  browsers that support it. We adjust the scaled container's width so it fills the
+  viewport without adding horizontal scrollbars.
+
+  Note: scaling the root can affect pixel sharpness and fixed-position elements.
+  Test visually after enabling; if issues appear we can target a wrapper element
+  or adjust transform-origin accordingly.
+*/
+/* Apply a gentle 0.95 scale for slightly zoomed-out view on medium-large screens.
+   This avoids aggressive scaling that caused layout gaps; we only target widths
+   between 1024px and 1400px. Height is not constrained to avoid accidental
+   non-matches on different monitors. */
+@media (min-width: 1024px) and (max-width: 1400px) {
+  /* Scope to the app root to avoid affecting browser chrome */
+  #root {
+    transform-origin: top center;
+    transform: scale(0.95);
+    /* Use zoom as a fallback for browsers that render better with it */
+    zoom: 0.95;
+    /* Compensate the layout so scaled content still fills the viewport and
+       no white edges appear. For scale(s) use width: calc(100% / s). We also
+       center it by setting a left margin equal to half the remaining space. */
+    width: calc(100% / 0.95);
+    margin-left: calc((100% - (100% / 0.95)) / 2);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Keep full-bleed elements aligned correctly */
+  .navbar, .footer, .hero, .products-hero {
+    transform-origin: top center !important;
+  }
+}

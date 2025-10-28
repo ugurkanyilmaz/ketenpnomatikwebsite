@@ -23,7 +23,7 @@ export interface BlogSEOData {
 
 const SITE_DOMAIN = 'https://www.ketenpnomatik.com'
 const SITE_NAME = 'Keten Pnömatik'
-const SITE_LOGO = 'https://ketenpnomatik.com/weblogo.jpg'
+const SITE_LOGO = `${SITE_DOMAIN}/weblogo.jpg`
 const DEFAULT_IMAGE = `${SITE_DOMAIN}/weblogo.jpg`
 
 function absUrl(p?: string) {

@@ -243,16 +243,16 @@ export default function Article() {
       s = s.replace(/^(https?:\/\/)+/i, (m) => m.replace(/(https?:\/\/)+/i, '$1'))
 
       // If it looks like a protocol-relative path
-      if (s.startsWith('//')) s = 'https:' + s
+  if (s.startsWith('//')) s = 'https:' + s
 
       // If still doesn't start with http and starts with '/', prefix canonical host
       if (!/^https?:\/\//i.test(s) && s.startsWith('/')) {
         // Some APIs return paths like '/uploads/products/...' (missing the '/react/public' segment)
         // Normalize those to the cPanel-visible path used on the site: '/react/public/uploads/...'
         if (s.includes('/uploads/') && s.indexOf('/react/public') === -1) {
-          s = 'https://ketenpnomatik.com' + '/react/public' + s.replace(/^\/+/, '/')
+          s = 'https://www.ketenpnomatik.com' + '/react/public' + s.replace(/^\/+/, '/')
         } else {
-          s = 'https://ketenpnomatik.com' + s
+          s = 'https://www.ketenpnomatik.com' + s
         }
       }
 
@@ -266,7 +266,7 @@ export default function Article() {
             // insert '/react/public' before the first '/uploads/' segment
             path = '/react/public' + path.replace(/^\/+/, '/')
           }
-          s = 'https://ketenpnomatik.com' + path + u.search + u.hash
+          s = 'https://www.ketenpnomatik.com' + path + u.search + u.hash
         }
       } catch (e) {
         // ignore URL parse errors
@@ -601,19 +601,22 @@ export default function Article() {
 
             <div className="mt-6 sm:mt-8 grid md:grid-cols-2 gap-4 sm:gap-6 items-start px-2 sm:px-0">
                 {/* Simplified image container: make image larger and fill the box (responsive) */}
-                <div className="w-full px-2 sm:px-0">
-                  <div className="w-full max-w-[420px] mx-auto">
-                  <img
-                    src={getImgOrFallback(cat?.img1, `https://picsum.photos/seed/${seriesId}-hero/420/315`) }
-                    alt={`${cat.title} - Ürün Detay Görseli`}
-                    title={cat.title}
-                    className="w-full h-auto object-cover rounded-box shadow"
-                    loading="lazy"
-                    style={{ display: 'block', maxWidth: '100%' }}
-                    onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${seriesId}-hero/420/315` }}
-                  />
+                {/* Secondary image box: show on mobile or when cat.img1 exists; hide on desktop when missing */}
+                {(isMobile || (cat?.img1 && String(cat.img1).trim() !== '' && String(cat.img1).toUpperCase() !== 'NULL')) && (
+                  <div className="w-full px-2 sm:px-0">
+                    <div className="w-full max-w-[420px] mx-auto">
+                      <img
+                        src={getImgOrFallback(cat?.img1, `https://picsum.photos/seed/${seriesId}-hero/420/315`) }
+                        alt={`${cat.title} - Ürün Detay Görseli`}
+                        title={cat.title}
+                        className="w-full h-auto object-cover rounded-box shadow"
+                        loading="lazy"
+                        style={{ display: 'block', maxWidth: '100%' }}
+                        onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${seriesId}-hero/420/315` }}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="flex flex-col items-stretch gap-2 sm:gap-3 w-full">
                 <div className="w-full py-0.5 sm:py-1">

@@ -2,10 +2,12 @@ import { motion } from 'framer-motion'
 import { ScrollToTopLink } from '../../components/ScrollToTopLink'
 import { useSectionImages } from '../../hooks/useSectionImages'
 import { useEffect } from 'react'
+import { useScrollTopOnMount } from '../../hooks/useScrollTopOnMount'
 import { applyPageSEO } from '../../utils/other_seo'
 
 export default function Kolver() {
   const { images, hero: kolverHero, showcase: kolverShowcase } = useSectionImages('kolver_section', 'about_kolver')
+  useScrollTopOnMount()
   useEffect(() => {
     applyPageSEO('about_kolver')
   }, [])

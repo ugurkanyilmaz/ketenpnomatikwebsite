@@ -8,6 +8,11 @@ const SECTIONS: { key: string; label: string; count?: number }[] = [
   { key: 'home_hero_2', label: 'Ana sayfa - Hero 2' },
   { key: 'home_hero_3', label: 'Ana sayfa - Hero 3' },
 
+  // Missing homepage product sections (added so admin can edit these images)
+  { key: 'home_electric', label: 'Ana sayfa - Elektrikli Ürünlerimiz' },
+  { key: 'home_battery', label: 'Ana sayfa - Akülü Ürünlerimiz' },
+  { key: 'home_pneumatic', label: 'Ana sayfa - Havalı Ürünlerimiz' },
+
   { key: 'home_process_1', label: 'Ana sayfa - Nasıl Çalışıyoruz 1' },
   { key: 'home_process_2', label: 'Ana sayfa - Nasıl Çalışıyoruz 2' },
   { key: 'home_process_3', label: 'Ana sayfa - Nasıl Çalışıyoruz 3' },

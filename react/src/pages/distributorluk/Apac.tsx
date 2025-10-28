@@ -2,11 +2,14 @@ import { motion } from 'framer-motion'
 import { ScrollToTopLink } from '../../components/ScrollToTopLink'
 import { useSectionImages } from '../../hooks/useSectionImages'
 import { useEffect } from 'react'
+import { useScrollTopOnMount } from '../../hooks/useScrollTopOnMount'
 import { applyPageSEO } from '../../utils/other_seo'
 
 export default function Apac() {
   // Use section gallery first (apac_section*), fallback to about_apac
   const { images, hero: apacHero, showcase: apacShowcase } = useSectionImages('apac_section', 'about_apac')
+  // ensure we start at top when the detail page opens
+  useScrollTopOnMount()
   useEffect(() => {
     applyPageSEO('about_apac')
   }, [])

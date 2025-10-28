@@ -94,7 +94,7 @@ export function useSiteImages() {
 
       const data: SiteImage[] = await response.json();
       // Normalize image_path on each returned record
-  const origin = typeof window !== 'undefined' ? (window.location.protocol + '//' + window.location.host) : 'https://ketenpnomatik.com';
+  const origin = typeof window !== 'undefined' ? (window.location.protocol + '//' + window.location.host) : 'https://www.ketenpnomatik.com';
       data.forEach(img => {
         if (img && img.image_path && !/^https?:\/\//i.test(img.image_path)) {
           img.image_path = origin + img.image_path;

@@ -2,10 +2,12 @@ import { motion } from 'framer-motion'
 import { ScrollToTopLink } from '../../components/ScrollToTopLink'
 import { useSectionImages } from '../../hooks/useSectionImages'
 import { useEffect } from 'react'
+import { useScrollTopOnMount } from '../../hooks/useScrollTopOnMount'
 import { applyPageSEO } from '../../utils/other_seo'
 
 export default function Asa() {
   const { images, hero: brandHero, showcase: brandShowcase } = useSectionImages('asa_section', 'about_asa')
+  useScrollTopOnMount()
   useEffect(() => {
     applyPageSEO('about_asa')
   }, [])

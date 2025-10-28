@@ -4,7 +4,7 @@
 
 const SITE_DOMAIN = 'https://www.ketenpnomatik.com'
 const SITE_NAME = 'Keten Pnömatik'
-const DEFAULT_IMAGE = 'https://ketenpnomatik.com/weblogo.jpg'
+const DEFAULT_IMAGE = `${SITE_DOMAIN}/weblogo.jpg`
 
 function absUrl(p?: string) {
   if (!p) return DEFAULT_IMAGE
