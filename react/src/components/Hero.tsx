@@ -66,7 +66,7 @@ export default function Hero() {
 
   useEffect(() => {
     if (paused || slides.length === 0) return
-    const id = setInterval(() => setMobileIndex((i) => (i + 1) % slides.length), 4000)
+    const id = setInterval(() => setMobileIndex((i) => (i + 1) % slides.length), 3000)
     return () => clearInterval(id)
   }, [slides.length, paused])
 

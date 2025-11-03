@@ -175,6 +175,10 @@ export default function Header() {
             <ScrollToTopLink to="/" aria-label="Keten Pnömatik" className="flex items-center gap-2 ml-0">
               <img src="/ketenlogoson.fw_.png" alt="Keten Pnömatik" className="h-8 md:h-10 w-auto" />
             </ScrollToTopLink>
+            {/* Mobile: show 28.yıl badge to the right of the logo */}
+            <div className="inline-flex lg:hidden items-center ml-2 pointer-events-none">
+              <img src="/28.yil.png" alt="28. Yıl" className="h-10 sm:h-12 w-auto object-contain" />
+            </div>
           </div>
 
           {/* Desktop Navigation */}
