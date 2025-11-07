@@ -33,6 +33,7 @@ export default function Kolver() {
             <div className="mt-6 flex flex-wrap gap-3">
               <ScrollToTopLink to="/iletisim" className="btn btn-primary">İletişim</ScrollToTopLink>
               <ScrollToTopLink to="/demo-talebi" className="btn btn-outline">Demo Talep Et</ScrollToTopLink>
+              <ScrollToTopLink to={`/urunler?brand=${encodeURIComponent('Kolver')}`} className="btn btn-outline">Ürünleri Gör</ScrollToTopLink>
             </div>
             <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 text-gray-300">
               {[

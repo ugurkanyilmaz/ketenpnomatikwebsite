@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import { useEffect, useState, useMemo } from 'react'
 import { fetchArticleRows } from '../utils/api'
 import { applyArticleSEOWithProducts, type ArticleSEOData } from '../utils/article_seo'
@@ -48,6 +48,7 @@ interface Product {
 
 export default function Article() {
   const { seriesId, tier, categoryId } = useParams()
+  const navigate = useNavigate()
   // helper: decode slug and make human-friendly label
   const humanize = (s?: string | null) => {
     if (!s) return ''
@@ -416,22 +417,69 @@ export default function Article() {
             {products.length === 0 ? (
               <div className="alert alert-info">Bu seri için henüz ürün eklenmemiş.</div>
             ) : (
-              products.map(p => (
-                <div key={p.id} className="card mb-3">
-                  <div className="card-body p-3 flex gap-3 items-start">
-                    <img src={getImgOrFallback(p.main_img, `https://picsum.photos/seed/${encodeURIComponent(p.sku)}/120/90`)} alt={p.sku} className="w-20 h-14 object-contain rounded" />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold truncate">{p.sku}</div>
-                      <div className="text-xs text-base-content/70 mt-1 line-clamp-3">
-                        {p.paragraph || p.description || '-'}
-                      </div>
-                      <div className="mt-2">
-                        <Link to={`/urun/${p.sku}`} className="btn btn-primary btn-sm">Detay</Link>
+              (() => {
+                // Helper function to extract torque value for sorting
+                const extractTorqueValue = (product: Product): number | null => {
+                  for (let i = 1; i <= 11; i++) {
+                    const raw = product[`feature${i}` as keyof Product] as unknown as string
+                    if (!raw) continue
+                    const v = String(raw).trim()
+                    if (v === '' || v.toUpperCase() === 'NULL') continue
+                    
+                    const lowerV = v.toLowerCase()
+                    if (lowerV.includes('tork')) {
+                      const parts = v.split(':')
+                      const valuePart = parts.length > 1 ? parts[1] : v
+                      
+                      // Match range patterns like: "1,0 - 3.58", "0,2 – 1.22"
+                      const match = valuePart.match(/(\d+[.,]?\d*)\s*[-–—]\s*\d+/)
+                      if (match) {
+                        const numStr = match[1].replace(',', '.')
+                        const num = parseFloat(numStr)
+                        if (!isNaN(num)) return num
+                      }
+                      
+                      // Try to extract any first number
+                      const singleMatch = valuePart.match(/(\d+[.,]?\d*)/)
+                      if (singleMatch) {
+                        const numStr = singleMatch[1].replace(',', '.')
+                        const num = parseFloat(numStr)
+                        if (!isNaN(num)) return num
+                      }
+                    }
+                  }
+                  return null
+                }
+
+                // Sort products by torque value
+                const sortedProducts = [...products].sort((a, b) => {
+                  const torqueA = extractTorqueValue(a)
+                  const torqueB = extractTorqueValue(b)
+                  
+                  if (torqueA === null && torqueB === null) return 0
+                  if (torqueA === null) return 1
+                  if (torqueB === null) return -1
+                  
+                  return torqueA - torqueB
+                })
+
+                return sortedProducts.map(p => (
+                  <div key={p.id} className="card mb-3">
+                    <div className="card-body p-3 flex gap-3 items-start">
+                      <img src={getImgOrFallback(p.main_img, `https://picsum.photos/seed/${encodeURIComponent(p.sku)}/120/90`)} alt={p.sku} className="w-20 h-14 object-contain rounded" />
+                      <div className="flex-1 min-w-0">
+                        <div className="font-semibold truncate">{p.sku}</div>
+                        <div className="text-xs text-base-content/70 mt-1 line-clamp-3">
+                          {p.paragraph || p.description || '-'}
+                        </div>
+                        <div className="mt-2">
+                          <Link to={`/urun/${p.sku}`} className="btn btn-primary btn-sm">Detay</Link>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))
+                ))
+              })()
             )}
           </div>
 
@@ -687,45 +735,99 @@ export default function Article() {
                               </tr>
                             </thead>
                             <tbody className="bg-base-100">
-                              {products.map((product, idx) => (
-                                <tr key={product.id} className={`hover:bg-primary/5 transition-colors border-b border-base-200 ${idx % 2 === 0 ? 'bg-base-50' : 'bg-white'}`}>
-                                  <td className="px-2 py-2 align-top">
-                                    <img
-                                      src={getImgOrFallback(product.main_img, `https://picsum.photos/seed/${encodeURIComponent(product.sku)}/80/60`) }
-                                      alt={product.sku}
-                                      className="w-20 h-14 object-contain rounded"
-                                      loading="lazy"
-                                      onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${encodeURIComponent(product.sku)}/80/60` }}
-                                      style={{ maxWidth: '100%', height: 'auto' }}
-                                    />
-                                  </td>
-                                  <td className="font-semibold px-2 py-3 text-primary truncate max-w-[160px]">{product.sku}</td>
-                                  {desktopFeatureColumns.map((label, colIdx) => {
-                                    // find the first feature in this product whose LHS label matches this column label
-                                    let cellVal = ''
-                                    for (let i = 1; i <= 11; i++) {
-                                      const raw = product[`feature${i}` as keyof Product] as unknown as string || ''
-                                      if (!raw) continue
-                                      const v = String(raw).trim()
-                                      if (v === '' || v.toUpperCase() === 'NULL') continue
+                              {(() => {
+                                // Helper function to extract torque value
+                                const extractTorqueValue = (product: Product): number | null => {
+                                  for (let i = 1; i <= 11; i++) {
+                                    const raw = product[`feature${i}` as keyof Product] as unknown as string
+                                    if (!raw) continue
+                                    const v = String(raw).trim()
+                                    if (v === '' || v.toUpperCase() === 'NULL') continue
+                                    
+                                    const lowerV = v.toLowerCase()
+                                    if (lowerV.includes('tork')) {
                                       const parts = v.split(':')
-                                      const lhs = parts.length > 1 ? parts[0].trim() : `Özellik ${i}`
-                                      if (lhs === label) {
-                                        cellVal = parts.length > 1 ? parts.slice(1).join(':').trim() : ''
-                                        break
+                                      const valuePart = parts.length > 1 ? parts[1] : v
+                                      
+                                      // Match range patterns like: "1,0 - 3.58", "0,2 – 1.22"
+                                      const match = valuePart.match(/(\d+[.,]?\d*)\s*[-–—]\s*\d+/)
+                                      if (match) {
+                                        const numStr = match[1].replace(',', '.')
+                                        const num = parseFloat(numStr)
+                                        if (!isNaN(num)) return num
+                                      }
+                                      
+                                      // Try to extract any first number
+                                      const singleMatch = valuePart.match(/(\d+[.,]?\d*)/)
+                                      if (singleMatch) {
+                                        const numStr = singleMatch[1].replace(',', '.')
+                                        const num = parseFloat(numStr)
+                                        if (!isNaN(num)) return num
                                       }
                                     }
-                                    return (
-                                      <td key={colIdx} className="px-2 py-3 text-base-content/80 break-words">{cellVal || '-'}</td>
-                                    )
-                                  })}
-                                  <td className="px-2 py-3">
-                                    <Link to={`/urun/${product.sku}`} className="btn btn-primary btn-xs whitespace-nowrap shadow-sm hover:shadow-md transition-shadow">
-                                      Detay
-                                    </Link>
-                                  </td>
-                                </tr>
-                              ))}
+                                  }
+                                  return null
+                                }
+
+                                // Sort products by torque value
+                                const sortedProducts = [...products].sort((a, b) => {
+                                  const torqueA = extractTorqueValue(a)
+                                  const torqueB = extractTorqueValue(b)
+                                  
+                                  if (torqueA === null && torqueB === null) return 0
+                                  if (torqueA === null) return 1
+                                  if (torqueB === null) return -1
+                                  
+                                  return torqueA - torqueB
+                                })
+
+                                return sortedProducts.map((product, idx) => (
+                                  <tr
+                                    key={product.id}
+                                    className={`hover:bg-primary/5 transition-colors border-b border-base-200 ${idx % 2 === 0 ? 'bg-base-50' : 'bg-white'} cursor-pointer`}
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={() => navigate(`/urun/${product.sku}`)}
+                                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/urun/${product.sku}`) }}
+                                  >
+                                    <td className="px-2 py-2 align-top">
+                                      <img
+                                        src={getImgOrFallback(product.main_img, `https://picsum.photos/seed/${encodeURIComponent(product.sku)}/80/60`) }
+                                        alt={product.sku}
+                                        className="w-20 h-14 object-contain rounded"
+                                        loading="lazy"
+                                        onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${encodeURIComponent(product.sku)}/80/60` }}
+                                        style={{ maxWidth: '100%', height: 'auto' }}
+                                      />
+                                    </td>
+                                    <td className="font-semibold px-2 py-3 text-primary truncate max-w-[160px]">{product.sku}</td>
+                                    {desktopFeatureColumns.map((label, colIdx) => {
+                                      // find the first feature in this product whose LHS label matches this column label
+                                      let cellVal = ''
+                                      for (let i = 1; i <= 11; i++) {
+                                        const raw = product[`feature${i}` as keyof Product] as unknown as string || ''
+                                        if (!raw) continue
+                                        const v = String(raw).trim()
+                                        if (v === '' || v.toUpperCase() === 'NULL') continue
+                                        const parts = v.split(':')
+                                        const lhs = parts.length > 1 ? parts[0].trim() : `Özellik ${i}`
+                                        if (lhs === label) {
+                                          cellVal = parts.length > 1 ? parts.slice(1).join(':').trim() : ''
+                                          break
+                                        }
+                                      }
+                                      return (
+                                        <td key={colIdx} className="px-2 py-3 text-base-content/80 break-words">{cellVal || '-'}</td>
+                                      )
+                                    })}
+                                    <td className="px-2 py-3">
+                                      <Link to={`/urun/${product.sku}`} onClick={(e) => e.stopPropagation()} className="btn btn-primary btn-xs whitespace-nowrap shadow-sm hover:shadow-md transition-shadow">
+                                        Detay
+                                      </Link>
+                                    </td>
+                                  </tr>
+                                ))
+                              })()}
                             </tbody>
                           </table>
                         </div>

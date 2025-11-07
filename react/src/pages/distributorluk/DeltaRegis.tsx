@@ -32,6 +32,7 @@ export default function DeltaRegis() {
               <div className="mt-4 flex gap-3">
                 <ScrollToTopLink to="/iletisim" className="btn btn-primary">İletişim</ScrollToTopLink>
                 <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost text-white">Demo Talep Et</ScrollToTopLink>
+                <ScrollToTopLink to={`/urunler?brand=${encodeURIComponent('DeltaRegis')}`} className="btn btn-outline text-white">Ürünleri Gör</ScrollToTopLink>
               </div>
             </div>
           </div>
@@ -153,6 +154,7 @@ export default function DeltaRegis() {
             <div className="flex gap-3 lg:justify-end">
               <ScrollToTopLink to="/iletisim" className="btn btn-primary">İletişim</ScrollToTopLink>
               <ScrollToTopLink to="/demo-talebi" className="btn btn-ghost">Demo Talep Et</ScrollToTopLink>
+              <ScrollToTopLink to={`/urunler?brand=${encodeURIComponent('DeltaRegis')}`} className="btn btn-outline">Ürünleri Gör</ScrollToTopLink>
             </div>
           </div>
         </div>
