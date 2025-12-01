@@ -34,12 +34,36 @@ export const zascheCategories: ZascheCategory[] = [
             'Farklı yük tipleri için değiştirilebilir tutucular'
         ],
         subProducts: [
-            { title: 'Mafsallı Kollar', slug: slugifyForApi('Mafsallı Kollar'), description: 'Geniş erişim alanı sağlayan çok eklemli kol sistemleri.' },
-            { title: 'Paralelogram Manipülatörler', slug: slugifyForApi('Paralelogram Manipülatörler'), description: 'Ağır yükler için rijit ve dengeli kaldırma çözümü.' },
-            { title: 'Kaldırma Eksenleri', slug: slugifyForApi('Kaldırma Eksenleri'), description: 'Dikey hareketler için hassas lineer eksenler.' },
-            { title: 'Teleskopik Kaldırma Cihazları', slug: slugifyForApi('Teleskopik Kaldırma Cihazları'), description: 'Düşük tavanlı alanlar için kompakt çözümler.' },
-            { title: 'İstifleme Vinçleri', slug: slugifyForApi('İstifleme Vinçleri'), description: 'Depolama ve istifleme işlemleri için optimize edilmiş vinçler.' },
-            { title: 'Zemin Kılavuzlu Taşıma Cihazları', slug: slugifyForApi('Zemin Kılavuzlu Taşıma Cihazları'), description: 'Zemine monte raylar üzerinde hareket eden mobil sistemler.' }
+            {
+                title: 'Mafsallı Kollar',
+                slug: slugifyForApi('Mafsallı Kollar'),
+                description: 'Geniş erişim alanı sağlayan çok eklemli kol sistemleri.'
+            },
+            {
+                title: 'Paralelogram Manipülatörler',
+                slug: slugifyForApi('Paralelogram Manipülatörler'),
+                description: 'Ağır yükler için rijit ve dengeli kaldırma çözümü.'
+            },
+            {
+                title: 'Kaldırma Eksenleri',
+                slug: slugifyForApi('Kaldırma Eksenleri'),
+                description: 'Dikey hareketler için hassas lineer eksenler.'
+            },
+            {
+                title: 'Teleskopik Kaldırma Cihazları',
+                slug: slugifyForApi('Teleskopik Kaldırma Cihazları'),
+                description: 'Düşük tavanlı alanlar için kompakt çözümler.'
+            },
+            {
+                title: 'İstifleme Vinçleri',
+                slug: slugifyForApi('İstifleme Vinçleri'),
+                description: 'Depolama ve istifleme işlemleri için optimize edilmiş vinçler.'
+            },
+            {
+                title: 'Zemin Kılavuzlu Taşıma Cihazları',
+                slug: slugifyForApi('Zemin Kılavuzlu Taşıma Cihazları'),
+                description: 'Zemine monte raylar üzerinde hareket eden mobil sistemler.'
+            }
         ]
     },
     {
@@ -56,9 +80,21 @@ export const zascheCategories: ZascheCategory[] = [
             'Entegre güvenlik özellikleri'
         ],
         subProducts: [
-            { title: 'Elektrikli Halatlı Vinç', slug: slugifyForApi('Elektrikli Halatlı Vinç'), description: 'Güçlü ve dayanıklı elektrikli kaldırma üniteleri.' },
-            { title: 'Pnömatik Halatlı Dengeleyiciler', slug: slugifyForApi('Pnömatik Halatlı Dengeleyiciler'), description: 'Hava gücüyle çalışan, patlamaya dayanıklı (ATEX) seçenekli dengeleyiciler.' },
-            { title: 'Elektrikli Halatlı Dengeleyiciler', slug: slugifyForApi('Elektrikli Halatlı Dengeleyiciler'), description: 'Akıllı kontrol sistemlerine sahip servo motorlu dengeleyiciler.' }
+            {
+                title: 'Elektrikli Halatlı Vinç',
+                slug: slugifyForApi('Elektrikli Halatlı Vinç'),
+                description: 'Güçlü ve dayanıklı elektrikli kaldırma üniteleri.'
+            },
+            {
+                title: 'Pnömatik Halatlı Dengeleyiciler',
+                slug: slugifyForApi('Pnömatik Halatlı Dengeleyiciler'),
+                description: 'Hava gücüyle çalışan, patlamaya dayanıklı (ATEX) seçenekli dengeleyiciler.'
+            },
+            {
+                title: 'Elektrikli Halatlı Dengeleyiciler',
+                slug: slugifyForApi('Elektrikli Halatlı Dengeleyiciler'),
+                description: 'Akıllı kontrol sistemlerine sahip servo motorlu dengeleyiciler.'
+            }
         ]
     },
     {
@@ -75,9 +111,21 @@ export const zascheCategories: ZascheCategory[] = [
             'Manuel veya elektrikli yürütme seçenekleri'
         ],
         subProducts: [
-            { title: 'Çelik Üstyapı / Vinç Destek Yapısı', slug: slugifyForApi('Çelik Üstyapı / Vinç Destek Yapısı'), description: 'Vinç sistemleri için sağlam ve güvenilir çelik konstrüksiyonlar.' },
-            { title: 'Hafif Vinç Sistemleri', slug: slugifyForApi('Hafif Vinç Sistemleri'), description: 'Alüminyum profilli, ergonomik hafif vinç rayları.' },
-            { title: 'Pergel Vinçler', slug: slugifyForApi('Pergel Vinçler'), description: 'Belirli bir çalışma alanı için duvara veya zemine monte döner vinçler.' }
+            {
+                title: 'Çelik Üstyapı / Vinç Destek Yapısı',
+                slug: slugifyForApi('Çelik Üstyapı / Vinç Destek Yapısı'),
+                description: 'Asma vinç sistemlerini kurmak için gereken çelik konstrüksiyon yapılarıdır. Uzman mühendislerimiz ve sertifikalı kaynak personelimizle, projenize özel planlama ve uygulama hizmeti sunuyoruz.'
+            },
+            {
+                title: 'Hafif Vinç Sistemleri',
+                slug: slugifyForApi('Hafif Vinç Sistemleri'),
+                description: 'Tek veya çift kirişli hafif vinç sistemleri; manipülatörler ve kaldırma ekipmanlarımızla birleştirilerek kapsamlı ve modüler bir taşıma sistemi oluşturur.'
+            },
+            {
+                title: 'Pergel Vinçler',
+                slug: slugifyForApi('Pergel Vinçler'),
+                description: 'Duvar veya zemin montajlı, geniş erişim menziline sahip ergonomik döner vinçler. Halatlı dengeleyiciler veya zincirli vinçlerle kombine edilerek basit taşıma operasyonlarını yönetir.'
+            }
         ]
     },
     {
@@ -94,7 +142,11 @@ export const zascheCategories: ZascheCategory[] = [
             'Tam kapsamlı mühendislik desteği'
         ],
         subProducts: [
-            { title: 'Takım Taşıma / Takım Panelleri', slug: slugifyForApi('Takım Taşıma / Takım Panelleri'), description: 'Montaj hatları için alet ve ekipman taşıma sistemleri.' }
+            {
+                title: 'Takım Taşıma / Takım Panelleri',
+                slug: slugifyForApi('Takım Taşıma / Takım Panelleri'),
+                description: 'Ergonomik iş istasyonları için optimize edilmiş, kablo dağınıklığını önleyen ve iş güvenliğini artıran özel takım panelleri ve taşıma sistemleri.'
+            }
         ]
     }
 ]

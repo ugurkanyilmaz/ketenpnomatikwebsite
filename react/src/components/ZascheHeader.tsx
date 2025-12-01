@@ -48,12 +48,6 @@ export default function ZascheHeader({ backgroundImage, logo }: { backgroundImag
                         >
                             İletişim
                         </Link>
-                        <Link
-                            to="/demo-talebi"
-                            className="btn btn-primary btn-sm"
-                        >
-                            Demo Talebi
-                        </Link>
                     </nav>
 
                     {/* Mobile Menu Button */}

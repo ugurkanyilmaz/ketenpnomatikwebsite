@@ -1,10 +1,16 @@
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 import panoramaImage from './ZASCHE_Panorama_03.jpg'
 import zashceLogo from './zashceLogo.svg'
 import ZascheHeader from '../../components/ZascheHeader'
+import { sectors } from '../../data/sectoredata'
 
 export default function ManiplatorlerPage() {
+    const [hoveredSector, setHoveredSector] = useState<number | null>(null)
+
+    const marketIcons = ['🚗', '⚡', '🏗️', '🧪', '🖨️', '⚙️', '📦', '🔧', '🪵', '🔩', '🧵', '🔬']
+
     return (
         <div className="bg-base-100">
             {/* ZASCHE Header */}
@@ -51,8 +57,6 @@ export default function ManiplatorlerPage() {
                 </div>
             </motion.section>
 
-
-
             {/* Manipülatörler Nedir Section */}
             <motion.section
                 className="bg-white py-16"
@@ -88,7 +92,7 @@ export default function ManiplatorlerPage() {
                             transition={{ duration: 0.6 }}
                         >
                             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                                Manipülatörler Nedir?
+                                Manipülatör Nedir?
                             </h2>
                             <div className="space-y-4 text-gray-700 text-base leading-relaxed">
                                 <p>
@@ -201,7 +205,7 @@ export default function ManiplatorlerPage() {
                                 <p className="text-gray-600 text-sm line-clamp-2">
                                     Endüstriyel yük taşıma ve pozisyonlama için ergonomik çözümler.
                                 </p>
-                                <div className="mt-4 flex items-center text-primary font-semibold text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                                <div className="mt-4 flex items-center text-[#ff8c42] font-semibold text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                                     İncele
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -229,7 +233,7 @@ export default function ManiplatorlerPage() {
                                 <p className="text-gray-600 text-sm line-clamp-2">
                                     Hassas ve güvenli yük kaldırma için gelişmiş sistemler.
                                 </p>
-                                <div className="mt-4 flex items-center text-primary font-semibold text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                                <div className="mt-4 flex items-center text-[#ff8c42] font-semibold text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                                     İncele
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -257,7 +261,7 @@ export default function ManiplatorlerPage() {
                                 <p className="text-gray-600 text-sm line-clamp-2">
                                     Esnek ve modüler tavan vinç çözümleri.
                                 </p>
-                                <div className="mt-4 flex items-center text-primary font-semibold text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                                <div className="mt-4 flex items-center text-[#ff8c42] font-semibold text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                                     İncele
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -285,7 +289,7 @@ export default function ManiplatorlerPage() {
                                 <p className="text-gray-600 text-sm line-clamp-2">
                                     Spesifik ihtiyaçlar için özelleştirilmiş taşıma çözümleri.
                                 </p>
-                                <div className="mt-4 flex items-center text-primary font-semibold text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                                <div className="mt-4 flex items-center text-[#ff8c42] font-semibold text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                                     İncele
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -299,13 +303,13 @@ export default function ManiplatorlerPage() {
 
             {/* Markets We Serve Section */}
             <motion.section
-                className="bg-white py-16"
+                className="bg-white py-16 overflow-visible"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
             >
-                <div className="max-w-7xl mx-auto px-4">
+                <div className="max-w-7xl mx-auto px-4 overflow-visible">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
                             Hizmet Verdiğimiz Sektörler
@@ -315,37 +319,76 @@ export default function ManiplatorlerPage() {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {[
-                            { name: 'Otomotiv', icon: '🚗' },
-                            { name: 'Elektrikli Mobilite', icon: '⚡' },
-                            { name: 'İnşaat ve Zemin', icon: '🏗️' },
-                            { name: 'Kimyasal', icon: '🧪' },
-                            { name: 'Baskı', icon: '🖨️' },
-                            { name: 'Döküm', icon: '⚙️' },
-                            { name: 'Lojistik', icon: '📦' },
-                            { name: 'Makine İmalatı', icon: '🔧' },
-                            { name: 'Ahşap / Mobilya', icon: '🪵' },
-                            { name: 'Metal İşleme', icon: '🔩' },
-                            { name: 'Tekstil', icon: '🧵' },
-                            { name: 'Temiz Oda', icon: '🔬' }
-                        ].map((market, index) => (
-                            <motion.div
-                                key={market.name}
-                                className="card bg-white shadow-md hover:shadow-xl transition-all duration-300 border border-base-200"
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.05, duration: 0.4 }}
-                                whileHover={{ y: -5 }}
-                            >
-                                <div className="card-body items-center text-center p-6">
-                                    <div className="text-4xl mb-3">{market.icon}</div>
-                                    <h3 className="card-title text-base font-semibold text-gray-800">
-                                        {market.name}
-                                    </h3>
-                                </div>
-                            </motion.div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 overflow-visible">
+                        {sectors.map((sector, index) => (
+                            <div key={sector.title} className="relative">
+                                <motion.div
+                                    className="card bg-white shadow-md hover:shadow-xl transition-all duration-300 border border-base-200 relative"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: index * 0.05, duration: 0.4 }}
+                                    whileHover={{ y: -5 }}
+                                    onMouseEnter={() => setHoveredSector(index)}
+                                    onMouseLeave={() => setHoveredSector(null)}
+                                >
+                                    <div className="card-body items-center text-center p-6">
+                                        <div className="text-4xl mb-3">{marketIcons[index]}</div>
+                                        <h3 className="card-title text-base font-semibold text-gray-800">
+                                            {sector.title}
+                                        </h3>
+                                    </div>
+                                </motion.div>
+
+                                {/* Hover Tooltip Bubble - Outside the animated card */}
+                                <AnimatePresence>
+                                    {hoveredSector === index && (
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.9, y: index < 4 ? -10 : 10 }}
+                                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                                            exit={{ opacity: 0, scale: 0.9, y: index < 4 ? -10 : 10 }}
+                                            transition={{ duration: 0.3 }}
+                                            className={`absolute left-1/2 -translate-x-1/2 ${index < 4 ? 'top-full mt-3' : 'bottom-full mb-3'
+                                                } w-[350px] max-w-[90vw] z-[9999]`}
+                                            style={{ pointerEvents: 'none' }}
+                                        >
+                                            <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl shadow-2xl overflow-hidden border-2 border-primary/50">
+                                                {/* Image Section */}
+                                                <div className="h-36 overflow-hidden relative">
+                                                    <img
+                                                        src={sector.image}
+                                                        alt={sector.title}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 to-transparent" />
+                                                    <h4 className="absolute bottom-3 left-4 text-white font-bold text-lg">
+                                                        {sector.title}
+                                                    </h4>
+                                                </div>
+
+                                                {/* Content Section */}
+                                                <div className="p-4 max-h-52 overflow-y-auto custom-scrollbar">
+                                                    <p className="text-gray-200 text-sm leading-relaxed">
+                                                        {sector.description}
+                                                    </p>
+                                                </div>
+
+                                                {/* Decorative Glow Effect */}
+                                                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none rounded-2xl" />
+                                            </div>
+
+                                            {/* Decorative Arrow pointing to card */}
+                                            <div className={`absolute left-1/2 -translate-x-1/2 ${index < 4 ? 'bottom-full -mb-1' : 'top-full -mt-1'
+                                                }`}>
+                                                <div className={`w-0 h-0 ${index < 4
+                                                    ? 'border-l-[10px] border-r-[10px] border-b-[10px] border-l-transparent border-r-transparent border-b-gray-900'
+                                                    : 'border-l-[10px] border-r-[10px] border-t-[10px] border-l-transparent border-r-transparent border-t-gray-900'
+                                                    }`} />
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
                         ))}
                     </div>
                 </div>

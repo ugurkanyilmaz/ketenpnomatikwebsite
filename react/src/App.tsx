@@ -14,12 +14,7 @@ import ZascheManipulatorlerPage from './pages/zasche/ZascheManipulatorlerPage'
 import ZascheKaldirmaEkipmanlariPage from './pages/zasche/ZascheKaldirmaEkipmanlariPage'
 import ZascheAsmaVincPage from './pages/zasche/ZascheAsmaVincPage'
 import ZascheOzelEkipmanlarPage from './pages/zasche/ZascheOzelEkipmanlarPage'
-import MafsalliKollarPage from './pages/zasche/products/MafsalliKollarPage'
-import ParalelogramManipulatorlerPage from './pages/zasche/products/ParalelogramManipulatorlerPage'
-import KaldirmaEksenleriPage from './pages/zasche/products/KaldirmaEksenleriPage'
-import TeleskopikKaldirmaPage from './pages/zasche/products/TeleskopikKaldirmaPage'
-import IstiflemeVincleriPage from './pages/zasche/products/IstiflemeVincleriPage'
-import ZeminKilavuzluTasimaPage from './pages/zasche/products/ZeminKilavuzluTasimaPage'
+import ZascheProductDetail from './pages/zasche/ZascheProductDetail'
 import Subcategories from './pages/subcategories'
 import Series from './pages/series'
 import Article from './pages/article'
@@ -102,12 +97,11 @@ function App() {
             <Route path="/kategoriler/manipulatorler/ozel-ekipmanlar" element={<ZascheOzelEkipmanlarPage />} />
 
             {/* Product Pages */}
-            <Route path="/kategoriler/manipulatorler/manipulatorler/mafsalli-kollar" element={<MafsalliKollarPage />} />
-            <Route path="/kategoriler/manipulatorler/manipulatorler/paralelogram-manipulatorler" element={<ParalelogramManipulatorlerPage />} />
-            <Route path="/kategoriler/manipulatorler/manipulatorler/kaldirma-eksenleri" element={<KaldirmaEksenleriPage />} />
-            <Route path="/kategoriler/manipulatorler/manipulatorler/teleskopik-kaldirma" element={<TeleskopikKaldirmaPage />} />
-            <Route path="/kategoriler/manipulatorler/manipulatorler/istifleme-vincleri" element={<IstiflemeVincleriPage />} />
-            <Route path="/kategoriler/manipulatorler/manipulatorler/zemin-kilavuzlu-tasima" element={<ZeminKilavuzluTasimaPage />} />
+            {/* Product Pages - Generic Route */}
+            <Route path="/kategoriler/manipulatorler/manipulatorler/:id" element={<ZascheProductDetail />} />
+            <Route path="/kategoriler/manipulatorler/kaldirma-ekipmanlari-halatli-dengeleyiciler/:id" element={<ZascheProductDetail />} />
+            <Route path="/kategoriler/manipulatorler/asma-vinc-sistemleri/:id" element={<ZascheProductDetail />} />
+            <Route path="/kategoriler/manipulatorler/ozel-ekipmanlar/:id" element={<ZascheProductDetail />} />
 
             {/* Redirect old spelling to new */}
             <Route path="/kategoriler/maniplatorler" element={<Navigate to="/kategoriler/manipulatorler" replace />} />

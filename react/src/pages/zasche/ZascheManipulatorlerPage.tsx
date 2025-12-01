@@ -3,14 +3,16 @@ import { Link } from 'react-router-dom'
 import { Weight, MoveVertical, Radius, RotateCw } from 'lucide-react'
 import ZascheHeader from '../../components/ZascheHeader'
 import zashceLogo from './zashceLogo.svg'
+import { zascheProducts } from '../../data/zascheProducts'
 
 const products = [
     {
         id: 1,
         title: 'Mafsallı Kollar',
         subtitle: 'Articulated arms',
-        description: 'Makine operatörleri için ergonomik bir yardımcı olan mafsallı kollarımız, halatlı dengeleyicilerle donatılmış olup sütun, kolon veya tavana monte edilebilir.',
+        description: 'Makine operatörleri için ergonomik bir yardımcı olan mafsallı kollarım ız, halatlı dengeleyicilerle donatılmış olup sütun, kolon veya tavana monte edilebilir.',
         link: '/kategoriler/manipulatorler/manipulatorler/mafsalli-kollar',
+        productId: 'mafsalli-kollar',
         specs: {
             load: '160 kg',
             lift: '2000 mm',
@@ -23,6 +25,7 @@ const products = [
         subtitle: 'Parallelogram manipulators',
         description: 'Pnömatik vinçler ve paralelogram yapısının birleşimi olan bu seri, yükleri ağırlıksızmış gibi hissettiren ve mükemmel dengeleme sağlayan bir çözümdür.',
         link: '/kategoriler/manipulatorler/manipulatorler/paralelogram-manipulatorler',
+        productId: 'paralelogram-manipulatorler',
         specs: {
             load: '350 kg',
             lift: '1600 mm',
@@ -35,6 +38,7 @@ const products = [
         subtitle: 'Lifting axes',
         description: '1000 kg\'a kadar kaldırma kapasitesine sahip kaldırma eksenlerimiz, rijit ve eksantrik yüklemeler için idealdir. Zincirli vinç sistemleriyle entegre edilebilir.',
         link: '/kategoriler/manipulatorler/manipulatorler/kaldirma-eksenleri',
+        productId: 'kaldirma-eksenleri',
         specs: {
             load: '1000 kg',
             lift: '1200 mm',
@@ -47,6 +51,7 @@ const products = [
         subtitle: 'Telescopic lifting devices',
         description: 'Teleskopik kaldırma cihazları, iç veya dış hareketli zincir mekanizmasına sahip elektrikli vinçler yardımıyla dikey hareket sağlar.',
         link: '/kategoriler/manipulatorler/manipulatorler/teleskopik-kaldirma',
+        productId: 'teleskopik-kaldirma',
         specs: {
             load: '1500 kg',
             lift: '2000 mm',
@@ -59,6 +64,7 @@ const products = [
         subtitle: 'Stacker crane',
         description: 'Tavan veya zemin montajlı seçenekleri bulunan istifleme vinçlerimiz, ulaşılması zor noktalara erişim ve geniş hareket aralığı gerektiren işlemler için tasarlanmıştır.',
         link: '/kategoriler/manipulatorler/manipulatorler/istifleme-vincleri',
+        productId: 'istifleme-vincleri',
         specs: {
             load: '500 kg',
             lift: '3000 mm',
@@ -71,6 +77,7 @@ const products = [
         subtitle: 'Floor-guided handling devices',
         description: 'Zemin kılavuzlu taşıma cihazlarımız, yüksek kaldırma kapasitesi sunan özel mobil çözümlerdir. Esneklik gerektiren zorlu taşıma operasyonları için idealdir.',
         link: '/kategoriler/manipulatorler/manipulatorler/zemin-kilavuzlu-tasima',
+        productId: 'zemin-kilavuzlu-tasima',
         specs: {
             load: '200 kg',
             lift: '800 mm',
@@ -84,129 +91,120 @@ export default function ZascheManipulatorlerPage() {
         <div className="bg-white min-h-screen font-sans text-gray-900">
             <ZascheHeader backgroundImage="/ZASCHE_Panorama_03_header.jpg" logo={zashceLogo} />
 
-            {/* Hero Section */}
-            <motion.section
-                className="relative h-[70vh] min-h-[600px] flex items-center justify-center overflow-hidden"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1 }}
-            >
-                <div
-                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                    style={{ backgroundImage: `url(https://placehold.co/1920x1080/1a1a1a/ffffff?text=Manipulatorler)` }}
-                >
-                    <div className="absolute inset-0 bg-black/60" />
-                </div>
-
-                <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-                    <motion.span
-                        className="block text-primary font-bold tracking-widest uppercase mb-4"
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.2, duration: 0.8 }}
-                    >
-                        ZASCHE HANDLING
-                    </motion.span>
-                    <motion.h1
-                        className="text-6xl md:text-8xl font-bold text-white mb-8 tracking-tight"
-                        initial={{ y: 30, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.3, duration: 0.8 }}
-                    >
-                        Manipülatörler
-                    </motion.h1>
-                    <motion.p
-                        className="text-xl md:text-2xl text-gray-200 font-light max-w-3xl mx-auto leading-relaxed"
-                        initial={{ y: 30, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.5, duration: 0.8 }}
-                    >
-                        Endüstriyel yük taşıma ve pozisyonlama için ergonomik çözümler.
-                    </motion.p>
-                </div>
-            </motion.section>
-
             {/* Rich Content Section */}
-            <section className="py-24 px-4 bg-white">
-                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                    <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                    >
-                        <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                            Yüklerinizi <span className="text-primary">Hafifletin</span>
-                        </h2>
-                        <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                            ZASCHE manipülatörleri, üretim hatlarında ve montaj istasyonlarında operatörlerin ağır yükleri zahmetsizce ve hassas bir şekilde taşımasını sağlar.
-                        </p>
-                        <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                            Ergonomik tasarımı sayesinde iş kazalarını azaltır, verimliliği artırır ve çalışan sağlığını korur. İster pnömatik ister elektrikli olsun, her türlü yük için özelleştirilebilir çözümler sunuyoruz.
-                        </p>
+            <section className="py-16 px-4 bg-white">
+                <div className="max-w-7xl mx-auto">
+                    {/* Page Title */}
+                    <div className="text-center mb-16">
+                        <motion.span
+                            className="block text-primary font-bold tracking-widest uppercase mb-4"
+                            initial={{ y: 20, opacity: 0 }}
+                            whileInView={{ y: 0, opacity: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.1, duration: 0.6 }}
+                        >
+                            ZASCHE HANDLING
+                        </motion.span>
+                        <motion.h1
+                            className="text-5xl md:text-6xl font-bold text-gray-900 mb-6"
+                            initial={{ y: 20, opacity: 0 }}
+                            whileInView={{ y: 0, opacity: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.2, duration: 0.6 }}
+                        >
+                            Manipülatörler
+                        </motion.h1>
+                        <motion.p
+                            className="text-xl text-gray-600 max-w-3xl mx-auto"
+                            initial={{ y: 20, opacity: 0 }}
+                            whileInView={{ y: 0, opacity: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.3, duration: 0.6 }}
+                        >
+                            Endüstriyel yük taşıma ve pozisyonlama için ergonomik çözümler.
+                        </motion.p>
+                    </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div className="flex items-start gap-3">
-                                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
-                                    <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </div>
-                                <span className="text-gray-700">Ergonomik ve güvenli kullanım</span>
-                            </div>
-                            <div className="flex items-start gap-3">
-                                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
-                                    <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </div>
-                                <span className="text-gray-700">Yüksek hassasiyetli pozisyonlama</span>
-                            </div>
-                            <div className="flex items-start gap-3">
-                                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
-                                    <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </div>
-                                <span className="text-gray-700">Geniş çalışma yarıçapı</span>
-                            </div>
-                            <div className="flex items-start gap-3">
-                                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
-                                    <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </div>
-                                <span className="text-gray-700">Düşük bakım gereksinimi</span>
-                            </div>
-                            <div className="flex items-start gap-3">
-                                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
-                                    <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </div>
-                                <span className="text-gray-700">Modüler ve özelleştirilebilir yapı</span>
-                            </div>
-                        </div>
-                    </motion.div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <motion.div
+                            initial={{ opacity: 0, x: -50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                        >
+                            <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                                Yüklerinizi <span className="text-primary">Hafifletin</span>
+                            </h2>
+                            <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                                ZASCHE manipülatörleri, üretim hatlarında ve montaj istasyonlarında operatörlerin ağır yükleri zahmetsizce ve hassas bir şekilde taşımasını sağlar.
+                            </p>
+                            <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+                                Ergonomik tasarımı sayesinde iş kazalarını azaltır, verimliliği artırır ve çalışan sağlığını korur. İster pnömatik ister elektrikli olsun, her türlü yük için özelleştirilebilir çözümler sunuyoruz.
+                            </p>
 
-                    <motion.div
-                        className="relative rounded-2xl overflow-hidden shadow-2xl aspect-video"
-                        initial={{ opacity: 0, x: 50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                    >
-                        <iframe
-                            width="100%"
-                            height="100%"
-                            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                            title="Zasche Manipulator Video"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            className="absolute inset-0 w-full h-full object-cover"
-                        ></iframe>
-                    </motion.div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div className="flex items-start gap-3">
+                                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
+                                        <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <span className="text-gray-700">Ergonomik ve güvenli kullanım</span>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
+                                        <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <span className="text-gray-700">Yüksek hassasiyetli pozisyonlama</span>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
+                                        <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <span className="text-gray-700">Geniş çalışma yarıçapı</span>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
+                                        <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <span className="text-gray-700">Düşük bakım gereksinimi</span>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
+                                        <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <span className="text-gray-700">Modüler ve özelleştirilebilir yapı</span>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            className="relative rounded-2xl overflow-hidden shadow-2xl aspect-video"
+                            initial={{ opacity: 0, x: 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                        >
+                            <iframe
+                                width="100%"
+                                height="100%"
+                                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                                title="Zasche Manipulator Video"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                className="absolute inset-0 w-full h-full object-cover"
+                            ></iframe>
+                        </motion.div>
+                    </div>
                 </div>
             </section>
 
@@ -225,11 +223,11 @@ export default function ZascheManipulatorlerPage() {
                                 to={product.link}
                                 className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col"
                             >
-                                <div className="aspect-[4/3] bg-gray-200 relative overflow-hidden">
+                                <div className="aspect-[4/3] bg-white relative overflow-hidden p-4">
                                     <img
-                                        src={`https://placehold.co/800x600/e2e8f0/1e293b?text=${encodeURIComponent(product.title)}`}
+                                        src={zascheProducts.find(p => p.id === product.productId)?.gallery.thumbnails[0] || `https://placehold.co/800x600/e2e8f0/1e293b?text=${encodeURIComponent(product.title)}`}
                                         alt={product.title}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        className="w-full h-full object-contain transition-transform duration-700"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                 </div>
@@ -283,20 +281,54 @@ export default function ZascheManipulatorlerPage() {
                 </div>
             </section>
 
-            {/* Navigation Footer */}
-            <div className="bg-white py-12 border-t border-gray-100">
-                <div className="max-w-7xl mx-auto px-4 text-center">
-                    <Link
-                        to="/kategoriler/manipulatorler"
-                        className="inline-flex items-center gap-2 text-gray-500 hover:text-primary transition-colors font-medium text-lg group"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        Tüm Kategorilere Dön
-                    </Link>
+            {/* Other Categories Section */}
+            <section className="py-24 px-4 bg-white border-t border-gray-100">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold text-gray-900 mb-4">Diğer Kategoriler</h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {[
+                            {
+                                title: 'Kaldırma Ekipmanları',
+                                link: '/kategoriler/manipulatorler/kaldirma-ekipmanlari-halatli-dengeleyiciler',
+                                image: 'https://placehold.co/1920x1080/1a1a1a/ffffff?text=Kaldirma+Ekipmanlari'
+                            },
+                            {
+                                title: 'Asma Vinç Sistemleri',
+                                link: '/kategoriler/manipulatorler/asma-vinc-sistemleri',
+                                image: 'https://placehold.co/1920x1080/1a1a1a/ffffff?text=Asma+Vinc+Sistemleri'
+                            },
+                            {
+                                title: 'Özel Ekipmanlar',
+                                link: '/kategoriler/manipulatorler/ozel-ekipmanlar',
+                                image: 'https://placehold.co/1920x1080/1a1a1a/ffffff?text=Ozel+Ekipmanlar'
+                            }
+                        ].map((category, index) => (
+                            <Link
+                                key={index}
+                                to={category.link}
+                                onClick={() => window.scrollTo(0, 0)}
+                                className="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+                            >
+                                <div className="aspect-[4/3] bg-gray-200 relative overflow-hidden">
+                                    <img
+                                        src={category.image}
+                                        alt={category.title}
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    />
+                                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
+                                </div>
+                                <div className="absolute inset-0 flex items-center justify-center p-4">
+                                    <h3 className="text-2xl font-bold text-white text-center drop-shadow-lg">
+                                        {category.title}
+                                    </h3>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     )
 }
