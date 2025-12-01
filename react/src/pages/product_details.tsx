@@ -46,6 +46,23 @@ export default function ProductDetails() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalImageIndex, setModalImageIndex] = useState(0)
 
+  // Slugify function to convert Turkish characters and make URL-safe
+  const slugify = (text: string): string => {
+    return text
+      .toLowerCase()
+      .replace(/ğ/g, 'g')
+      .replace(/ü/g, 'u')
+      .replace(/ş/g, 's')
+      .replace(/ı/g, 'i')
+      .replace(/İ/g, 'i')
+      .replace(/ö/g, 'o')
+      .replace(/ç/g, 'c')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+  }
+
   useEffect(() => {
     if (sku) {
       loadProduct()
@@ -217,9 +234,27 @@ export default function ProductDetails() {
             <ul>
               <li><Link to="/">Ana Sayfa</Link></li>
               <li><Link to="/urunler">Ürünler</Link></li>
-              {product.parent && <li>{product.parent}</li>}
-              {product.child && <li>{product.child}</li>}
-              {product.subchild && <li>{product.subchild}</li>}
+              {product.parent && (
+                <li>
+                  <Link to={`/kategoriler/${slugify(product.parent)}`}>
+                    {product.parent}
+                  </Link>
+                </li>
+              )}
+              {product.child && (
+                <li>
+                  <Link to={`/kategoriler/${slugify(product.parent)}/${slugify(product.child)}`}>
+                    {product.child}
+                  </Link>
+                </li>
+              )}
+              {product.subchild && (
+                <li>
+                  <Link to={`/kategoriler/${slugify(product.parent)}/${slugify(product.child)}/${slugify(product.subchild)}`}>
+                    {product.subchild}
+                  </Link>
+                </li>
+              )}
               <li className="font-semibold">{product.title}</li>
             </ul>
           </div>

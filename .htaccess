@@ -3,5 +3,5 @@
 
 RewriteEngine On
 
-# Exact path with optional trailing slash
-RewriteRule ^kategoriler/endustriyel/kolver-elektrikli-sikicilar/kolver-pluto-kabza-tip-akim-ve-tork-kontrollu-tornavidalar/?$ https://www.ketenpnomatik.com/kategoriler/endustriyel/kolver-elektrikli-tornavidalar/Kolver%20PLUTO%20Kabza%20Tip%20Ak%C4%B1m%20Ve%20Tork%20Kontroll%C3%BC%20Tornavidalar [R=301,L]
+# Redirect any legacy 'kolver-elektrikli-sikicilar' path to the new canonical category (301)
+RewriteRule ^kategoriler/endustriyel/kolver-elektrikli-sikicilar(/.*)?$ https://www.ketenpnomatik.com/kategoriler/endustriyel/kolver-elektrikli-tornavidalar/ [R=301,L]

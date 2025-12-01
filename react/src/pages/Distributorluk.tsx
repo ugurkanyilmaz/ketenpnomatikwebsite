@@ -11,16 +11,15 @@ export default function Distributorluk() {
   return (
     <div className="bg-base-100">
       {/* Hero - Modern split design with overlay */}
-    <section className="relative w-full min-h-[300px] md:min-h-[500px] lg:min-h-[600px] bg-gradient-to-br from-slate-900 to-slate-800 overflow-hidden">
-        {/* Background image with overlay */}
+    <section className="relative w-full min-h-[300px] md:min-h-[500px] lg:min-h-[600px] bg-gradient-to-br from-[#e0e0e0] to-[#d0d0d0] overflow-hidden">
+        {/* Background image without overlay */}
         <div className="absolute inset-0">
           <img
             src="/dist.jpg"
             alt="Distribütörlük hero"
-            className="w-full h-full object-cover opacity-30"
+            className="w-full h-full object-cover opacity-50"
             loading="eager"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-transparent" />
         </div>
 
         {/* Content */}
@@ -39,13 +38,13 @@ export default function Distributorluk() {
                 <span className="text-sm font-semibold">Yetkili Distribütör</span>
               </div>
 
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-gray-900 mb-6 leading-tight">
                 Distribütörlüğünü Yaptığımız
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary mt-2">
                   Markalar
                 </span>
               </h1>
-              <p className="text-lg md:text-xl text-gray-300 mb-8 leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed">
                 Yetkili olduğumuz markalar ve sunduğumuz çözümler ile endüstriyel ihtiyaçlarınıza profesyonel yanıtlar sunuyoruz.
               </p>
             </motion.div>
@@ -61,7 +60,7 @@ export default function Distributorluk() {
                 <button
                   key={b.id}
                   type="button"
-                  className="btn btn-lg bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 hover:border-white/40 hover:scale-105 transition-all duration-300 shadow-lg"
+                  className="btn btn-lg bg-primary/10 backdrop-blur-sm border-primary/30 text-gray-900 hover:bg-primary/20 hover:border-primary/40 hover:scale-105 transition-all duration-300 shadow-lg"
                   onClick={() => {
                     const el = document.getElementById(b.id)
                     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -88,3 +87,4 @@ export default function Distributorluk() {
     </div>
   )
 }
+

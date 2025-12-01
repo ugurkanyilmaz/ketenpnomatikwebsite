@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Edit, Trash2, Plus, Upload, Search } from 'lucide-react'
+import { convertToYouTubeEmbed } from '../../utils/youtube'
 
 interface Category {
   id: number
@@ -13,6 +14,7 @@ interface Category {
   info: string
   summary: string
   usable_areas: string
+  more: string
   main_image: string
   img1: string
   video_url: string
@@ -318,6 +320,7 @@ export default function CategoryManagement() {
                         <div className="flex gap-1 flex-wrap">
                           {cat.about && <div className="badge badge-success badge-xs" title="Hakkında mevcut">H</div>}
                           {cat.featured && <div className="badge badge-info badge-xs" title="Özellikler mevcut">Ö</div>}
+                          {cat.more && <div className="badge badge-accent badge-xs" title="Daha Fazla Bilgi mevcut">D</div>}
                           {cat.main_image && <div className="badge badge-warning badge-xs" title="Resim mevcut">R</div>}
                           {cat.video_url && <div className="badge badge-error badge-xs" title="Video mevcut">V</div>}
                           {cat.meta_title && <div className="badge badge-primary badge-xs" title="SEO mevcut">S</div>}
@@ -460,6 +463,7 @@ function CategoryModal({
       info: '',
       summary: '',
       usable_areas: '',
+      more: '',
       main_image: '',
       img1: '',
       video_url: '',
@@ -471,10 +475,13 @@ function CategoryModal({
   )
   const [mainFile, setMainFile] = useState<File | null>(null)
   const [img1File, setImg1File] = useState<File | null>(null)
+  const [videoFile, setVideoFile] = useState<File | null>(null)
   const [uploadingMain, setUploadingMain] = useState(false)
   const [uploadingImg1, setUploadingImg1] = useState(false)
+  const [uploadingVideo, setUploadingVideo] = useState(false)
   const [mainPreview, setMainPreview] = useState<string | null>(null)
   const [img1Preview, setImg1Preview] = useState<string | null>(null)
+  const [videoPreview, setVideoPreview] = useState<string | null>(null)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -503,39 +510,60 @@ function CategoryModal({
     setImg1Preview(null)
   }, [img1File])
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, target: 'main' | 'img1') => {
+  useEffect(() => {
+    if (videoFile) {
+      const url = URL.createObjectURL(videoFile)
+      setVideoPreview(url)
+      return () => URL.revokeObjectURL(url)
+    }
+    setVideoPreview(null)
+  }, [videoFile])
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, target: 'main' | 'img1' | 'video') => {
     const f = e.target.files?.[0] ?? null
     if (target === 'main') setMainFile(f)
-    else setImg1File(f)
+    else if (target === 'img1') setImg1File(f)
+    else setVideoFile(f)
   }
 
-  const uploadFile = async (target: 'main' | 'img1') => {
-    const file = target === 'main' ? mainFile : img1File
+  const uploadFile = async (target: 'main' | 'img1' | 'video') => {
+    const file = target === 'main' ? mainFile : target === 'img1' ? img1File : videoFile
     if (!file) return
-    if (file.size > 5 * 1024 * 1024) { alert('Dosya boyutu 5MB sınırını aşıyor'); return }
+
+    // For images enforce 5MB limit; videos have no enforced limit here per request
+    if ((target === 'main' || target === 'img1') && file.size > 5 * 1024 * 1024) { alert('Dosya boyutu 5MB sınırını aşıyor'); return }
 
     if (target === 'main') setUploadingMain(true)
-    else setUploadingImg1(true)
+    else if (target === 'img1') setUploadingImg1(true)
+    else setUploadingVideo(true)
 
     try {
       const fd = new FormData()
-      fd.append('image', file)
-      const res = await fetch('/php/api/upload_image.php', { method: 'POST', body: fd })
+      // Use different field name and endpoint for videos
+      if (target === 'video') fd.append('video', file)
+      else fd.append('image', file)
+
+      const endpoint = target === 'video' ? '/php/api/upload_video.php' : '/php/api/upload_image.php'
+      const res = await fetch(endpoint, { method: 'POST', body: fd })
       const data = await res.json()
       if (!res.ok || !data?.url) throw new Error(data?.error || data?.message || 'Upload failed')
-  const url = data.url
-  const normalized = url?.startsWith('http') ? url : `https://www.ketenpnomatik.com${url}`
-  if (target === 'main') setFormData({ ...formData, main_image: normalized })
-  else setFormData({ ...formData, img1: normalized })
+      const url = data.url
+      const normalized = url?.startsWith('http') ? url : `https://www.ketenpnomatik.com${url}`
+      if (target === 'main') setFormData({ ...formData, main_image: normalized })
+      else if (target === 'img1') setFormData({ ...formData, img1: normalized })
+      else setFormData({ ...formData, video_url: normalized })
+
       alert('Yükleme başarılı. URL form alanına yerleştirildi.')
       if (target === 'main') setMainFile(null)
-      else setImg1File(null)
+      else if (target === 'img1') setImg1File(null)
+      else setVideoFile(null)
     } catch (err) {
       console.error('Upload failed', err)
       alert('Dosya yükleme başarısız: ' + (err instanceof Error ? err.message : String(err)))
     } finally {
       if (target === 'main') setUploadingMain(false)
-      else setUploadingImg1(false)
+      else if (target === 'img1') setUploadingImg1(false)
+      else setUploadingVideo(false)
     }
   }
 
@@ -650,6 +678,19 @@ function CategoryModal({
             />
           </div>
 
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Daha Fazla Bilgi</span>
+              <span className="label-text-alt text-info">Bu alan "Nerelerde Kullanılır?" bölümünün üstünde görünecektir</span>
+            </label>
+            <textarea
+              className="textarea textarea-bordered h-32"
+              value={formData.more}
+              onChange={(e) => setFormData({ ...formData, more: e.target.value })}
+              placeholder="Bu bölümde ürün serisi hakkında ek detaylı bilgiler yazabilirsiniz. Bu içerik kullanıcılara ürünü daha iyi tanıtmak için kullanılacaktır..."
+            />
+          </div>
+
           <div className="grid md:grid-cols-3 gap-4">
             <div className="form-control">
               <label className="label"><span className="label-text">Ana Görsel URL</span></label>
@@ -698,14 +739,35 @@ function CategoryModal({
               </div>
             </div>
             <div className="form-control">
-              <label className="label"><span className="label-text">Video URL</span></label>
+              <label className="label">
+                <span className="label-text">Video URL</span>
+                <span className="label-text-alt text-info">YouTube linki otomatik embed formatına dönüştürülür</span>
+              </label>
               <input
                 type="text"
                 className="input input-bordered"
                 value={formData.video_url}
-                onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
-                placeholder="https://youtube.com/embed/..."
+                onChange={(e) => {
+                  const url = e.target.value
+                  // Otomatik olarak YouTube embed formatına dönüştür
+                  const embedUrl = url.trim() !== '' ? convertToYouTubeEmbed(url) : url
+                  setFormData({ ...formData, video_url: embedUrl })
+                }}
+                placeholder="https://youtube.com/watch?v=... veya https://youtu.be/..."
               />
+              <div className="mt-2">
+                <input type="file" accept="video/*" onChange={(e) => handleFileSelect(e, 'video')} className="file-input file-input-bordered w-full" />
+                {videoFile && (
+                  <div className="flex gap-2 items-center mt-2">
+                    <div className="text-sm">Seçilen: {videoFile.name} ({Math.round(videoFile.size/1024)} KB)</div>
+                    <button type="button" className="btn btn-sm btn-primary" onClick={() => uploadFile('video')} disabled={uploadingVideo}>Yükle</button>
+                    <button type="button" className="btn btn-sm" onClick={() => setVideoFile(null)} disabled={uploadingVideo}>İptal</button>
+                  </div>
+                )}
+                {videoPreview && (
+                  <video src={videoPreview} className="w-full h-28 object-cover rounded mt-2" controls preload="metadata" />
+                )}
+              </div>
             </div>
           </div>
 

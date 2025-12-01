@@ -198,9 +198,21 @@ if ((int)$existingImages === 0) {
         ['home_hero_1', '/keten_banner.jpg', 1920, 1080, 'Keten Pnömatik'],
         ['home_hero_2', '/endus.jpg', 1920, 1080, 'Endüstriyel Seri'],
         ['home_hero_3', '/professional_banner.png', 1920, 1080, 'Profesyonel Seri'],
-        ['home_electric', '/professional_banner.png', 1920, 1080, 'Elektrikli ürünler'],
-        ['home_battery', '/professional_banner.png', 1920, 1080, 'Akülü ürünler'],
-        ['home_pneumatic', '/endus.jpg', 1920, 1080, 'Havalı ürünler'],
+        
+        // Elektrikli Ürünler - Profesyonel & Endüstriyel
+        ['home_electric_professional', '/professional_banner.png', 1920, 1080, 'Profesyonel Elektrikli ürünler'],
+        ['home_electric_industrial', '/endus.jpg', 1920, 1080, 'Endüstriyel Elektrikli ürünler'],
+        
+        // Akülü Ürünler - Profesyonel & Endüstriyel
+        ['home_battery_professional', '/professional_banner.png', 1920, 1080, 'Profesyonel Akülü ürünler'],
+        ['home_battery_industrial', '/endus.jpg', 1920, 1080, 'Endüstriyel Akülü ürünler'],
+        
+        // Havalı Ürünler - Profesyonel & Endüstriyel
+        ['home_pneumatic_professional', '/professional_banner.png', 1920, 1080, 'Profesyonel Havalı ürünler'],
+        ['home_pneumatic_industrial', '/endus.jpg', 1920, 1080, 'Endüstriyel Havalı ürünler'],
+        
+        // Özel Çözümler & Süreç
+        ['home_custom_solutions', '/professional_banner.png', 1920, 1080, 'Özel çözümler'],
         ['home_process_1', '/technical_service_banner.png', 1920, 1080, 'İhtiyaç analizi'],
         ['home_process_2', '/keten_banner.jpg', 1920, 1080, 'Ürün/Seri seçimi'],
         ['home_process_3', '/technical_service_banner.png', 1920, 1080, 'Kurulum ve eğitim'],

@@ -26,9 +26,13 @@ export default function HomePage() {
       }
   
   // Fetch dynamic images
-  const { image: electricImg } = useSiteImage('home_electric')
-  const { image: batteryImg } = useSiteImage('home_battery')
-  const { image: pneumaticImg } = useSiteImage('home_pneumatic')
+  const { image: electricProfessionalImg } = useSiteImage('home_electric_professional')
+  const { image: electricIndustrialImg } = useSiteImage('home_electric_industrial')
+  const { image: batteryProfessionalImg } = useSiteImage('home_battery_professional')
+  const { image: batteryIndustrialImg } = useSiteImage('home_battery_industrial')
+  const { image: pneumaticProfessionalImg } = useSiteImage('home_pneumatic_professional')
+  const { image: pneumaticIndustrialImg } = useSiteImage('home_pneumatic_industrial')
+  const { image: customSolutionsImg } = useSiteImage('home_custom_solutions')
   const { image: process1Img } = useSiteImage('home_process_1')
   const { image: process2Img } = useSiteImage('home_process_2')
   const { image: process3Img } = useSiteImage('home_process_3')
@@ -41,94 +45,334 @@ export default function HomePage() {
 
   {/* Ürünlerimiz header now sits above the Elektrikli section */}
 
-    {/* Elektrikli Ürünlerimiz - Blog Layout (Görsel solda, metin sağda) */}
+    {/* Elektrikli Ürünlerimiz - Çapraz düzen */}
       <M.section
-        className="bg-slate-800"
+        className="bg-white"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.6, delay: 0.05 }}
       >
         <div className="max-w-7xl mx-auto px-4 pt-12">
-          <SectionHeader title="Ürünlerimiz" subtitle="Havalı, Akülü, Elektrikli ürünler" dark />
+          <SectionHeader title="Ürünlerimiz" subtitle="Havalı, Akülü, Elektrikli ürünler" />
         </div>
-        <div className="max-w-7xl mx-auto px-4 py-16 grid lg:grid-cols-2 gap-10 items-center">
-          <M.div
-            className="order-1 lg:order-none"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <img src={electricImg?.image_path || "/professional_banner.png"} alt={electricImg?.alt_text || "Elektrikli ürünler"}
-                 className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
-          </M.div>
-          <div>
-            <p className="text-gray-300 mb-2 text-base md:text-lg">İhtiyacınıza uygun elektrikli çözümler</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-white">Elektrikli Ürünlerimiz</h2>
-            <p className="mt-3 text-gray-300 text-base md:text-lg">
-              İşinizin kritik noktalarında maksimum hassasiyet ve kontrol sizinle olsun. Elektrikli alet serimiz, tork ayarlı tornavidalar dahil olmak üzere, şebeke gücünden aldığı kesintisiz enerji ile en zorlu montaj ve üretim işlemlerinizi hatasız tamamlamanızı sağlar. Dayanıklı ve ergonomik çözümlerimizle tanışın.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <ScrollToTopLink
-                className="btn"
-                to="/urunler?q=elektrikli"
-                style={{
-                  outline: 'none',
-                  boxShadow: 'none',
-                  backgroundColor: 'var(--p)',
-                  borderColor: 'var(--pf)',
-                  color: 'var(--pc)',
-                }}
-              >
-                Elektrikli Seriler
-              </ScrollToTopLink>
-              <a
-                className="btn btn-outline"
-                href="/kategoriler"
-                style={{
-                  outline: 'none',
-                  boxShadow: 'none',
-                  borderColor: 'var(--p)',
-                  color: 'var(--p)',
-                }}
-              >
-                Tüm Kategoriler
-              </a>
-            </div>
-            {/* Alt seri kutuları */}
-            <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-4">
-              {[
-                { title: 'Tork Kontrollü Tornavidalar', href: '/urunler?q=tork+kontroll%C3%BC+tornavida' },
-                { title: 'Kömürsüz Tornavidalar', href: '/urunler?q=k%C3%B6m%C3%BCrs%C3%BCz+tornavida' },
-                { title: 'Elektrikli Tornavidalar', href: '/urunler?q=elektrikli+tornavida' },
-              ].map((s, i) => (
-                <M.div
-                  key={s.title}
-                  className="rounded-box bg-gray-800 p-4 text-sm font-semibold hover:shadow-md"
-                  style={{
-                        color: 'var(--p)',
-                        borderColor: 'var(--p)',
-                        borderWidth: '1px',
-                        borderStyle: 'solid',
-                      }}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.05 }}
-                  whileHover={{ y: -3 }}
+        <div className="max-w-7xl mx-auto px-4 py-16">
+          {/* Başlık */}
+          <div className="mb-10 text-center">
+            <p className="text-gray-600 mb-2 text-base md:text-lg">İhtiyacınıza uygun elektrikli çözümler</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Elektrikli Ürünlerimiz</h2>
+          </div>
+          
+          {/* Çapraz Düzen: Sol üstte foto/altta açıklama, Sağ üstte açıklama/altta foto */}
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-0 lg:divide-x-2 lg:divide-gray-200">
+            {/* Sol: Profesyonel - Üstte Foto, Altta Açıklama */}
+            <M.div
+              className="lg:pr-8"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              {/* Fotoğraf Üstte */}
+              <div className="mb-6 w-full" style={{ aspectRatio: '2/1' }}>
+                <img 
+                  src={electricProfessionalImg?.image_path || "/professional_banner.png"} 
+                  alt={electricProfessionalImg?.alt_text || "Profesyonel Elektrikli ürünler"}
+                  className="rounded-xl w-full h-full object-cover shadow-lg" 
+                  loading="lazy" 
+                />
+              </div>
+              
+              {/* Açıklama Altta */}
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-blue-600">Profesyonel</h3>
+                </div>
+                <p className="text-gray-700 text-sm md:text-base mb-6 leading-relaxed">
+                  Hassas işlemler için tork ayarlı tornavidalar ve kömürsüz motorlu çözümler. Ergonomik tasarım ile uzun süreli kullanım konforu.
+                </p>
+                <ScrollToTopLink
+                  className="btn btn-block btn-outline-blue"
+                  to="/kategoriler/profesyonel/elektrikli-sikicilar"
+                  style={{ fontWeight: 600 }}
                 >
-                  <ScrollToTopLink to={s.href} className="block h-full w-full">{s.title}</ScrollToTopLink>
-                </M.div>
-              ))}
-            </div>
+                  Profesyonel Elektrikli Seriler
+                </ScrollToTopLink>
+              </div>
+            </M.div>
+
+            {/* Sağ: Endüstriyel - Üstte Açıklama, Altta Foto */}
+            <M.div
+              className="lg:pl-8"
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              {/* Açıklama Üstte */}
+              <div className="mb-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold" style={{ color: 'var(--p)' }}>Endüstriyel</h3>
+                </div>
+                <p className="text-gray-700 text-sm md:text-base mb-6 leading-relaxed">
+                  7/24 vardiya şartlarında kullanılabilecek endüstriyel elektrikli ürünlerimiz. Yüksek dayanıklılık ve kesintisiz performans.
+                </p>
+                <ScrollToTopLink
+                  className="btn btn-block"
+                  to="/kategoriler/endustriyel/kolver-elektrikli-tornavidalar"
+                  style={{
+                    backgroundColor: 'var(--p)',
+                    borderColor: 'var(--pf)',
+                    color: 'var(--pc)',
+                    fontWeight: '600',
+                  }}
+                >
+                  Endüstriyel Elektrikli Seriler
+                </ScrollToTopLink>
+              </div>
+              
+              {/* Fotoğraf Altta */}
+              <div className="w-full" style={{ aspectRatio: '2/1' }}>
+                <img 
+                  src={electricIndustrialImg?.image_path || "/endus.jpg"} 
+                  alt={electricIndustrialImg?.alt_text || "Endüstriyel Elektrikli ürünler"}
+                  className="rounded-xl w-full h-full object-cover shadow-lg" 
+                  loading="lazy" 
+                />
+              </div>
+            </M.div>
           </div>
         </div>
   </M.section>
 
-    {/* Akülü section */}
+    {/* Akülü Ürünlerimiz - Çapraz düzen */}
       <motion.section
-        className="bg-gray-100"
+        className="bg-gray-50"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.6, delay: 0.05 }}
+      >
+        <div className="max-w-7xl mx-auto px-4 py-16">
+          {/* Başlık */}
+          <div className="mb-10 text-center">
+            <p className="text-gray-600 mb-2 text-base md:text-lg">Hafif, güçlü ve uzun ömürlü</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Akülü Ürünlerimiz</h2>
+          </div>
+          
+          {/* Çapraz Düzen: Sol üstte foto/altta açıklama, Sağ üstte açıklama/altta foto */}
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-0 lg:divide-x-2 lg:divide-gray-300">
+            {/* Sol: Profesyonel - Üstte Foto, Altta Açıklama */}
+            <motion.div
+              className="lg:pr-8"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              {/* Fotoğraf Üstte */}
+              <div className="mb-6 w-full" style={{ aspectRatio: '2/1' }}>
+                <img 
+                  src={batteryProfessionalImg?.image_path || "/professional_banner.png"} 
+                  alt={batteryProfessionalImg?.alt_text || "Profesyonel Akülü ürünler"}
+                  className="rounded-xl w-full h-full object-cover shadow-lg" 
+                  loading="lazy" 
+                />
+              </div>
+              
+              {/* Açıklama Altta */}
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-blue-600">Profesyonel</h3>
+                </div>
+                <p className="text-gray-700 text-sm md:text-base mb-6 leading-relaxed">
+                  Hafif ve ergonomik tasarım ile uzun ömürlü bataryalar. Hareket özgürlüğü ile profesyonel işlerinizi kesintisiz tamamlayın.
+                </p>
+                <ScrollToTopLink
+                  className="btn btn-block btn-outline-blue"
+                  to="/kategoriler/profesyonel/akulu-montaj-aletleri"
+                  style={{ fontWeight: 600 }}
+                >
+                  Profesyonel Akülü Seriler
+                </ScrollToTopLink>
+              </div>
+            </motion.div>
+
+            {/* Sağ: Endüstriyel - Üstte Açıklama, Altta Foto */}
+            <motion.div
+              className="lg:pl-8"
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              {/* Açıklama Üstte */}
+              <div className="mb-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold" style={{ color: 'var(--p)' }}>Endüstriyel</h3>
+                </div>
+                <p className="text-gray-700 text-sm md:text-base mb-6 leading-relaxed">
+                  7/24 vardiya şartlarında yüksek güç ve dayanıklılık. Ağır sanayi uygulamaları için güçlü akülü çözümler.
+                </p>
+                <ScrollToTopLink
+                  className="btn btn-block"
+                  to="/kategoriler/endustriyel/akulu-montaj-aletleri"
+                  style={{
+                    backgroundColor: 'var(--p)',
+                    borderColor: 'var(--pf)',
+                    color: 'var(--pc)',
+                    fontWeight: '600',
+                  }}
+                >
+                  Endüstriyel Akülü Seriler
+                </ScrollToTopLink>
+              </div>
+              
+              {/* Fotoğraf Altta */}
+              <div className="w-full" style={{ aspectRatio: '2/1' }}>
+                <img 
+                  src={batteryIndustrialImg?.image_path || "/endus.jpg"} 
+                  alt={batteryIndustrialImg?.alt_text || "Endüstriyel Akülü ürünler"}
+                  className="rounded-xl w-full h-full object-cover shadow-lg" 
+                  loading="lazy" 
+                />
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </motion.section>
+
+
+      {/* Havalı Ürünlerimiz - Çapraz düzen */}
+      <motion.section
+        className="bg-white"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.6, delay: 0.05 }}
+      >
+        <div className="max-w-7xl mx-auto px-4 py-16">
+          {/* Başlık */}
+          <div className="mb-10 text-center">
+            <p className="text-gray-600 mb-2 text-base md:text-lg">Yüksek dayanım ve verimlilik</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Havalı Ürünlerimiz</h2>
+          </div>
+          
+          {/* Çapraz Düzen: Sol üstte foto/altta açıklama, Sağ üstte açıklama/altta foto */}
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-0 lg:divide-x-2 lg:divide-gray-200">
+            {/* Sol: Profesyonel - Üstte Foto, Altta Açıklama */}
+            <motion.div
+              className="lg:pr-8"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              {/* Fotoğraf Üstte */}
+              <div className="mb-6 w-full" style={{ aspectRatio: '2/1' }}>
+                <img 
+                  src={pneumaticProfessionalImg?.image_path || "/professional_banner.png"} 
+                  alt={pneumaticProfessionalImg?.alt_text || "Profesyonel Havalı ürünler"}
+                  className="rounded-xl w-full h-full object-cover shadow-lg" 
+                  loading="lazy" 
+                />
+              </div>
+              
+              {/* Açıklama Altta */}
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-blue-600">Profesyonel</h3>
+                </div>
+                <p className="text-gray-700 text-sm md:text-base mb-6 leading-relaxed">
+                  Hassas işlemler için tork ayarlı pnömatik tornavidalar ve hafif perçin makineleri. Ergonomik ve güvenilir profesyonel çözümler.
+                </p>
+                <ScrollToTopLink
+                  className="btn btn-block btn-outline-blue"
+                  to="/kategoriler/profesyonel/havali-el-aletleri"
+                  style={{ fontWeight: 600 }}
+                >
+                  Profesyonel Havalı Seriler
+                </ScrollToTopLink>
+              </div>
+            </motion.div>
+
+            {/* Sağ: Endüstriyel - Üstte Açıklama, Altta Foto */}
+            <motion.div
+              className="lg:pl-8"
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              {/* Açıklama Üstte */}
+              <div className="mb-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold" style={{ color: 'var(--p)' }}>Endüstriyel</h3>
+                </div>
+                <p className="text-gray-700 text-sm md:text-base mb-6 leading-relaxed">
+                  7/24 vardiya şartlarında kullanılabilecek endüstriyel havalı ürünlerimiz. Ağır hizmet tipi uygulamalar için yüksek dayanıklılık ve kesintisiz performans.
+                </p>
+                <ScrollToTopLink
+                  className="btn btn-block"
+                  to="/kategoriler/endustriyel/havali-montaj-aletleri"
+                  style={{
+                    backgroundColor: 'var(--p)',
+                    borderColor: 'var(--pf)',
+                    color: 'var(--pc)',
+                    fontWeight: '600',
+                  }}
+                >
+                  Endüstriyel Havalı Seriler
+                </ScrollToTopLink>
+              </div>
+              
+              {/* Fotoğraf Altta */}
+              <div className="w-full" style={{ aspectRatio: '2/1' }}>
+                <img 
+                  src={pneumaticIndustrialImg?.image_path || "/endus.jpg"} 
+                  alt={pneumaticIndustrialImg?.alt_text || "Endüstriyel Havalı ürünler"}
+                  className="rounded-xl w-full h-full object-cover shadow-lg" 
+                  loading="lazy" 
+                />
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Özel Çözümler - Custom Solutions */}
+      <motion.section
+        className="bg-gray-50"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
@@ -136,58 +380,28 @@ export default function HomePage() {
       >
         <div className="max-w-7xl mx-auto px-4 py-16 grid lg:grid-cols-2 gap-10 items-center">
           <div>
-            <p className="text-neutral-600 mb-2 text-base md:text-lg">Hafif, güçlü ve uzun ömürlü</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Akülü Ürünlerimiz</h2>
-            <p className="mt-3 text-gray-700 text-base md:text-lg">Çalışma alanınız neresi olursa olsun, performansınızdan ödün vermeyin. Akülü ürün serimiz, hafifliği, uzun ömürlü bataryaları ve yüksek gücü tek bir çatıda birleştirir. Şarj endişesi yaşamadan, aletlerimizin sunduğu tam hareket özgürlüğü ile en zorlu projelerinizi dahi kesintisiz tamamlayın. Dayanıklı ve güçlü çözümlerimizle tanışın, iş akışınızı şimdi kablolardan bağımsız hale getirin.</p>
+            <p className="text-neutral-600 mb-2 text-base md:text-lg">Sizin için özel tasarlanmış çözümler</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Özel Çözümler</h2>
+            <p className="mt-3 text-gray-700 text-base md:text-lg">
+              Standart ürünlerimizin ötesinde, işletmenizin kendine özgü ihtiyaçlarına yönelik kişiselleştirilmiş çözümler sunuyoruz. Üretim hattınıza tam entegre olacak, verimliliğinizi artıracak ve işletme maliyetlerinizi düşürecek özel sistemler tasarlıyoruz. Uzman ekibimiz, projenizin her aşamasında yanınızda.
+            </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <ScrollToTopLink
-                className="btn"
-                to="/urunler?q=akülü"
-                style={{
-                  backgroundColor: 'var(--p)',
-                  borderColor: 'var(--pf)',
-                  color: 'var(--pc)',
-                }}
+              <a
+                className="btn btn-primary"
+                href="/iletisim"
               >
-                Akülü Seriler
-              </ScrollToTopLink>
+                İletişime Geç
+              </a>
               <a
                 className="btn btn-outline"
-                href="/kategoriler"
+                href="/demo-talebi"
                 style={{
-                  borderColor: '#facc15',
-                  color: '#facc15',
+                  borderColor: 'var(--p)',
+                  color: 'var(--p)',
                 }}
               >
-                Tüm Kategoriler
+                Demo Talebi
               </a>
-            </div>
-            <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-4">
-              {[
-                { title: 'Transducer', href: '/urunler?q=transducer' },
-                { title: 'Sıkıcılar', href: '/urunler?q=s%C4%B1k%C4%B1c%C4%B1lar' },
-                { title: 'Boru Rekor Tabancalar', href: '/urunler?q=boru+rekor+tabanca' },
-                { title: 'Darbeli Vidalama', href: '/urunler?q=ak%C3%BCl%C3%BC+vidalama' },
-              ].map((s, i) => (
-                <motion.a
-                  key={s.title}
-                  href={s.href}
-                  className="rounded-box bg-base-100 p-4 text-sm font-semibold hover:shadow-md"
-                  style={{
-                    color: 'var(--p)',
-                    borderColor: 'var(--p)',
-                    borderWidth: '1px',
-                    borderStyle: 'solid',
-                  }}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.05 }}
-                  whileHover={{ y: -3 }}
-                >
-                  {s.title}
-                </motion.a>
-              ))}
             </div>
           </div>
           <motion.div
@@ -197,78 +411,13 @@ export default function HomePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <img src={batteryImg?.image_path || "/professional_banner.png"} alt={batteryImg?.alt_text || "Akülü ürünler"}
-                 className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+            <img 
+              src={customSolutionsImg?.image_path || "/placeholder.png"} 
+              alt={customSolutionsImg?.alt_text || "Özel çözümler"} 
+              className="rounded-box shadow-xl w-full object-cover" 
+              loading="lazy" 
+            />
           </motion.div>
-        </div>
-      </motion.section>
-
-      {/* Havalı Ürünlerimiz */}
-      <motion.section
-        className="bg-slate-800"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.6, delay: 0.05 }}
-      >
-        <div className="max-w-7xl mx-auto px-4 py-16 grid lg:grid-cols-2 gap-10 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <img src={pneumaticImg?.image_path || "/endus.jpg"} alt={pneumaticImg?.alt_text || "Havalı ürünler"}
-                 className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
-          </motion.div>
-          <div>
-            <p className="text-gray-300 mb-2 text-base md:text-lg">Yüksek dayanım ve verimlilik</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-white">Havalı Ürünlerimiz</h2>
-              <p className="mt-3 text-gray-300 text-base md:text-lg text-justify leading-relaxed max-w-prose mx-auto">
-                Pnömatik aletler, ağır hizmet tipi kullanımlarda bile tutarlı ve güvenilir performans sunar. Darbelere ve sürekli kullanıma dayanıklı yapıları ile uzun yıllar hizmet ederken, servis kolaylıkları ile de operasyonel devamlılığınızı korur. İşletmenizin verimliliğini ve dayanıklılığını artıracak çözümler bu kategoride.
-              </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <a className="btn" href="/urunler?q=haval%C4%B1">Havalı Seriler</a>
-              <a
-                className="btn btn-outline"
-                href="/kategoriler"
-                style={{
-                  borderColor: '#facc15',
-                  color: '#facc15',
-                }}
-              >
-                Tüm Kategoriler
-              </a>
-            </div>
-            {/* Alt seri kutuları */}
-            <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-4">
-              {[
-                { title: 'Tork Ayarlı Tornavidalar', href: '/urunler?q=tork+ayarlı+tornavida' },
-                { title: 'Perçin Makinesi', href: '/urunler?q=perçin+makinesi' },
-                { title: 'Taşlamalar', href: '/urunler?q=taşlama' },
-                { title: 'Somun Sıkma Sökme', href: '/urunler?q=somun+sıkma+sökme' },
-              ].map((s, i) => (
-                <motion.a
-                  key={s.title}
-                  href={s.href}
-                  className="rounded-box bg-base-100 p-4 text-sm font-semibold hover:shadow-md"
-                  style={{
-                    color: 'var(--p)',
-                    borderColor: 'var(--p)',
-                    borderWidth: '1px',
-                    borderStyle: 'solid',
-                  }}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.05 }}
-                  whileHover={{ y: -3 }}
-                >
-                  {s.title}
-                </motion.a>
-              ))}
-            </div>
-          </div>
         </div>
       </motion.section>
 
@@ -368,7 +517,7 @@ export default function HomePage() {
 
         {/* 2. Ürün/Seri Seçimi - Dark background */}
         <motion.div
-          className="bg-slate-800 py-16"
+          className="bg-[#e0e0e0] py-16"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
@@ -378,8 +527,8 @@ export default function HomePage() {
             <div className="grid lg:grid-cols-2 gap-10 items-center">
               <div>
                 <div className="badge badge-primary mb-3">2. Adım</div>
-                <h3 className="text-xl md:text-2xl font-bold text-white">Ürün / Seri Seçimi</h3>
-                <p className="mt-3 text-gray-300">Seriler arasında doğru eşleşmeyi yapar, elektrikli veya havalı seçenekleri kullanım senaryonuza göre öneririz.</p>
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900">Ürün / Seri Seçimi</h3>
+                <p className="mt-3 text-gray-700">Seriler arasında doğru eşleşmeyi yapar, elektrikli veya havalı seçenekleri kullanım senaryonuza göre öneririz.</p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <a className="btn btn-outline btn-sm" href="/kategoriler/profesyonel">Elektrikli Seriler</a>
                   <a className="btn btn-outline btn-sm" href="/kategoriler/endustriyel">Havalı Seriler</a>
@@ -432,7 +581,7 @@ export default function HomePage() {
 
         {/* 4. Servis & Takip - Dark background */}
         <motion.div
-          className="bg-slate-800 py-16"
+          className="bg-[#e0e0e0] py-16"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
@@ -442,8 +591,8 @@ export default function HomePage() {
             <div className="grid lg:grid-cols-2 gap-10 items-center">
               <div>
                 <div className="badge badge-primary mb-3">4. Adım</div>
-                <h3 className="text-xl md:text-2xl font-bold text-white">Servis & Takip</h3>
-                <p className="mt-3 text-gray-300">Periyodik bakım hatırlatmaları, hızlı parça temini ve yerinde servis ile iş sürekliliğinizi koruruz.</p>
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900">Servis & Takip</h3>
+                <p className="mt-3 text-gray-700">Periyodik bakım hatırlatmaları, hızlı parça temini ve yerinde servis ile iş sürekliliğinizi koruruz.</p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <a className="btn btn-outline btn-sm" href="/teknik-servis">Servis Talebi</a>
                   <a className="btn btn-outline btn-sm" href="/iletisim">Bize Ulaşın</a>
@@ -488,3 +637,4 @@ export default function HomePage() {
 }
 
 // page SEO is applied inside the HomePage component via useEffect
+

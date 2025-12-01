@@ -298,12 +298,11 @@ function mapSchemaAvailability(product: ProductSEOData): string {
  * User requested: lowPrice = 400 TRY, highPrice = 629710 TRY
  */
 function buildAggregateOffer(product: ProductSEOData, canonicalUrl: string) {
+  // Build a minimal AggregateOffer but omit any explicit price fields
+  // to avoid exposing pricing in structured data.
   const agg: any = {
     '@type': 'AggregateOffer',
     'url': canonicalUrl,
-    'priceCurrency': 'TRY',
-    'lowPrice': 400,
-    'highPrice': 629710,
     'offerCount': 1,
     'availability': mapSchemaAvailability(product)
   }
@@ -370,6 +369,23 @@ function buildProductFeatures(product: ProductSEOData) {
  * Builds breadcrumb structured data
  */
 function buildBreadcrumbs(product: ProductSEOData, canonicalUrl: string) {
+  // Slugify function to convert Turkish characters and make URL-safe
+  const slugify = (text: string): string => {
+    return text
+      .toLowerCase()
+      .replace(/ğ/g, 'g')
+      .replace(/ü/g, 'u')
+      .replace(/ş/g, 's')
+      .replace(/ı/g, 'i')
+      .replace(/İ/g, 'i')
+      .replace(/ö/g, 'o')
+      .replace(/ç/g, 'c')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+  }
+
   const breadcrumbs = [
     {
       '@type': 'ListItem',
@@ -380,54 +396,54 @@ function buildBreadcrumbs(product: ProductSEOData, canonicalUrl: string) {
     {
       '@type': 'ListItem',
       'position': 2,
-      'name': 'Kategoriler',
-      'item': `${SITE_DOMAIN}/kategoriler`
+      'name': 'Ürünler',
+      'item': `${SITE_DOMAIN}/urunler`
     }
   ]
 
   let position = 3
 
-
-  const slugify = (text?: string) => {
-    if (!text) return ''
-    let s = String(text).toLowerCase()
-    s = s.replace(/[ıİ]/g, 'i')
-    s = s.replace(/[şŞ]/g, 's')
-    s = s.replace(/[ğĞ]/g, 'g')
-    s = s.replace(/[üÜ]/g, 'u')
-    s = s.replace(/[öÖ]/g, 'o')
-    s = s.replace(/[çÇ]/g, 'c')
-    s = s.replace(/[^a-z0-9]+/g, '-')
-    s = s.replace(/(^-|-$)/g, '')
-    return s
-  }
-
   if (product.parent) {
-    breadcrumbs.push({ '@type': 'ListItem', 'position': position++, 'name': product.parent, 'item': `${SITE_DOMAIN}/kategoriler/${encodeURIComponent(slugify(String(product.parent)))}` })
+    breadcrumbs.push({ 
+      '@type': 'ListItem', 
+      'position': position++, 
+      'name': product.parent, 
+      'item': `${SITE_DOMAIN}/kategoriler/${slugify(String(product.parent))}` 
+    })
   }
 
   if (product.child) {
-    const p = encodeURIComponent(slugify(String(product.parent)))
-    const c = encodeURIComponent(slugify(String(product.child)))
-    breadcrumbs.push({ '@type': 'ListItem', 'position': position++, 'name': product.child, 'item': `${SITE_DOMAIN}/kategoriler/${p}/${c}` })
+    const p = slugify(String(product.parent))
+    const c = slugify(String(product.child))
+    breadcrumbs.push({ 
+      '@type': 'ListItem', 
+      'position': position++, 
+      'name': product.child, 
+      'item': `${SITE_DOMAIN}/kategoriler/${p}/${c}` 
+    })
   }
 
   if (product.subchild) {
-    const p = encodeURIComponent(slugify(String(product.parent)))
-    const c = encodeURIComponent(slugify(String(product.child)))
-    const s = encodeURIComponent(slugify(String(product.subchild)))
-    breadcrumbs.push({ '@type': 'ListItem', 'position': position++, 'name': product.subchild, 'item': `${SITE_DOMAIN}/kategoriler/${p}/${c}/${s}` })
+    const p = slugify(String(product.parent))
+    const c = slugify(String(product.child))
+    const s = slugify(String(product.subchild))
+    breadcrumbs.push({ 
+      '@type': 'ListItem', 
+      'position': position++, 
+      'name': product.subchild, 
+      'item': `${SITE_DOMAIN}/kategoriler/${p}/${c}/${s}` 
+    })
   }
 
   // Final breadcrumb: product title — point 'item' to the deepest category URL (not the product URL)
-  let deepestCategoryUrl = `${SITE_DOMAIN}/kategoriler`
+  let deepestCategoryUrl = `${SITE_DOMAIN}/urunler`
   try {
-    const slugParent = product.parent ? encodeURIComponent(slugify(String(product.parent))) : ''
-    const slugChild = product.child ? encodeURIComponent(slugify(String(product.child))) : ''
-    const slugSub = product.subchild ? encodeURIComponent(slugify(String(product.subchild))) : ''
-    if (slugParent && slugChild && slugSub) deepestCategoryUrl = `${SITE_DOMAIN}/kategoriler/${slugParent}/${slugChild}/${slugSub}`
-    else if (slugParent && slugChild) deepestCategoryUrl = `${SITE_DOMAIN}/kategoriler/${slugParent}/${slugChild}`
-    else if (slugParent) deepestCategoryUrl = `${SITE_DOMAIN}/kategoriler/${slugParent}`
+    const urlParent = product.parent ? slugify(String(product.parent)) : ''
+    const urlChild = product.child ? slugify(String(product.child)) : ''
+    const urlSub = product.subchild ? slugify(String(product.subchild)) : ''
+    if (urlParent && urlChild && urlSub) deepestCategoryUrl = `${SITE_DOMAIN}/kategoriler/${urlParent}/${urlChild}/${urlSub}`
+    else if (urlParent && urlChild) deepestCategoryUrl = `${SITE_DOMAIN}/kategoriler/${urlParent}/${urlChild}`
+    else if (urlParent) deepestCategoryUrl = `${SITE_DOMAIN}/kategoriler/${urlParent}`
   } catch (e) {
     // fallback remains
   }
@@ -632,7 +648,8 @@ export function applyProductSEOEnhanced(seoData: ReturnType<typeof buildProductS
             // fallback: create a lightweight Offer if price info exists in seoData
             const price = (seoData as any)?.meta?.find((m: any) => m.property === 'product:price:amount')?.content || (seoData as any)?.price
             if (price) {
-              p.offers = { '@type': 'Offer', 'price': String(price), 'priceCurrency': (seoData as any)?.meta?.find((m: any) => m.property === 'product:price:currency')?.content || (seoData as any)?.price_currency || 'TRY', 'availability': mapSchemaAvailabilityPlaceholder(p) }
+              // Omit explicit price fields in Offer; include availability only
+              p.offers = { '@type': 'Offer', 'availability': mapSchemaAvailabilityPlaceholder(p) }
             }
           }
         }

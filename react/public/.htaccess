@@ -17,6 +17,9 @@
   RewriteCond %{REQUEST_URI} !^/api/ [NC]
 
   # Rewrite everything else to index.html (SPA entry)
+  # Redirect any legacy 'kolver-elektrikli-sikicilar' path to the new canonical category (301)
+  RewriteRule ^kategoriler/endustriyel/kolver-elektrikli-sikicilar(/.*)?$ https://www.ketenpnomatik.com/kategoriler/endustriyel/kolver-elektrikli-tornavidalar/ [R=301,L]
+
   RewriteRule ^ index.html [L]
 </IfModule>
 

@@ -9,6 +9,17 @@ import RequireAuth from './pages/admin/RequireAuth'
 import AdminLogin from './pages/admin/Login'
 import HomePage from './pages/home_page'
 import Categories_page from './pages/categories_page'
+import ManiplatorlerPage from './pages/zasche/ManiplatorlerPage'
+import ZascheManipulatorlerPage from './pages/zasche/ZascheManipulatorlerPage'
+import ZascheKaldirmaEkipmanlariPage from './pages/zasche/ZascheKaldirmaEkipmanlariPage'
+import ZascheAsmaVincPage from './pages/zasche/ZascheAsmaVincPage'
+import ZascheOzelEkipmanlarPage from './pages/zasche/ZascheOzelEkipmanlarPage'
+import MafsalliKollarPage from './pages/zasche/products/MafsalliKollarPage'
+import ParalelogramManipulatorlerPage from './pages/zasche/products/ParalelogramManipulatorlerPage'
+import KaldirmaEksenleriPage from './pages/zasche/products/KaldirmaEksenleriPage'
+import TeleskopikKaldirmaPage from './pages/zasche/products/TeleskopikKaldirmaPage'
+import IstiflemeVincleriPage from './pages/zasche/products/IstiflemeVincleriPage'
+import ZeminKilavuzluTasimaPage from './pages/zasche/products/ZeminKilavuzluTasimaPage'
 import Subcategories from './pages/subcategories'
 import Series from './pages/series'
 import Article from './pages/article'
@@ -56,7 +67,7 @@ function App() {
     <AuthProvider>
       <div data-theme="keten" className="min-h-dvh flex flex-col bg-base-100 text-base-content">
         <ScrollToTop />
-        {!isAdminRoute && <Header />}
+        {!isAdminRoute && <Header sticky={location.pathname !== '/kategoriler/manipulatorler'} />}
         <main className="flex-1">
           <Routes>
             {/* Admin Routes - No Header/Footer */}
@@ -84,14 +95,26 @@ function App() {
             </Route>
 
             <Route path="/kategoriler" element={<Categories_page />} />
+            <Route path="/kategoriler/manipulatorler" element={<ManiplatorlerPage />} />
+            <Route path="/kategoriler/manipulatorler/manipulatorler" element={<ZascheManipulatorlerPage />} />
+            <Route path="/kategoriler/manipulatorler/kaldirma-ekipmanlari-halatli-dengeleyiciler" element={<ZascheKaldirmaEkipmanlariPage />} />
+            <Route path="/kategoriler/manipulatorler/asma-vinc-sistemleri" element={<ZascheAsmaVincPage />} />
+            <Route path="/kategoriler/manipulatorler/ozel-ekipmanlar" element={<ZascheOzelEkipmanlarPage />} />
+
+            {/* Product Pages */}
+            <Route path="/kategoriler/manipulatorler/manipulatorler/mafsalli-kollar" element={<MafsalliKollarPage />} />
+            <Route path="/kategoriler/manipulatorler/manipulatorler/paralelogram-manipulatorler" element={<ParalelogramManipulatorlerPage />} />
+            <Route path="/kategoriler/manipulatorler/manipulatorler/kaldirma-eksenleri" element={<KaldirmaEksenleriPage />} />
+            <Route path="/kategoriler/manipulatorler/manipulatorler/teleskopik-kaldirma" element={<TeleskopikKaldirmaPage />} />
+            <Route path="/kategoriler/manipulatorler/manipulatorler/istifleme-vincleri" element={<IstiflemeVincleriPage />} />
+            <Route path="/kategoriler/manipulatorler/manipulatorler/zemin-kilavuzlu-tasima" element={<ZeminKilavuzluTasimaPage />} />
+
+            {/* Redirect old spelling to new */}
+            <Route path="/kategoriler/maniplatorler" element={<Navigate to="/kategoriler/manipulatorler" replace />} />
             {/* Legacy redirects: map old links to new targets */}
             <Route
-              path="/kategoriler/endustriyel/kolver-elektrikli-sikicilar/kolver-pluto-kabza-tip-akim-ve-tork-kontrollu-tornavidalar"
-              element={<Navigate to="https://www.ketenpnomatik.com/kategoriler/endustriyel/kolver-elektrikli-tornavidalar/Kolver%20PLUTO%20Kabza%20Tip%20Ak%C4%B1m%20Ve%20Tork%20Kontroll%C3%BC%20Tornavidalar" replace />}
-            />
-            <Route
-              path="/kategoriler/endustriyel/kolver-elektrikli-sikicilar/kolver-pluto-kabza-tip-akim-ve-tork-kontrollu-tornavidalar/"
-              element={<Navigate to="https://www.ketenpnomatik.com/kategoriler/endustriyel/kolver-elektrikli-tornavidalar/Kolver%20PLUTO%20Kabza%20Tip%20Ak%C4%B1m%20Ve%20Tork%20Kontroll%C3%BC%20Tornavidalar" replace />}
+              path="/kategoriler/endustriyel/kolver-elektrikli-sikicilar/*"
+              element={<Navigate to="https://www.ketenpnomatik.com/kategoriler/endustriyel/kolver-elektrikli-tornavidalar/" replace />}
             />
             <Route path="/urunler" element={<Urunler />} />
             <Route path="/kategoriler/:tier" element={<Subcategories />} />

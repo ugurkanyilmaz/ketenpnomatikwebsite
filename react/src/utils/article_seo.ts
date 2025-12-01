@@ -638,13 +638,10 @@ export function applyArticleSEOWithProducts(article: ArticleSEOData, products?: 
       return 'https://schema.org/InStock'
     })()
 
-    // Per request, use AggregateOffer with fixed low/high price range (TRY)
+    // Build a minimal AggregateOffer for ItemList entries but omit price
     const agg: any = {
       '@type': 'AggregateOffer',
       'url': productUrl,
-      'priceCurrency': 'TRY',
-      'lowPrice': 400,
-      'highPrice': 629710,
       'offerCount': 1,
       'availability': availability,
       'seller': { '@type': 'Organization', 'name': p.seller_name || SITE_NAME, 'url': p.seller_url || SITE_DOMAIN }

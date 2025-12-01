@@ -1,6 +1,39 @@
 import { Link, useParams } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
 import { fetchTiers, type Tier } from '../utils/api'
+import { applyPageSEO } from '../utils/other_seo'
+import type { PageKey } from '../utils/other_seo'
+
+// Map categoryId to SEO page keys
+// For categories that exist in both tiers, we need to check the tier parameter
+const getCategoryIdToSEOKey = (tier: string | undefined, categoryId: string | undefined): PageKey | null => {
+  if (!categoryId) return null
+  
+  // Special handling for akulu-montaj-aletleri which exists in both tiers
+  if (categoryId === 'akulu-montaj-aletleri') {
+    return tier === 'profesyonel' ? 'category_akulu_montaj_aletleri_profesyonel' : 'category_akulu_montaj_aletleri'
+  }
+  
+  const categoryIdToSEOKey: Record<string, PageKey> = {
+    // Endüstriyel kategoriler
+    'havali-montaj-aletleri': 'category_havali_montaj_aletleri',
+    'kolver-elektrikli-tornavidalar': 'category_kolver_elektrikli_tornavidalar',
+    'dijital-ve-mekanik-tork-olcum-aletleri': 'category_dijital_mekanik_tork_olcum',
+    'elektrikli-clutch-control-komursuz-tornavidalar': 'category_elektrikli_clutch_control',
+    'wireless-dijital-tork-olcum-cihazlari': 'category_wireless_dijital_tork',
+    'el-tipi-ve-otomasyon-tip-vida-besleme': 'category_vida_besleme',
+    'delta-regis-tork-kontrollu-sikicilar': 'category_delta_regis_tork_sikicilar',
+    'vida-sunucular': 'category_vida_sunucular',
+    // Profesyonel kategoriler
+    'havali-el-aletleri': 'category_havali_el_aletleri',
+    'elektrikli-sikicilar': 'category_elektrikli_sikicilar',
+    'makarali-hortumlar': 'category_makarali_hortumlar',
+    'akrobat-radyel-teleskobik-kollar': 'category_akrobat_radyel_teleskobik_kollar',
+    'balancerler': 'category_balancerler',
+  }
+  
+  return categoryIdToSEOKey[categoryId] || null
+}
 
 export default function Series() {
   const { tier, categoryId } = useParams()
@@ -41,6 +74,17 @@ export default function Series() {
     
     return () => { active = false }
   }, [])
+
+  // Apply SEO based on tier and categoryId
+  useEffect(() => {
+    const seoKey = getCategoryIdToSEOKey(tier, categoryId)
+    if (seoKey) {
+      console.log(`🎯 Applying SEO for tier: ${tier}, category: ${categoryId} → ${seoKey}`)
+      applyPageSEO(seoKey)
+    } else {
+      console.log(`⚠️ No SEO mapping found for tier: ${tier}, category: ${categoryId}`)
+    }
+  }, [tier, categoryId])
 
   const tierKey = tier || 'endustriyel'
   const tierTitle = useMemo(() => {

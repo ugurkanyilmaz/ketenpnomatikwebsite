@@ -4,15 +4,15 @@ import UrwareLogo from './urware.net_logo.png';
 
 export default function Footer() {
   return (
-    <footer className="relative bg-slate-800 text-gray-300 border-t border-slate-700">
+    <footer className="relative bg-[#e0e0e0] text-gray-700 border-t border-gray-300">
       <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-10">
         
         {/* Logo + açıklama */}
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-white">
+          <h2 className="text-2xl font-bold tracking-tight text-gray-900">
             Keten <span className="text-primary">Pnömatik</span>
           </h2>
-          <p className="mt-3 text-sm text-gray-400">
+          <p className="mt-3 text-sm text-gray-600">
             Endüstriyel Pnömatik El Aletleri Ve Ekipmanları
           </p>
         </div>
@@ -23,6 +23,7 @@ export default function Footer() {
             <Link to="/hakkimizda" className="hover:text-primary transition-colors">Hakkımızda</Link>
             <Link to="/iletisim" className="hover:text-primary transition-colors">İletişim</Link>
             <Link to="/blog" className="hover:text-primary transition-colors">Blog</Link>
+            <Link to="/demo-talebi" className="hover:text-primary transition-colors">Demo Talebi</Link>
           </div>
           <div className="flex flex-col gap-2">
             <Link to="/sss" className="hover:text-primary transition-colors">SSS</Link>
@@ -33,7 +34,7 @@ export default function Footer() {
         {/* Sosyal medya + Katalog */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-white">Bizi Takip Edin</h3>
+            <h3 className="text-sm font-semibold text-gray-900">Bizi Takip Edin</h3>
             <a 
               href="/katalog.pdf" 
               target="_blank" 
@@ -64,7 +65,7 @@ export default function Footer() {
       </div>
 
       {/* Alt kısım */}
-      <div className="border-t border-gray-800 py-4 text-sm text-gray-500 flex flex-col md:flex-row items-center justify-between gap-4 px-6">
+      <div className="border-t border-gray-300 py-4 text-sm text-gray-600 flex flex-col md:flex-row items-center justify-between gap-4 px-6">
         <span>© {new Date().getFullYear()} Keten Pnömatik</span>
       </div>
 
@@ -82,3 +83,4 @@ export default function Footer() {
     </footer>
   );
 }
+

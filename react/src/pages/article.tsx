@@ -2,8 +2,9 @@ import { Link, useParams, useNavigate } from 'react-router-dom'
 import { useEffect, useState, useMemo } from 'react'
 import { fetchArticleRows } from '../utils/api'
 import { applyArticleSEOWithProducts, type ArticleSEOData } from '../utils/article_seo'
-import { getUniqueCategoriesFromAreas } from '../data/usableAreasMapping'
+import { getUniqueCategoriesFromAreas, type UsableAreaCategory } from '../data/usableAreasMapping'
 import { Car, Factory, Settings, Cpu, HardHat, Armchair, Plane, Wrench, PartyPopper, Home, Package, Hammer } from 'lucide-react'
+import { convertToYouTubeEmbed, isYouTubeUrl } from '../utils/youtube'
 
 // Icon mapping
 const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
@@ -46,6 +47,31 @@ interface Product {
   keywords: string
 }
 
+interface ArticleCategory {
+  id: number
+  parent: string
+  child: string
+  subchild: string
+  subchild_id?: string | number
+  title: string
+  title_subtext: string
+  about: string
+  featured: string
+  info: string
+  summary: string
+  usable_areas: string
+  more: string
+  main_image: string
+  img1: string
+  video_url: string
+  meta_title: string
+  meta_desc: string
+  schema_desc: string
+  meta_keywords: string
+  created_at?: string
+  updated_at?: string
+}
+
 export default function Article() {
   const { seriesId, tier, categoryId } = useParams()
   const navigate = useNavigate()
@@ -63,11 +89,11 @@ export default function Article() {
       return fallback
     }
   }
-  const [catRows, setCatRows] = useState<any[] | null>(null)
+  const [catRows, setCatRows] = useState<ArticleCategory[] | null>(null)
   const [loading, setLoading] = useState(true)
   const [products, setProducts] = useState<Product[]>([])
   const [productsLoading, setProductsLoading] = useState(false)
-  const [relatedSeries, setRelatedSeries] = useState<any[]>([])
+  const [relatedSeries, setRelatedSeries] = useState<ArticleCategory[]>([])
 
   useEffect(() => {
     if (!tier || !categoryId || !seriesId) {
@@ -211,7 +237,7 @@ export default function Article() {
       .then((res) => {
         console.log('[Article] Related series fetched:', res)
         const filtered = res.items
-          .filter((item: any) => {
+          .filter((item: ArticleCategory) => {
             const itemKey = item.subchild_id ?? item.subchild ?? item.id ?? item.title
             return String(itemKey) !== String(seriesId)
           })
@@ -223,7 +249,7 @@ export default function Article() {
       })
   }, [tier, categoryId, seriesId])
 
-  const cat = useMemo(() => {
+  const cat = useMemo<ArticleCategory | null>(() => {
     const result = (catRows && catRows[0]) || null
     console.log('[Article] Current cat data:', result)
     return result
@@ -348,7 +374,7 @@ export default function Article() {
   }, [])
 
   // --- NEW: compact mobile view using same data (minimal, mobile-friendly) ---
-  const MobileArticle = ({ cat, products, relatedSeries }: { cat: any; products: Product[]; relatedSeries: any[] }) => {
+  const MobileArticle = ({ cat, products, relatedSeries }: { cat: ArticleCategory; products: Product[]; relatedSeries: ArticleCategory[] }) => {
     return (
       <section className="bg-base-100">
         <div className="max-w-xl mx-auto px-4 py-6">
@@ -400,7 +426,11 @@ export default function Article() {
             <h2 className="font-semibold mb-2">Nasıl Kullanılır?</h2>
             {cat.video_url && cat.video_url.trim() !== '' ? (
               <div className="rounded-box overflow-hidden shadow">
-                <iframe className="w-full" style={{ minHeight: 180 }} src={cat.video_url} title="Çalışma Videosu" allowFullScreen></iframe>
+                {isYouTubeUrl(cat.video_url) ? (
+                  <iframe className="w-full" style={{ minHeight: 180 }} src={convertToYouTubeEmbed(cat.video_url)} title="Çalışma Videosu" allowFullScreen></iframe>
+                ) : (
+                  <video className="w-full" style={{ minHeight: 180 }} controls preload="metadata" src={getImgOrFallback(cat.video_url, cat.video_url)} />
+                )}
               </div>
             ) : (
               <div className="card bg-warning/10 shadow">
@@ -431,18 +461,32 @@ export default function Article() {
                       const parts = v.split(':')
                       const valuePart = parts.length > 1 ? parts[1] : v
                       
-                      // Match range patterns like: "1,0 - 3.58", "0,2 – 1.22"
-                      const match = valuePart.match(/(\d+[.,]?\d*)\s*[-–—]\s*\d+/)
-                      if (match) {
-                        const numStr = match[1].replace(',', '.')
+                      // Remove common units and clean the string
+                      const cleanValue = valuePart.replace(/\s*(nm|NM|Nm)\s*/gi, ' ').trim()
+                      
+                      // Match range patterns like: "1,0 - 3.58", "0,2 – 1.22", "1.080 - 2.000"
+                      const rangeMatch = cleanValue.match(/(\d+[.,]?\d*)\s*[-–—]\s*(\d+[.,]?\d*)/)
+                      if (rangeMatch) {
+                        const numStr = rangeMatch[1].replace(',', '.')
                         const num = parseFloat(numStr)
                         if (!isNaN(num)) return num
                       }
                       
-                      // Try to extract any first number
-                      const singleMatch = valuePart.match(/(\d+[.,]?\d*)/)
+                      // Try to extract any number (including decimals with comma or dot, and thousands with dot)
+                      // Match patterns like: 1.080, 1,086, 105, 2.714, etc.
+                      const singleMatch = cleanValue.match(/(\d+(?:[.,]\d+)*)/)
                       if (singleMatch) {
-                        const numStr = singleMatch[1].replace(',', '.')
+                        // Handle both European (1.080,5) and standard (1,080.5) formats
+                        let numStr = singleMatch[1]
+                        
+                        // If there's a dot followed by 3 digits, it's likely a thousands separator
+                        if (/\d+\.\d{3}/.test(numStr)) {
+                          numStr = numStr.replace('.', '') // Remove thousands separator
+                        }
+                        
+                        // Replace comma with dot for decimal point
+                        numStr = numStr.replace(',', '.')
+                        
                         const num = parseFloat(numStr)
                         if (!isNaN(num)) return num
                       }
@@ -510,23 +554,41 @@ export default function Article() {
               ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'
               : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'
             return (
-              <div className="mt-8 sm:mt-12 px-2 sm:px-0">
-                <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Nerelerde Kullanılır?</h2>
-                <div className={containerClass}>
-                  {areas.map((area: any) => {
-                    const Icon = iconMap[area.icon] ?? null
-                    return (
-                      <div
-                        key={area.id}
-                        className="flex flex-col items-center justify-center text-center p-6 bg-[#f8f7ff] rounded-2xl shadow-sm transition hover:shadow-md"
-                      >
-                        {Icon && <Icon className="w-10 h-10 text-primary mb-2" />}
-                        <div className="font-medium">{area.title}</div>
+              <>
+                {/* Daha Fazla Bilgi Section - Mobile */}
+                {cat.more && cat.more.trim() !== '' && (
+                  <div className="mb-6">
+                    <h2 className="font-semibold mb-3">Daha Fazla Bilgi</h2>
+                    <div className="card bg-gradient-to-br from-primary/5 to-primary/10 shadow-lg border border-primary/20">
+                      <div className="card-body p-4">
+                        <div className="prose prose-sm max-w-none">
+                          <p className="text-base-content/80 whitespace-pre-line leading-relaxed">
+                            {cat.more}
+                          </p>
+                        </div>
                       </div>
-                    )
-                  })}
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-8 sm:mt-12 px-2 sm:px-0">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Nerelerde Kullanılır?</h2>
+                  <div className={containerClass}>
+                    {areas.map((area: UsableAreaCategory) => {
+                      const Icon = iconMap[area.icon] ?? null
+                      return (
+                        <div
+                          key={area.id}
+                          className="flex flex-col items-center justify-center text-center p-6 bg-[#f8f7ff] rounded-2xl shadow-sm transition hover:shadow-md"
+                        >
+                          {Icon && <Icon className="w-10 h-10 text-primary mb-2" />}
+                          <div className="font-medium">{area.title}</div>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
-              </div>
+              </>
             )
           })()}
 
@@ -564,7 +626,7 @@ export default function Article() {
               <li><Link to="/kategoriler">Kategoriler</Link></li>
               {/* Show partial path even when cat is null */}
               <li>{tier ? humanize(tier) : 'Kategori'}</li>
-              <li className="whitespace-nowrap">{categoryId ? humanize(categoryId) : (cat?.title || 'Alt Kategori')}</li>
+              <li className="whitespace-nowrap">{categoryId ? humanize(categoryId) : 'Alt Kategori'}</li>
             </ul>
           </div>
           <div className="alert alert-warning">
@@ -749,18 +811,32 @@ export default function Article() {
                                       const parts = v.split(':')
                                       const valuePart = parts.length > 1 ? parts[1] : v
                                       
-                                      // Match range patterns like: "1,0 - 3.58", "0,2 – 1.22"
-                                      const match = valuePart.match(/(\d+[.,]?\d*)\s*[-–—]\s*\d+/)
-                                      if (match) {
-                                        const numStr = match[1].replace(',', '.')
+                                      // Remove common units and clean the string
+                                      const cleanValue = valuePart.replace(/\s*(nm|NM|Nm)\s*/gi, ' ').trim()
+                                      
+                                      // Match range patterns like: "1,0 - 3.58", "0,2 – 1.22", "1.080 - 2.000"
+                                      const rangeMatch = cleanValue.match(/(\d+[.,]?\d*)\s*[-–—]\s*(\d+[.,]?\d*)/)
+                                      if (rangeMatch) {
+                                        const numStr = rangeMatch[1].replace(',', '.')
                                         const num = parseFloat(numStr)
                                         if (!isNaN(num)) return num
                                       }
                                       
-                                      // Try to extract any first number
-                                      const singleMatch = valuePart.match(/(\d+[.,]?\d*)/)
+                                      // Try to extract any number (including decimals with comma or dot, and thousands with dot)
+                                      // Match patterns like: 1.080, 1,086, 105, 2.714, etc.
+                                      const singleMatch = cleanValue.match(/(\d+(?:[.,]\d+)*)/)
                                       if (singleMatch) {
-                                        const numStr = singleMatch[1].replace(',', '.')
+                                        // Handle both European (1.080,5) and standard (1,080.5) formats
+                                        let numStr = singleMatch[1]
+                                        
+                                        // If there's a dot followed by 3 digits, it's likely a thousands separator
+                                        if (/\d+\.\d{3}/.test(numStr)) {
+                                          numStr = numStr.replace('.', '') // Remove thousands separator
+                                        }
+                                        
+                                        // Replace comma with dot for decimal point
+                                        numStr = numStr.replace(',', '.')
+                                        
                                         const num = parseFloat(numStr)
                                         if (!isNaN(num)) return num
                                       }
@@ -882,23 +958,41 @@ export default function Article() {
               ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'
               : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'
             return (
-              <div className="mt-8 sm:mt-12 px-2 sm:px-0">
-                <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Nerelerde Kullanılır?</h2>
-                <div className={containerClass}>
-                  {areas.map((area: any) => {
-                    const Icon = iconMap[area.icon] ?? null
-                    return (
-                      <div
-                        key={area.id}
-                        className="flex flex-col items-center justify-center text-center p-6 bg-[#f8f7ff] rounded-2xl shadow-sm transition hover:shadow-md"
-                      >
-                        {Icon && <Icon className="w-10 h-10 text-primary mb-2" />}
-                        <div className="font-medium">{area.title}</div>
+              <>
+                {/* Daha Fazla Bilgi Section - Desktop */}
+                {cat.more && cat.more.trim() !== '' && (
+                  <div className="mt-8 sm:mt-12 px-2 sm:px-0">
+                    <h2 className="text-xl sm:text-2xl font-bold mb-4">Daha Fazla Bilgi</h2>
+                    <div className="card bg-gradient-to-br from-primary/5 to-primary/10 shadow-lg border border-primary/20">
+                      <div className="card-body p-6">
+                        <div className="prose prose-base max-w-none">
+                          <p className="text-base-content/80 whitespace-pre-line leading-relaxed text-justify">
+                            {cat.more}
+                          </p>
+                        </div>
                       </div>
-                    )
-                  })}
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-8 sm:mt-12 px-2 sm:px-0">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Nerelerde Kullanılır?</h2>
+                  <div className={containerClass}>
+                    {areas.map((area: UsableAreaCategory) => {
+                      const Icon = iconMap[area.icon] ?? null
+                      return (
+                        <div
+                          key={area.id}
+                          className="flex flex-col items-center justify-center text-center p-6 bg-[#f8f7ff] rounded-2xl shadow-sm transition hover:shadow-md"
+                        >
+                          {Icon && <Icon className="w-10 h-10 text-primary mb-2" />}
+                          <div className="font-medium">{area.title}</div>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
-              </div>
+              </>
             )
             })()}
 
@@ -906,12 +1000,16 @@ export default function Article() {
               <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Nasıl Kullanılır?</h2>
               {cat?.video_url && cat.video_url.trim() !== '' ? (
                 <div className="aspect-video rounded-box overflow-hidden shadow">
-                  <iframe
-                    className="w-full h-full"
-                    src={cat.video_url}
-                    title="Çalışma Videosu"
-                    allowFullScreen
-                  ></iframe>
+                  {isYouTubeUrl(cat.video_url) ? (
+                    <iframe
+                      className="w-full h-full"
+                      src={convertToYouTubeEmbed(cat.video_url)}
+                      title="Çalışma Videosu"
+                      allowFullScreen
+                    ></iframe>
+                  ) : (
+                    <video className="w-full h-full" controls preload="metadata" src={getImgOrFallback(cat.video_url, cat.video_url)} />
+                  )}
                 </div>
               ) : (
                 <div className="card bg-gradient-to-br from-warning/10 to-warning/5 shadow-lg border-2 border-warning/20">

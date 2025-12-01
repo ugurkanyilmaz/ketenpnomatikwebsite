@@ -8,17 +8,26 @@ const SECTIONS: { key: string; label: string; count?: number }[] = [
   { key: 'home_hero_2', label: 'Ana sayfa - Hero 2' },
   { key: 'home_hero_3', label: 'Ana sayfa - Hero 3' },
 
-  // Missing homepage product sections (added so admin can edit these images)
-  { key: 'home_electric', label: 'Ana sayfa - Elektrikli Ürünlerimiz' },
-  { key: 'home_battery', label: 'Ana sayfa - Akülü Ürünlerimiz' },
-  { key: 'home_pneumatic', label: 'Ana sayfa - Havalı Ürünlerimiz' },
+  // Elektrikli Ürünler - Profesyonel & Endüstriyel
+  { key: 'home_electric_professional', label: 'Ana sayfa - Elektrikli Profesyonel' },
+  { key: 'home_electric_industrial', label: 'Ana sayfa - Elektrikli Endüstriyel' },
+  
+  // Akülü Ürünler - Profesyonel & Endüstriyel
+  { key: 'home_battery_professional', label: 'Ana sayfa - Akülü Profesyonel' },
+  { key: 'home_battery_industrial', label: 'Ana sayfa - Akülü Endüstriyel' },
+  
+  // Havalı Ürünler - Profesyonel & Endüstriyel
+  { key: 'home_pneumatic_professional', label: 'Ana sayfa - Havalı Profesyonel' },
+  { key: 'home_pneumatic_industrial', label: 'Ana sayfa - Havalı Endüstriyel' },
 
+  { key: 'home_custom_solutions', label: 'Ana sayfa - Özel Çözümler' },
   { key: 'home_process_1', label: 'Ana sayfa - Nasıl Çalışıyoruz 1' },
   { key: 'home_process_2', label: 'Ana sayfa - Nasıl Çalışıyoruz 2' },
   { key: 'home_process_3', label: 'Ana sayfa - Nasıl Çalışıyoruz 3' },
   { key: 'home_process_4', label: 'Ana sayfa - Nasıl Çalışıyoruz 4' },
 
   { key: 'about_hero', label: 'Hakkımızda - Ana Hero' },
+  { key: 'about_distributorluk_hero', label: 'Hakkımızda - Distribütörlük Hero' },
   { key: 'about_kolver', label: 'Hakkımızda - Kolver' },
   { key: 'about_apac', label: 'Hakkımızda - APAC' },
   { key: 'about_hiyoki', label: 'Hakkımızda - Hiyoki' },
@@ -28,6 +37,19 @@ const SECTIONS: { key: string; label: string; count?: number }[] = [
   { key: 'about_hawanox', label: 'Hakkımızda - Hawanox' },
   { key: 'about_asa', label: 'Hakkımızda - ASA' },
   { key: 'about_delta_regis', label: 'Hakkımızda - Delta Regis' },
+
+  // Gallery images - Hakkımızda (Sol Dikey - 3 adet)
+  { key: 'about_gallery_vertical_left_1', label: 'Hakkımızda Galeri - Sol Dikey 1' },
+  { key: 'about_gallery_vertical_left_2', label: 'Hakkımızda Galeri - Sol Dikey 2' },
+  { key: 'about_gallery_vertical_left_3', label: 'Hakkımızda Galeri - Sol Dikey 3' },
+  // Gallery images - Hakkımızda (Sağ Dikey - 3 adet)
+  { key: 'about_gallery_vertical_right_1', label: 'Hakkımızda Galeri - Sağ Dikey 1' },
+  { key: 'about_gallery_vertical_right_2', label: 'Hakkımızda Galeri - Sağ Dikey 2' },
+  { key: 'about_gallery_vertical_right_3', label: 'Hakkımızda Galeri - Sağ Dikey 3' },
+  // Gallery images - Hakkımızda (Yatay - 3 adet)
+  { key: 'about_gallery_horizontal_1', label: 'Hakkımızda Galeri - Yatay 1' },
+  { key: 'about_gallery_horizontal_2', label: 'Hakkımızda Galeri - Yatay 2' },
+  { key: 'about_gallery_horizontal_3', label: 'Hakkımızda Galeri - Yatay 3' },
 
   // Details pages (3 photos each)
   { key: 'kolver_section_1', label: 'Kolver detay 1' },

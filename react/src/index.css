@@ -2,6 +2,12 @@
 @plugin "daisyui" ;
 @import "./styles/pdf-viewer.css";
 
+/* Root variables */
+:root {
+  /* Header height used by hero to calculate visible area. Adjust if your header/nav is taller. */
+  --header-height: 72px;
+}
+
 /* Base layout */
 *, *::before, *::after { box-sizing: border-box; }
 html, body, #root { 
@@ -79,6 +85,18 @@ html[data-no-animations="true"] * {
   color: var(--p) !important; /* primary orange */
   border-color: var(--p) !important;
   background-color: transparent !important;
+}
+
+/* Explicit blue outlined button to override site-wide orange rules */
+.home-page .btn-outline-blue {
+  color: #3b82f6 !important; /* blue */
+  border-color: #3b82f6 !important;
+  background-color: transparent !important;
+}
+.home-page .btn-outline-blue:hover {
+  background-color: rgba(59,130,246,0.06) !important;
+  color: #1e40af !important;
+  border-color: #2563eb !important;
 }
 
 .home-page .btn.btn-outline,
@@ -333,6 +351,67 @@ html[data-no-animations="true"] * {
   animation: heroTextIn 450ms ease-out;
 }
 
+/* Hero Ken Burns effect for background images */
+@keyframes ken-burns {
+  0% { 
+    transform: scale(1);
+  }
+  100% { 
+    transform: scale(1.1);
+  }
+}
+
+.animate-ken-burns {
+  animation: ken-burns 20s ease-out infinite alternate;
+}
+
+/* Hero content animations */
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+/* Stronger override for professional buttons: ensure blue outline/text on homepage links */
+.home-page a.btn.btn-outline-blue,
+.home-page .btn.btn-outline-blue {
+  color: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  background-color: transparent !important;
+}
+.home-page a.btn.btn-outline-blue:hover,
+.home-page .btn.btn-outline-blue:hover {
+  background-color: rgba(59,130,246,0.06) !important;
+  color: #1e40af !important;
+  border-color: #2563eb !important;
+}
+
 /* CRITICAL FIX: Remove ALL focus rings and blue glow - NUCLEAR OPTION */
 /* Global reset for all focusable elements */
 *,
@@ -429,27 +508,19 @@ select:focus-visible {
   Test visually after enabling; if issues appear we can target a wrapper element
   or adjust transform-origin accordingly.
 */
-/* Apply a gentle 0.95 scale for slightly zoomed-out view on medium-large screens.
-   This avoids aggressive scaling that caused layout gaps; we only target widths
-   between 1024px and 1400px. Height is not constrained to avoid accidental
-   non-matches on different monitors. */
-@media (min-width: 1024px) and (max-width: 1400px) {
-  /* Scope to the app root to avoid affecting browser chrome */
+/* Apply scale only for screens between 1024-1400px width AND below 1080p height.
+   This fixes overflow issues on smaller screens while keeping 1920x1080+ screens at 100%. */
+@media (min-width: 1024px) and (max-width: 1400px) and (max-height: 1079px) {
   #root {
     transform-origin: top center;
     transform: scale(0.95);
-    /* Use zoom as a fallback for browsers that render better with it */
     zoom: 0.95;
-    /* Compensate the layout so scaled content still fills the viewport and
-       no white edges appear. For scale(s) use width: calc(100% / s). We also
-       center it by setting a left margin equal to half the remaining space. */
     width: calc(100% / 0.95);
     margin-left: calc((100% - (100% / 0.95)) / 2);
     min-height: 100vh;
     overflow-x: hidden;
   }
 
-  /* Keep full-bleed elements aligned correctly */
   .navbar, .footer, .hero, .products-hero {
     transform-origin: top center !important;
   }

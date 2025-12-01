@@ -26,7 +26,7 @@ export function ensureHtmlLang(lang = 'tr') {
   }
 }
 
-type PageKey =
+export type PageKey =
   | 'home'
   | 'contact'
   | 'technical_service'
@@ -39,6 +39,21 @@ type PageKey =
   | 'about_asa'
   | 'categories'
   | 'products'
+  | 'category_havali_montaj_aletleri'
+  | 'category_akulu_montaj_aletleri'
+  | 'category_kolver_elektrikli_tornavidalar'
+  | 'category_dijital_mekanik_tork_olcum'
+  | 'category_elektrikli_clutch_control'
+  | 'category_wireless_dijital_tork'
+  | 'category_vida_besleme'
+  | 'category_delta_regis_tork_sikicilar'
+  | 'category_vida_sunucular'
+  | 'category_havali_el_aletleri'
+  | 'category_elektrikli_sikicilar'
+  | 'category_akulu_montaj_aletleri_profesyonel'
+  | 'category_makarali_hortumlar'
+  | 'category_akrobat_radyel_teleskobik_kollar'
+  | 'category_balancerler'
 
 interface PageOpts {
   title?: string
@@ -207,6 +222,141 @@ function buildPageSEO(key: PageKey, opts?: PageOpts) {
        opts?.image,
       )
 
+    case 'category_havali_montaj_aletleri':
+      return buildBase(
+        opts?.title || 'Havalı Montaj Aletleri | Endüstriyel Yüksek Performanslı Montaj Çözümleri',
+        opts?.description || 'Havalı montaj aletleri, yüksek tork ve dayanıklılık ile endüstriyel montaj süreçlerinde verimli ve güvenli kullanım sağlar. 17 farklı seri seçenekli.',
+        opts?.keywords || 'havalı montaj aleti, pnömatik montaj aracı, yüksek torklu montaj, endüstriyel montaj aleti, dayanıklı pnömatik alet, 17 seri montaj aleti',
+        path,
+        opts?.image,
+      )
+
+    case 'category_akulu_montaj_aletleri':
+      return buildBase(
+        opts?.title || 'Akülü Montaj Aletleri | Kablosuz Endüstriyel Montaj Çözümleri',
+        opts?.description || 'Akülü montaj aletleri, kablosuz kullanım, yüksek performans ve dayanıklılık ile endüstriyel montaj işlerinde verimli çalışma sunar. 8 seri mevcuttur.',
+        opts?.keywords || 'akülü montaj aleti, kablosuz montaj aleti, endüstriyel montaj aracı, dayanıklı montaj aleti, 8 seri montaj aleti',
+        path,
+        opts?.image,
+      )
+
+    case 'category_kolver_elektrikli_tornavidalar':
+      return buildBase(
+        opts?.title || 'Kolver Elektrikli Tornavidalar | Hassas ve Dayanıklı Elektrikli Aletler',
+        opts?.description || 'Kolver elektrikli tornavidalar, hassas vidalama, dayanıklılık ve ergonomi sunarak endüstriyel montaj ve bakım işlerinde yüksek verim sağlar. 7 seri mevcut.',
+        opts?.keywords || 'Kolver elektrikli tornavida, hassas vidalama aleti, endüstriyel elektrikli tornavida, dayanıklı montaj aleti, 7 seri tornavida',
+        path,
+        opts?.image,
+      )
+
+    case 'category_dijital_mekanik_tork_olcum':
+      return buildBase(
+        opts?.title || 'Dijital ve Mekanik Tork Ölçüm Aletleri | Hassas Ölçüm Çözümleri',
+        opts?.description || 'Dijital ve mekanik tork ölçüm aletleri, hassas ölçüm ve güvenli kullanım sağlayarak endüstriyel montaj ve bakım süreçlerini optimize eder. 5 seri mevcut.',
+        opts?.keywords || 'dijital tork ölçer, mekanik tork ölçüm aleti, hassas tork ölçüm, endüstriyel tork aleti, 5 seri tork ölçer',
+        path,
+        opts?.image,
+      )
+
+    case 'category_elektrikli_clutch_control':
+      return buildBase(
+        opts?.title || 'Elektrikli Clutch Control Kömürsüz Tornavidalar | Hassas Montaj',
+        opts?.description || 'Elektrikli clutch control kömürsüz tornavidalar, hassas montaj, düşük bakım ve dayanıklı performans ile endüstriyel uygulamalarda verimli kullanım sağlar. 2 seri mevcut.',
+        opts?.keywords || 'elektrikli clutch control tornavida, kömürsüz tornavida, hassas montaj aleti, endüstriyel elektrikli tornavida, 2 seri tornavida',
+        path,
+        opts?.image,
+      )
+
+    case 'category_wireless_dijital_tork':
+      return buildBase(
+        opts?.title || 'Wireless Dijital Tork Ölçüm Cihazları | Kablosuz Hassas Tork Ölçer',
+        opts?.description || 'Wireless dijital tork ölçüm cihazları, kablosuz hassas ölçüm ve endüstriyel montajda güvenli tork kontrolü sağlar. 1 seri ile yüksek performans sunar.',
+        opts?.keywords || 'wireless dijital tork ölçer, kablosuz tork ölçüm aleti, hassas tork kontrol, endüstriyel montaj tork cihazı, 1 seri tork cihazı',
+        path,
+        opts?.image,
+      )
+
+    case 'category_vida_besleme':
+      return buildBase(
+        opts?.title || 'El Tipi ve Otomasyon Tip Vida Besleme | Hızlı ve Hassas Montaj',
+        opts?.description || 'El tipi ve otomasyon tip vida besleme sistemleri, hızlı ve hassas montaj sağlar. Endüstriyel üretimde verimliliği artırır. 2 seri mevcut.',
+        opts?.keywords || 'el tipi vida besleme, otomasyon vida besleme, endüstriyel montaj sistemi, hızlı vida besleme, 2 seri vida besleme',
+        path,
+        opts?.image,
+      )
+
+    case 'category_delta_regis_tork_sikicilar':
+      return buildBase(
+        opts?.title || 'Delta Regis Tork Kontrollü Sıkıcılar | Hassas Tork Kontrolü',
+        opts?.description || 'Delta Regis tork kontrollü sıkıcılar, hassas tork ayarı ile endüstriyel montajda güvenli ve verimli kullanım sağlar. 2 seri mevcuttur.',
+        opts?.keywords || 'Delta Regis sıkıcı, tork kontrollü sıkıcı, hassas montaj aracı, endüstriyel tork sıkıcı, 2 seri sıkıcı',
+        path,
+        opts?.image,
+      )
+
+    case 'category_vida_sunucular':
+      return buildBase(
+        opts?.title || 'Vida Sunucular | Hassas ve Dayanıklı Montaj Çözümleri',
+        opts?.description || 'Vida sunucular, yüksek hassasiyet, dayanıklılık ve düşük enerji tüketimi ile otomotiv, elektronik ve endüstriyel montajlarda verimli kullanım sunar.',
+        opts?.keywords || 'vida sunucu, endüstriyel vida sunucu, hassas vida montajı, dayanıklı vida sunucu, otomotiv ve elektronik montaj, düşük enerji tüketimli vida sunucu',
+        path,
+        opts?.image,
+      )
+
+    case 'category_havali_el_aletleri':
+      return buildBase(
+        opts?.title || 'Havalı El Aletleri | Profesyonel Endüstriyel Havalı Aletler',
+        opts?.description || 'Havalı el aletleri, darbeli kırıcılar, somun sıkma, cırcır ve karıştırıcı mikserler dahil 24 seri ile endüstriyel montaj ve bakımda yüksek performans sunar.',
+        opts?.keywords || 'havalı el aleti, darbeli kırıcı, havalı cırcır, somun sıkma, karıştırıcı mikser, endüstriyel havalı alet, 24 seri havalı el aleti',
+        path,
+        opts?.image,
+      )
+
+    case 'category_elektrikli_sikicilar':
+      return buildBase(
+        opts?.title || 'Elektrikli Sıkıcılar | Hassas ve Dayanıklı Montaj Araçları',
+        opts?.description || 'Elektrikli sıkıcılar, hassas tork ve güvenilir performans ile profesyonel montaj ve bakım işlerinde verimli kullanım sunar. 1 seri mevcuttur.',
+        opts?.keywords || 'elektrikli sıkıcı, hassas sıkıcı aleti, endüstriyel montaj aleti, dayanıklı elektrikli sıkıcı, 1 seri sıkıcı',
+        path,
+        opts?.image,
+      )
+
+    case 'category_akulu_montaj_aletleri_profesyonel':
+      return buildBase(
+        opts?.title || 'Akülü Montaj Aletleri | Kablosuz ve Profesyonel Montaj Çözümleri',
+        opts?.description || 'Akülü montaj aletleri, kablosuz kullanım, yüksek performans ve dayanıklılık ile 7 seri seçenek ile profesyonel montaj işlerinde verimli çalışma sağlar.',
+        opts?.keywords || 'akülü montaj aleti, kablosuz montaj aracı, dayanıklı montaj aleti, endüstriyel montaj aleti, 7 seri akülü montaj aleti',
+        path,
+        opts?.image,
+      )
+
+    case 'category_makarali_hortumlar':
+      return buildBase(
+        opts?.title || 'Makaralı Hortumlar | Dayanıklı ve Düzenli Endüstriyel Hortum Sistemleri',
+        opts?.description || 'Makaralı hortumlar, endüstriyel uygulamalarda güvenli, dayanıklı ve düzenli hortum yönetimi sağlar. 1 seri ile uzun ömürlü kullanım sunar.',
+        opts?.keywords || 'makaralı hortum, endüstriyel hortum sistemi, dayanıklı hortum, hortum yönetim sistemi, 1 seri makaralı hortum',
+        path,
+        opts?.image,
+      )
+
+    case 'category_akrobat_radyel_teleskobik_kollar':
+      return buildBase(
+        opts?.title || 'Akrobat, Radyel ve Teleskobik Kollar | Esnek Endüstriyel Montaj',
+        opts?.description || 'Akrobat, radyel ve teleskobik kollar, profesyonel montaj ve bakım işlerinde esnek erişim, güvenli kullanım ve yüksek performans sunar. 1 seri mevcut.',
+        opts?.keywords || 'akrobat kol, radyel kol, teleskobik kol, endüstriyel montaj kol, esnek montaj aracı, 1 seri kol',
+        path,
+        opts?.image,
+      )
+
+    case 'category_balancerler':
+      return buildBase(
+        opts?.title || 'Balancerler | Endüstriyel Montaj ve Dengeleme Çözümleri',
+        opts?.description || 'Balancerler, ağır ekipman ve montaj parçalarının dengeli ve güvenli taşınmasını sağlar. Profesyonel endüstriyel kullanım için idealdir.',
+        opts?.keywords || 'balancer, endüstriyel balancer, montaj balancer, ekipman taşıma aracı, profesyonel balancer',
+        path,
+        opts?.image,
+      )
+
     default:
       return buildBase(opts?.title || SITE_NAME, opts?.description || '', opts?.keywords || SITE_NAME, path || '/', opts?.image)
   }
@@ -327,6 +477,21 @@ function enhanceStructuredDataForKey(key: PageKey, base: any, opts?: PageOpts) {
       graph = [webPage, organization, brand]
       break
 
+    case 'category_havali_montaj_aletleri':
+    case 'category_akulu_montaj_aletleri':
+    case 'category_kolver_elektrikli_tornavidalar':
+    case 'category_dijital_mekanik_tork_olcum':
+    case 'category_elektrikli_clutch_control':
+    case 'category_wireless_dijital_tork':
+    case 'category_vida_besleme':
+    case 'category_delta_regis_tork_sikicilar':
+    case 'category_vida_sunucular':
+    case 'category_havali_el_aletleri':
+    case 'category_elektrikli_sikicilar':
+    case 'category_akulu_montaj_aletleri_profesyonel':
+    case 'category_makarali_hortumlar':
+    case 'category_akrobat_radyel_teleskobik_kollar':
+    case 'category_balancerler':
     case 'categories':
     case 'products':
       graph = [
@@ -383,6 +548,36 @@ function pageKeyToPath(key: PageKey) {
       return '/kategoriler'
     case 'products':
       return '/urunler'
+    case 'category_havali_montaj_aletleri':
+      return '/kategoriler/endustriyel/havali-montaj-aletleri'
+    case 'category_akulu_montaj_aletleri':
+      return '/kategoriler/endustriyel/akulu-montaj-aletleri'
+    case 'category_kolver_elektrikli_tornavidalar':
+      return '/kategoriler/endustriyel/kolver-elektrikli-tornavidalar'
+    case 'category_dijital_mekanik_tork_olcum':
+      return '/kategoriler/endustriyel/dijital-ve-mekanik-tork-olcum-aletleri'
+    case 'category_elektrikli_clutch_control':
+      return '/kategoriler/endustriyel/elektrikli-clutch-control-komursuz-tornavidalar'
+    case 'category_wireless_dijital_tork':
+      return '/kategoriler/endustriyel/wireless-dijital-tork-olcum-cihazlari'
+    case 'category_vida_besleme':
+      return '/kategoriler/endustriyel/el-tipi-ve-otomasyon-tip-vida-besleme'
+    case 'category_delta_regis_tork_sikicilar':
+      return '/kategoriler/endustriyel/delta-regis-tork-kontrollu-sikicilar'
+    case 'category_vida_sunucular':
+      return '/kategoriler/endustriyel/vida-sunucular'
+    case 'category_havali_el_aletleri':
+      return '/kategoriler/profesyonel/havali-el-aletleri'
+    case 'category_elektrikli_sikicilar':
+      return '/kategoriler/profesyonel/elektrikli-sikicilar'
+    case 'category_akulu_montaj_aletleri_profesyonel':
+      return '/kategoriler/profesyonel/akulu-montaj-aletleri'
+    case 'category_makarali_hortumlar':
+      return '/kategoriler/profesyonel/makarali-hortumlar'
+    case 'category_akrobat_radyel_teleskobik_kollar':
+      return '/kategoriler/profesyonel/akrobat-radyel-teleskobik-kollar'
+    case 'category_balancerler':
+      return '/kategoriler/profesyonel/balancerler'
     default:
       return '/'
   }

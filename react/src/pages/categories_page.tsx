@@ -8,23 +8,23 @@ export default function Categories_page() {
     applyPageSEO('categories')
   }, [])
   // Images are served from the `public/` folder and available at the site root.
-  const mainTiers = [
+  const categories = [
     { id: 'endustriyel', title: 'Endüstriyel', desc: 'Ağır hizmet, 7/24 kullanım', img: '/endustrial_cat_pic..jpg' },
     { id: 'profesyonel', title: 'Profesyonel', desc: 'Atölye ve servisler için', img: '/proffesional_cat_pic.jpg' },
+    { id: 'yardimci-ekipmanlar', title: 'Yardımcı Ürünler', desc: 'Aksesuarlar ve yedek parçalar', img: '/technical_service_banner.png' },
+    { id: 'maniplatorler', title: 'Maniplatörler', desc: 'Endüstriyel manipilatör sistemleri', img: '/maniplator.jpg' },
   ]
-
-  const auxiliaryTier = { id: 'yardimci-ekipmanlar', title: 'Yardımcı Ürünler', desc: 'Aksesuarlar ve yedek parçalar', img: '/technical_service_banner.png' }
 
   return (
     <section className="bg-base-100">
       <div className="max-w-7xl mx-auto px-4">
         <div className="breadcrumbs text-sm py-4"><ul><li><Link to="/">Ana sayfa</Link></li><li>Kategoriler</li></ul></div>
         <h1 className="text-3xl font-bold">Kategoriler</h1>
-        <p className="mt-2 text-base-content/70">Endüstriyel, Profesyonel veya Yardımcı Ürünler kategorilerinden birini seçin.</p>
-        
-        {/* Ana kategoriler - 2'li grid */}
+        <p className="mt-2 text-base-content/70">İhtiyacınıza uygun ürün grubunu seçin.</p>
+
+        {/* Kategoriler - Grid */}
         <div className="grid gap-5 mt-6 sm:grid-cols-2">
-          {mainTiers.map((t) => (
+          {categories.map((t) => (
             <Link key={t.id} to={`/kategoriler/${t.id}`} className="group relative block rounded-box overflow-hidden shadow hover:shadow-lg transition-shadow">
               <img
                 src={t.img}
@@ -41,25 +41,6 @@ export default function Categories_page() {
               </div>
             </Link>
           ))}
-        </div>
-
-        {/* Yardımcı Ürünler - Ortada tek başına */}
-        <div className="mt-6 flex justify-center">
-          <Link to={`/kategoriler/${auxiliaryTier.id}`} className="group relative block rounded-box overflow-hidden shadow hover:shadow-lg transition-shadow w-full sm:w-2/3 lg:w-1/2">
-            <img
-              src={auxiliaryTier.img}
-              alt={`${auxiliaryTier.title} - ${auxiliaryTier.desc}`}
-              title={auxiliaryTier.title}
-              className="h-48 w-full object-cover"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-base-300/70 to-transparent" />
-            <div className="absolute bottom-0 p-4">
-              <div className="badge badge-primary badge-sm mb-2 opacity-0 group-hover:opacity-100 transition-opacity">İncele</div>
-              <div className="text-xl font-semibold">{auxiliaryTier.title}</div>
-              <div className="text-base-content/80">{auxiliaryTier.desc}</div>
-            </div>
-          </Link>
         </div>
         {/* "Tümünü Gör" button - moved up and made flashy */}
         <div className="mt-4 mb-8 flex justify-center">

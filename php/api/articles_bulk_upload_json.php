@@ -52,8 +52,8 @@ $normalizeBool = function($v): int {
 $required = ['parent','child','subchild'];
 
 $pdo->beginTransaction();
-$ins = $pdo->prepare('INSERT INTO articles (parent,child,subchild,title,title_subtext,about,featured,info,summary,usable_areas,meta_title,meta_desc,schema_desc,meta_keywords,main_image,img1,video_url,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)');
-$upd = $pdo->prepare('UPDATE articles SET title=?, title_subtext=?, about=?, featured=?, info=?, summary=?, usable_areas=?, meta_title=?, meta_desc=?, schema_desc=?, meta_keywords=?, main_image=?, img1=?, video_url=?, updated_at=CURRENT_TIMESTAMP WHERE parent=? AND child=? AND subchild=?');
+$ins = $pdo->prepare('INSERT INTO articles (parent,child,subchild,title,title_subtext,about,featured,info,summary,usable_areas,more,meta_title,meta_desc,schema_desc,meta_keywords,main_image,img1,video_url,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)');
+$upd = $pdo->prepare('UPDATE articles SET title=?, title_subtext=?, about=?, featured=?, info=?, summary=?, usable_areas=?, more=?, meta_title=?, meta_desc=?, schema_desc=?, meta_keywords=?, main_image=?, img1=?, video_url=?, updated_at=CURRENT_TIMESTAMP WHERE parent=? AND child=? AND subchild=?');
 
 $inserted = 0; $updated = 0; $skipped = 0; $errors = [];
 try {
@@ -92,6 +92,7 @@ try {
                 $sanitize($nrow['info'] ?? ''),
                 $sanitize($nrow['summary'] ?? ''),
                 $sanitize($nrow['usable_areas'] ?? ''),
+                $sanitize($nrow['more'] ?? ''),
                 $sanitize($nrow['meta_title'] ?? ''),
                 $sanitize($nrow['meta_desc'] ?? ''),
                 $sanitize($nrow['schema_desc'] ?? ''),
@@ -120,6 +121,7 @@ try {
                     $sanitize($nrow['info'] ?? ''),
                     $sanitize($nrow['summary'] ?? ''),
                     $sanitize($nrow['usable_areas'] ?? ''),
+                    $sanitize($nrow['more'] ?? ''),
                     $sanitize($nrow['meta_title'] ?? ''),
                     $sanitize($nrow['meta_desc'] ?? ''),
                     $sanitize($nrow['schema_desc'] ?? ''),
