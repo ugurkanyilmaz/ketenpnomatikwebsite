@@ -7,18 +7,21 @@ const SECTIONS: { key: string; label: string; count?: number }[] = [
   { key: 'home_hero_1', label: 'Ana sayfa - Hero 1' },
   { key: 'home_hero_2', label: 'Ana sayfa - Hero 2' },
   { key: 'home_hero_3', label: 'Ana sayfa - Hero 3' },
+  { key: 'home_hero_4', label: 'Ana sayfa - Hero 4 (Manipülatörler)' },
 
   // Elektrikli Ürünler - Profesyonel & Endüstriyel
   { key: 'home_electric_professional', label: 'Ana sayfa - Elektrikli Profesyonel' },
   { key: 'home_electric_industrial', label: 'Ana sayfa - Elektrikli Endüstriyel' },
-  
+
   // Akülü Ürünler - Profesyonel & Endüstriyel
   { key: 'home_battery_professional', label: 'Ana sayfa - Akülü Profesyonel' },
   { key: 'home_battery_industrial', label: 'Ana sayfa - Akülü Endüstriyel' },
-  
+
   // Havalı Ürünler - Profesyonel & Endüstriyel
   { key: 'home_pneumatic_professional', label: 'Ana sayfa - Havalı Profesyonel' },
   { key: 'home_pneumatic_industrial', label: 'Ana sayfa - Havalı Endüstriyel' },
+
+  { key: 'home_manipulator', label: 'Ana sayfa - Manipülatörler' },
 
   { key: 'home_custom_solutions', label: 'Ana sayfa - Özel Çözümler' },
   { key: 'home_process_1', label: 'Ana sayfa - Nasıl Çalışıyoruz 1' },
@@ -78,7 +81,7 @@ const SECTIONS: { key: string; label: string; count?: number }[] = [
   { key: 'delta_regis_section_3', label: 'Delta Regis detay 3' },
 ]
 
-  function ImageRow({ sectionKey, image, onUpload, onUpdateAlt, onDelete }: {
+function ImageRow({ sectionKey, image, onUpload, onUpdateAlt, onDelete }: {
   sectionKey: string
   image: SiteImage | null
   onUpload: (file: File, alt?: string) => Promise<void>

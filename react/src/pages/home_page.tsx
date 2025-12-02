@@ -20,11 +20,11 @@ export default function HomePage() {
   const M: any = shouldAnimate
     ? motion
     : {
-        div: (p: any) => <div {...p} />,
-        section: (p: any) => <section {...p} />,
-        a: (p: any) => <a {...p} />,
-      }
-  
+      div: (p: any) => <div {...p} />,
+      section: (p: any) => <section {...p} />,
+      a: (p: any) => <a {...p} />,
+    }
+
   // Fetch dynamic images
   const { image: electricProfessionalImg } = useSiteImage('home_electric_professional')
   const { image: electricIndustrialImg } = useSiteImage('home_electric_industrial')
@@ -37,15 +37,16 @@ export default function HomePage() {
   const { image: process2Img } = useSiteImage('home_process_2')
   const { image: process3Img } = useSiteImage('home_process_3')
   const { image: process4Img } = useSiteImage('home_process_4')
+  const { image: manipulatorImg } = useSiteImage('home_manipulator')
   return (
     <div className="home-page">
-  {/* Scroll Progress Bar */}
-  <M.div style={shouldAnimate ? { scaleX } : undefined} className="fixed left-0 right-0 top-0 h-1 origin-left bg-primary z-[100]" />
-    <Hero />
+      {/* Scroll Progress Bar */}
+      <M.div style={shouldAnimate ? { scaleX } : undefined} className="fixed left-0 right-0 top-0 h-1 origin-left bg-primary z-[100]" />
+      <Hero />
 
-  {/* Ürünlerimiz header now sits above the Elektrikli section */}
+      {/* Ürünlerimiz header now sits above the Elektrikli section */}
 
-    {/* Elektrikli Ürünlerimiz - Çapraz düzen */}
+      {/* Elektrikli Ürünlerimiz - Çapraz düzen */}
       <M.section
         className="bg-white"
         initial={{ opacity: 0, y: 30 }}
@@ -62,7 +63,7 @@ export default function HomePage() {
             <p className="text-gray-600 mb-2 text-base md:text-lg">İhtiyacınıza uygun elektrikli çözümler</p>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Elektrikli Ürünlerimiz</h2>
           </div>
-          
+
           {/* Çapraz Düzen: Sol üstte foto/altta açıklama, Sağ üstte açıklama/altta foto */}
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-0 lg:divide-x-2 lg:divide-gray-200">
             {/* Sol: Profesyonel - Üstte Foto, Altta Açıklama */}
@@ -75,14 +76,14 @@ export default function HomePage() {
             >
               {/* Fotoğraf Üstte */}
               <div className="mb-6 w-full" style={{ aspectRatio: '2/1' }}>
-                <img 
-                  src={electricProfessionalImg?.image_path || "/professional_banner.png"} 
+                <img
+                  src={electricProfessionalImg?.image_path || "/professional_banner.png"}
                   alt={electricProfessionalImg?.alt_text || "Profesyonel Elektrikli ürünler"}
-                  className="rounded-xl w-full h-full object-cover shadow-lg" 
-                  loading="lazy" 
+                  className="rounded-xl w-full h-full object-cover shadow-lg"
+                  loading="lazy"
                 />
               </div>
-              
+
               {/* Açıklama Altta */}
               <div>
                 <div className="flex items-center gap-3 mb-3">
@@ -140,22 +141,22 @@ export default function HomePage() {
                   Endüstriyel Elektrikli Seriler
                 </ScrollToTopLink>
               </div>
-              
+
               {/* Fotoğraf Altta */}
               <div className="w-full" style={{ aspectRatio: '2/1' }}>
-                <img 
-                  src={electricIndustrialImg?.image_path || "/endus.jpg"} 
+                <img
+                  src={electricIndustrialImg?.image_path || "/endus.jpg"}
                   alt={electricIndustrialImg?.alt_text || "Endüstriyel Elektrikli ürünler"}
-                  className="rounded-xl w-full h-full object-cover shadow-lg" 
-                  loading="lazy" 
+                  className="rounded-xl w-full h-full object-cover shadow-lg"
+                  loading="lazy"
                 />
               </div>
             </M.div>
           </div>
         </div>
-  </M.section>
+      </M.section>
 
-    {/* Akülü Ürünlerimiz - Çapraz düzen */}
+      {/* Akülü Ürünlerimiz - Çapraz düzen */}
       <motion.section
         className="bg-gray-50"
         initial={{ opacity: 0, y: 30 }}
@@ -169,7 +170,7 @@ export default function HomePage() {
             <p className="text-gray-600 mb-2 text-base md:text-lg">Hafif, güçlü ve uzun ömürlü</p>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Akülü Ürünlerimiz</h2>
           </div>
-          
+
           {/* Çapraz Düzen: Sol üstte foto/altta açıklama, Sağ üstte açıklama/altta foto */}
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-0 lg:divide-x-2 lg:divide-gray-300">
             {/* Sol: Profesyonel - Üstte Foto, Altta Açıklama */}
@@ -182,14 +183,14 @@ export default function HomePage() {
             >
               {/* Fotoğraf Üstte */}
               <div className="mb-6 w-full" style={{ aspectRatio: '2/1' }}>
-                <img 
-                  src={batteryProfessionalImg?.image_path || "/professional_banner.png"} 
+                <img
+                  src={batteryProfessionalImg?.image_path || "/professional_banner.png"}
                   alt={batteryProfessionalImg?.alt_text || "Profesyonel Akülü ürünler"}
-                  className="rounded-xl w-full h-full object-cover shadow-lg" 
-                  loading="lazy" 
+                  className="rounded-xl w-full h-full object-cover shadow-lg"
+                  loading="lazy"
                 />
               </div>
-              
+
               {/* Açıklama Altta */}
               <div>
                 <div className="flex items-center gap-3 mb-3">
@@ -247,14 +248,14 @@ export default function HomePage() {
                   Endüstriyel Akülü Seriler
                 </ScrollToTopLink>
               </div>
-              
+
               {/* Fotoğraf Altta */}
               <div className="w-full" style={{ aspectRatio: '2/1' }}>
-                <img 
-                  src={batteryIndustrialImg?.image_path || "/endus.jpg"} 
+                <img
+                  src={batteryIndustrialImg?.image_path || "/endus.jpg"}
                   alt={batteryIndustrialImg?.alt_text || "Endüstriyel Akülü ürünler"}
-                  className="rounded-xl w-full h-full object-cover shadow-lg" 
-                  loading="lazy" 
+                  className="rounded-xl w-full h-full object-cover shadow-lg"
+                  loading="lazy"
                 />
               </div>
             </motion.div>
@@ -277,7 +278,7 @@ export default function HomePage() {
             <p className="text-gray-600 mb-2 text-base md:text-lg">Yüksek dayanım ve verimlilik</p>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Havalı Ürünlerimiz</h2>
           </div>
-          
+
           {/* Çapraz Düzen: Sol üstte foto/altta açıklama, Sağ üstte açıklama/altta foto */}
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-0 lg:divide-x-2 lg:divide-gray-200">
             {/* Sol: Profesyonel - Üstte Foto, Altta Açıklama */}
@@ -290,14 +291,14 @@ export default function HomePage() {
             >
               {/* Fotoğraf Üstte */}
               <div className="mb-6 w-full" style={{ aspectRatio: '2/1' }}>
-                <img 
-                  src={pneumaticProfessionalImg?.image_path || "/professional_banner.png"} 
+                <img
+                  src={pneumaticProfessionalImg?.image_path || "/professional_banner.png"}
                   alt={pneumaticProfessionalImg?.alt_text || "Profesyonel Havalı ürünler"}
-                  className="rounded-xl w-full h-full object-cover shadow-lg" 
-                  loading="lazy" 
+                  className="rounded-xl w-full h-full object-cover shadow-lg"
+                  loading="lazy"
                 />
               </div>
-              
+
               {/* Açıklama Altta */}
               <div>
                 <div className="flex items-center gap-3 mb-3">
@@ -355,14 +356,14 @@ export default function HomePage() {
                   Endüstriyel Havalı Seriler
                 </ScrollToTopLink>
               </div>
-              
+
               {/* Fotoğraf Altta */}
               <div className="w-full" style={{ aspectRatio: '2/1' }}>
-                <img 
-                  src={pneumaticIndustrialImg?.image_path || "/endus.jpg"} 
+                <img
+                  src={pneumaticIndustrialImg?.image_path || "/endus.jpg"}
                   alt={pneumaticIndustrialImg?.alt_text || "Endüstriyel Havalı ürünler"}
-                  className="rounded-xl w-full h-full object-cover shadow-lg" 
-                  loading="lazy" 
+                  className="rounded-xl w-full h-full object-cover shadow-lg"
+                  loading="lazy"
                 />
               </div>
             </motion.div>
@@ -411,73 +412,126 @@ export default function HomePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <img 
-              src={customSolutionsImg?.image_path || "/placeholder.png"} 
-              alt={customSolutionsImg?.alt_text || "Özel çözümler"} 
-              className="rounded-box shadow-xl w-full object-cover" 
-              loading="lazy" 
+            <img
+              src={customSolutionsImg?.image_path || "/placeholder.png"}
+              alt={customSolutionsImg?.alt_text || "Özel çözümler"}
+              className="rounded-box shadow-xl w-full object-cover"
+              loading="lazy"
             />
           </motion.div>
         </div>
       </motion.section>
 
-    {/* Hizmetlerimiz - move to second */}
-    <motion.section
-      className="bg-white"
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.6, delay: 0.1 }}
-    >
-  <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Hizmetlerimiz</h2>
-          <p className="mt-3 text-gray-700">
-            Satıştan kurulum ve bakıma kadar; tüm süreçlerde yanınızdayız.
-          </p>
-        </div>
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            {
-              title: 'Satış',
-              desc: 'İhtiyaca özel ürün ve seri önerileri',
-              href: '/kategoriler',
-            },
-            {
-              title: 'Teknik Servis',
-              desc: 'Hızlı arıza tespiti ve onarım',
-              href: '/teknik-servis',
-            },
-            {
-              title: 'Yedek Parça',
-              desc: 'Orijinal ve garantili parça temini',
-              href: '/iletisim',
-            },
-            {
-              title: 'Demo Talebi',
-              desc: 'Saha denemesi ve eğitim',
-              href: '/demo-talebi',
-            },
-          ].map((s) => (
-            <motion.a
-              key={s.title}
-              href={s.href}
-              className="card bg-white border border-base-300 shadow-sm hover:shadow-xl transition-shadow"
-              whileHover={{ y: -4 }}
-            >
-              <div className="card-body">
-                <h3 className="card-title">{s.title}</h3>
-                <p className="text-gray-700">{s.desc}</p>
-              </div>
-            </motion.a>
-          ))}
-        </div>
-      </div>
-    </motion.section>
+      {/* Manipülatörler Section */}
+      <motion.section
+        className="bg-white"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.6, delay: 0.05 }}
+      >
+        <div className="max-w-7xl mx-auto px-4 py-16 grid lg:grid-cols-2 gap-10 items-center">
+          {/* Image Left */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <img
+              src={manipulatorImg?.image_path || "/placeholder.png"}
+              alt={manipulatorImg?.alt_text || "Manipülatörler"}
+              className="rounded-box shadow-xl w-full object-cover"
+              loading="lazy"
+            />
+          </motion.div>
 
-    {/* Distribütörlük - move to third */}
-    {/* Each distributor block now has its own background in DistributorSections */}
-    <DistributorSections />
+          {/* Text Right */}
+          <div>
+            <p className="text-neutral-600 mb-2 text-base md:text-lg">Ergonomik ve Güvenli Taşıma</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Manipülatörler</h2>
+            <p className="mt-3 text-gray-700 text-base md:text-lg">
+              Yüklerinizi ağırlıksız hissederek taşıyın. Endüstriyel manipülatörlerimiz ile iş güvenliğini artırın, operatör yorgunluğunu azaltın ve verimliliği maksimize edin. Her türlü yük için özel tutucu tasarımları.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a
+                className="btn btn-primary"
+                href="/kategoriler/manipulatorler"
+              >
+                İncele
+              </a>
+              <a
+                className="btn btn-outline"
+                href="/iletisim"
+                style={{
+                  borderColor: 'var(--p)',
+                  color: 'var(--p)',
+                }}
+              >
+                İletişime Geç
+              </a>
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Hizmetlerimiz - move to second */}
+      <motion.section
+        className="bg-white"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+      >
+        <div className="max-w-7xl mx-auto px-4 py-16">
+          <div className="text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Hizmetlerimiz</h2>
+            <p className="mt-3 text-gray-700">
+              Satıştan kurulum ve bakıma kadar; tüm süreçlerde yanınızdayız.
+            </p>
+          </div>
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                title: 'Satış',
+                desc: 'İhtiyaca özel ürün ve seri önerileri',
+                href: '/kategoriler',
+              },
+              {
+                title: 'Teknik Servis',
+                desc: 'Hızlı arıza tespiti ve onarım',
+                href: '/teknik-servis',
+              },
+              {
+                title: 'Yedek Parça',
+                desc: 'Orijinal ve garantili parça temini',
+                href: '/iletisim',
+              },
+              {
+                title: 'Demo Talebi',
+                desc: 'Saha denemesi ve eğitim',
+                href: '/demo-talebi',
+              },
+            ].map((s) => (
+              <motion.a
+                key={s.title}
+                href={s.href}
+                className="card bg-white border border-base-300 shadow-sm hover:shadow-xl transition-shadow"
+                whileHover={{ y: -4 }}
+              >
+                <div className="card-body">
+                  <h3 className="card-title">{s.title}</h3>
+                  <p className="text-gray-700">{s.desc}</p>
+                </div>
+              </motion.a>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Distribütörlük - move to third */}
+      {/* Each distributor block now has its own background in DistributorSections */}
+      <DistributorSections />
 
       {/* Süreç - Nasıl Çalışıyoruz (Blog tarzı bloklar) */}
       <section>
@@ -499,7 +553,7 @@ export default function HomePage() {
                 transition={{ duration: 0.6 }}
               >
                 <img src={process1Img?.image_path || "/technical_service_banner.png"} alt={process1Img?.alt_text || "İhtiyaç analizi"}
-                     className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+                  className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
               </motion.div>
               <div>
                 <div className="badge badge-primary mb-3">1. Adım</div>
@@ -541,7 +595,7 @@ export default function HomePage() {
                 transition={{ duration: 0.6 }}
               >
                 <img src={process2Img?.image_path || "/keten_banner.jpg"} alt={process2Img?.alt_text || "Ürün/Seri seçimi"}
-                     className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+                  className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
               </motion.div>
             </div>
           </div>
@@ -564,7 +618,7 @@ export default function HomePage() {
                 transition={{ duration: 0.6 }}
               >
                 <img src={process3Img?.image_path || "/technical_service_banner.png"} alt={process3Img?.alt_text || "Kurulum ve eğitim"}
-                     className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+                  className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
               </motion.div>
               <div>
                 <div className="badge badge-primary mb-3">3. Adım</div>
@@ -604,8 +658,8 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-       <img src={process4Img?.image_path || "/professional_banner.png"} alt={process4Img?.alt_text || "Servis ve takip"}
-         className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
+                <img src={process4Img?.image_path || "/professional_banner.png"} alt={process4Img?.alt_text || "Servis ve takip"}
+                  className="rounded-box shadow-xl w-full object-cover" loading="lazy" />
               </motion.div>
             </div>
           </div>

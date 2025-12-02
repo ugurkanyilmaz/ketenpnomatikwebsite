@@ -3,8 +3,14 @@ import { Link } from 'react-router-dom'
 import ZascheHeader from '../../components/ZascheHeader'
 import zashceLogo from './zashceLogo.svg'
 import { zascheProducts } from '../../data/zascheProducts'
+import { buildZascheSEO, applyZascheSEO } from '../../utils/zasche_seo'
+import { useEffect } from 'react'
 
 export default function ZascheKaldirmaEkipmanlariPage() {
+    useEffect(() => {
+        applyZascheSEO(buildZascheSEO('category_kaldirma'))
+    }, [])
+
     return (
         <div className="bg-white min-h-screen font-sans text-gray-900">
             <ZascheHeader backgroundImage="/ZASCHE_Panorama_03_header.jpg" logo={zashceLogo} />
@@ -87,23 +93,26 @@ export default function ZascheKaldirmaEkipmanlariPage() {
                             viewport={{ once: true }}
                             transition={{ duration: 0.8 }}
                         >
-                            <iframe
+                            <video
                                 width="100%"
                                 height="100%"
-                                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                                title="Zasche Lifting Equipment Video"
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
+                                autoPlay
+                                muted
+                                loop
+                                playsInline
+                                controls
                                 className="absolute inset-0 w-full h-full object-cover"
-                            ></iframe>
+                            >
+                                <source src="/zasche_videos/kaldirma_ekipmanlari.mp4" type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
                         </motion.div>
                     </div>
                 </div>
             </section>
 
             {/* Sub-products Grid */}
-            <section className="py-24 px-4 bg-gray-50">
+            <section id="products" className="py-24 px-4 bg-gray-50">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl font-bold text-gray-900 mb-4">Ürün Çeşitleri</h2>
@@ -111,93 +120,65 @@ export default function ZascheKaldirmaEkipmanlariPage() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {
-                            // richer product cards matching Manipulatorler page
-                            [
-                                {
-                                    id: 'pneumatic-rope',
-                                    title: 'Pnömatik Halatlı Dengeleyiciler',
-                                    subtitle: 'Pneumatic rope balancers',
-                                    trDescription: 'Pnömatik halat dengeleyicilerimiz, yükleri yüksek hassasiyetle konumlandırmaya ve karmaşık birleştirme ile montaj işlemlerini güvenle gerçekleştirmeye uygundur.',
-                                    link: '/kategoriler/manipulatorler/kaldirma-ekipmanlari-halatli-dengeleyiciler/pnomatik-halatli-dengeleyici',
-                                    productId: 'pnomatik-halatli-dengeleyici',
-                                    specs: { load: '100 kg', lift: '2000 mm' }
-                                },
-                                {
-                                    id: 'electric-ropebalancer',
-                                    title: 'Elektrikli Halatlı Dengeleyiciler',
-                                    subtitle: 'Electric rope balancers',
-                                    trDescription: 'Pnömatik hava beslemesinin bulunmadığı üretim tesisleri için elektrikli halat dengeleyicilerimiz ideal bir kaldırma ekipmanıdır.',
-                                    link: '/kategoriler/manipulatorler/kaldirma-ekipmanlari-halatli-dengeleyiciler/elektrikli-halatli-dengeleyici',
-                                    productId: 'elektrikli-halatli-dengeleyici',
-                                    specs: { load: '100 kg', lift: '2000 mm' }
-                                },
-                                {
-                                    id: 'electric-ropehoist',
-                                    title: 'Elektrikli Halatlı Vinç',
-                                    subtitle: 'Electric ropehoist (Z-RE / Z-BE)',
-                                    trDescription: 'Tamamen elektrikli bu kablolu kaldırma cihazı sayesinde yükleri hızlı ve minimum yorgunlukla hareket ettirebilirsiniz. Yatay konumlu tutma kolu, yükün yüksek veya alçak pozisyonlarda bile ergonomik şekilde yönlendirilmesini sağlar.',
-                                    link: '/kategoriler/manipulatorler/kaldirma-ekipmanlari-halatli-dengeleyiciler/elektrikli-halatli-vinc',
-                                    productId: 'elektrikli-halatli-vinc',
-                                    specs: { load: '100 kg', lift: '2000 mm' }
-                                }
-                            ].map((item) => (
-                                <Link
-                                    key={item.id}
-                                    to={item.link}
-                                    className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col"
-                                >
-                                    <div className="aspect-[4/3] bg-white relative overflow-hidden p-4">
-                                        <img
-                                            src={zascheProducts.find(p => p.id === item.productId)?.gallery.thumbnails[0] || `https://placehold.co/800x600/e2e8f0/1e293b?text=${encodeURIComponent(item.title)}`}
-                                            alt={item.title}
-                                            className="w-full h-full object-contain transition-transform duration-700"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                    </div>
-                                    <div className="p-8 flex-1 flex flex-col">
-                                        <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-[#ff8c42] transition-colors">
-                                            {item.title}
-                                        </h3>
-                                        <h4 className="text-lg font-medium text-gray-500 mb-4">
-                                            {item.subtitle}
-                                        </h4>
-                                        <p className="text-gray-700 leading-relaxed mb-3">
-                                            {item.trDescription}
-                                        </p>
-                                        <div className="space-y-3 border-t border-gray-100 pt-6">
-                                            <>
+                        {zascheProducts.filter(p => p.categoryId === 'kaldirma').map((product) => (
+                            <Link
+                                key={product.id}
+                                to={product.link || '#'}
+                                className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col"
+                            >
+                                <div className="aspect-[4/3] bg-white relative overflow-hidden p-4">
+                                    <img
+                                        src={product.gallery.thumbnails[0] || `https://placehold.co/800x600/e2e8f0/1e293b?text=${encodeURIComponent(product.title)}`}
+                                        alt={product.title}
+                                        className="w-full h-full object-contain transition-transform duration-700"
+                                        loading="lazy"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                </div>
+                                <div className="p-8 flex-1 flex flex-col">
+                                    <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-[#ff8c42] transition-colors">
+                                        {product.title}
+                                    </h3>
+                                    <h4 className="text-lg font-medium text-gray-500 mb-4">
+                                        {product.subtitle}
+                                    </h4>
+                                    <p className="text-gray-700 leading-relaxed mb-3 flex-1">
+                                        {product.heroDescription}
+                                    </p>
+                                    <div className="space-y-3 border-t border-gray-100 pt-6">
+                                        <>
+                                            {product.specs?.load && (
                                                 <div className="flex items-center gap-3 text-gray-700">
                                                     <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2v20" />
                                                     </svg>
-                                                    <span className="font-medium">max. {item.specs?.load}</span>
+                                                    <span className="font-medium">max. {product.specs.load}</span>
                                                 </div>
-                                                {item.specs?.lift && (
-                                                    <div className="flex items-center gap-3 text-gray-700">
-                                                        <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12h18" />
-                                                        </svg>
-                                                        <span className="font-medium">max. {item.specs.lift}</span>
-                                                    </div>
-                                                )}
-                                            </>
-                                        </div>
-
-                                        <div className="mt-6 pt-6 border-t border-gray-100">
-                                            <div className="text-center mt-4">
-                                                <span className="inline-flex items-center gap-2 text-primary font-semibold">
-                                                    Ürünü Görüntüle
-                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                            )}
+                                            {product.specs?.lift && (
+                                                <div className="flex items-center gap-3 text-gray-700">
+                                                    <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12h18" />
                                                     </svg>
-                                                </span>
-                                            </div>
+                                                    <span className="font-medium">max. {product.specs.lift}</span>
+                                                </div>
+                                            )}
+                                        </>
+                                    </div>
+
+                                    <div className="mt-6 pt-6 border-t border-gray-100">
+                                        <div className="text-center mt-4">
+                                            <span className="inline-flex items-center gap-2 text-primary font-semibold">
+                                                Ürünü Görüntüle
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                                </svg>
+                                            </span>
                                         </div>
                                     </div>
-                                </Link>
-                            ))
-                        }
+                                </div>
+                            </Link>
+                        ))}
                     </div>
                 </div>
             </section>
@@ -213,17 +194,17 @@ export default function ZascheKaldirmaEkipmanlariPage() {
                             {
                                 title: 'Manipülatörler',
                                 link: '/kategoriler/manipulatorler/manipulatorler',
-                                image: 'https://placehold.co/1920x1080/1a1a1a/ffffff?text=Manipulatorler'
+                                image: '/maniplatorler.jpg'
                             },
                             {
                                 title: 'Asma Vinç Sistemleri',
                                 link: '/kategoriler/manipulatorler/asma-vinc-sistemleri',
-                                image: 'https://placehold.co/1920x1080/1a1a1a/ffffff?text=Asma+Vinc+Sistemleri'
+                                image: '/asmavincsistemleri.jpg'
                             },
                             {
                                 title: 'Özel Ekipmanlar',
                                 link: '/kategoriler/manipulatorler/ozel-ekipmanlar',
-                                image: 'https://placehold.co/1920x1080/1a1a1a/ffffff?text=Ozel+Ekipmanlar'
+                                image: '/ozelcozumler.jpg'
                             }
                         ].map((category, index) => (
                             <Link
@@ -237,6 +218,7 @@ export default function ZascheKaldirmaEkipmanlariPage() {
                                         src={category.image}
                                         alt={category.title}
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        loading="lazy"
                                     />
                                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
                                 </div>

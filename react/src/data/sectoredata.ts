@@ -18,7 +18,7 @@ export const sectors: SectorData[] = [
     {
         title: 'İnşaat, Taş ve Toprak',
         description: 'Cihazlarımızın sağlam ve aşınmaya dayanıklı yapısı, en zorlu şantiye ve üretim koşullarında bile sorunsuz çalışmalarını sağlar. Sistemlerimiz, ağır yüklerin taşınmasında çalışanlarınızı destekler ve kas-iskelet sistemi rahatsızlıklarına bağlı iş gücü kayıplarını minimize eder.',
-        image: '/sectore_image/İnşaatveZemin.jpg'
+        image: '/sectore_image/insaatveZemin.jpg'
     },
     {
         title: 'Kimya',

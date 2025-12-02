@@ -4,8 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useParams, Navigate } from 'react-router-dom'
 import { X, ZoomIn, ChevronLeft, ChevronRight, Plus, Minus } from 'lucide-react'
 import ZascheHeader from '../../components/ZascheHeader'
+import ZascheBreadcrumbs from './components/ZascheBreadcrumbs'
 import zashceLogo from './zashceLogo.svg'
 import { zascheProducts } from '../../data/zascheProducts'
+import { buildZascheProductSEO, applyZascheProductSEO } from '../../utils/zasche_product_seo'
 
 interface ImageItem {
     id: number;
@@ -16,6 +18,12 @@ interface ImageItem {
 export default function ZascheProductDetail() {
     const { id } = useParams<{ id: string }>();
     const product = zascheProducts.find(p => p.id === id);
+
+    useEffect(() => {
+        if (id) {
+            applyZascheProductSEO(buildZascheProductSEO(id))
+        }
+    }, [id])
 
     // State hooks must be called unconditionally, so we handle the "not found" case after hooks or use a layout effect?
     // Actually, it's better to return early if not found, but hooks order matters.
@@ -192,6 +200,7 @@ export default function ZascheProductDetail() {
     return (
         <div className="bg-white min-h-screen font-sans text-gray-900">
             <ZascheHeader backgroundImage="/ZASCHE_Panorama_03_header.jpg" logo={zashceLogo} />
+            <ZascheBreadcrumbs product={product} />
 
             {/* Product Title Section (Replaces Hero) */}
             <section className="py-16 px-4 bg-gray-50 border-b border-gray-200">
@@ -210,7 +219,7 @@ export default function ZascheProductDetail() {
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.3, duration: 0.8 }}
                     >
-                        {product.title}
+                        Zasche Endüstriyel {product.title}
                     </motion.h1>
                     <motion.p
                         className="text-xl text-gray-600 font-light leading-relaxed max-w-2xl mx-auto"
@@ -265,7 +274,7 @@ export default function ZascheProductDetail() {
                         >
                             <img
                                 src={activeImage === 0 ? product.gallery.main : product.gallery.thumbnails[activeImage]}
-                                alt={`${product.title} Detay`}
+                                alt={`Zasche Endüstriyel ${product.title} - Detay`}
                                 className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
                             />
                             {/* Zoom icon hint */}
@@ -284,7 +293,7 @@ export default function ZascheProductDetail() {
                                 >
                                     <img
                                         src={img}
-                                        alt={`Thumbnail ${idx + 1}`}
+                                        alt={`Zasche Endüstriyel ${product.title} - Detay ${idx + 1}`}
                                         className="w-full h-full object-cover"
                                     />
                                 </div>
@@ -318,7 +327,7 @@ export default function ZascheProductDetail() {
                                 >
                                     <img
                                         src={app.src}
-                                        alt={app.title}
+                                        alt={`Zasche Endüstriyel ${product.title} - ${app.title}`}
                                         loading="lazy"
                                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                     />
@@ -536,32 +545,12 @@ export default function ZascheProductDetail() {
                             const fullData = zascheProducts.find(p => p.id === related.id);
                             const imageSrc = fullData ? fullData.gallery.thumbnails[0] : 'https://placehold.co/600x400?text=No+Image';
 
-                            // Determine category path
-                            const productCategoryMap: Record<string, string> = {
-                                'mafsalli-kollar': '/kategoriler/manipulatorler/manipulatorler',
-                                'paralelogram-manipulatorler': '/kategoriler/manipulatorler/manipulatorler',
-                                'kaldirma-eksenleri': '/kategoriler/manipulatorler/manipulatorler',
-                                'teleskopik-kaldirma': '/kategoriler/manipulatorler/manipulatorler',
-                                'istifleme-vincleri': '/kategoriler/manipulatorler/manipulatorler',
-                                'zemin-kilavuzlu-tasima': '/kategoriler/manipulatorler/manipulatorler',
-
-                                'pnomatik-halatli-dengeleyici': '/kategoriler/manipulatorler/kaldirma-ekipmanlari-halatli-dengeleyiciler',
-                                'elektrikli-halatli-dengeleyici': '/kategoriler/manipulatorler/kaldirma-ekipmanlari-halatli-dengeleyiciler',
-                                'elektrikli-halatli-vinc': '/kategoriler/manipulatorler/kaldirma-ekipmanlari-halatli-dengeleyiciler',
-
-                                'celik-ustyapi-vinc-destek-yapisi': '/kategoriler/manipulatorler/asma-vinc-sistemleri',
-                                'hafif-vinc-sistemleri': '/kategoriler/manipulatorler/asma-vinc-sistemleri',
-                                'pergel-vincler': '/kategoriler/manipulatorler/asma-vinc-sistemleri',
-
-                                'takim-tasima-panelleri': '/kategoriler/manipulatorler/ozel-ekipmanlar',
-                            };
-
-                            const basePath = productCategoryMap[related.id] || '/kategoriler/manipulatorler/manipulatorler';
+                            const link = fullData?.link || '#';
 
                             return (
                                 <Link
                                     key={idx}
-                                    to={`${basePath}/${related.id}`}
+                                    to={link}
                                     className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col border border-gray-100 hover:border-[#ff8c42]/30"
                                     onClick={() => window.scrollTo(0, 0)}
                                 >

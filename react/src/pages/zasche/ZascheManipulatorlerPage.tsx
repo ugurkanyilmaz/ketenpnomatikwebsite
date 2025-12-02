@@ -4,89 +4,16 @@ import { Weight, MoveVertical, Radius, RotateCw } from 'lucide-react'
 import ZascheHeader from '../../components/ZascheHeader'
 import zashceLogo from './zashceLogo.svg'
 import { zascheProducts } from '../../data/zascheProducts'
+import { buildZascheSEO, applyZascheSEO } from '../../utils/zasche_seo'
+import { useEffect } from 'react'
 
-const products = [
-    {
-        id: 1,
-        title: 'Mafsallı Kollar',
-        subtitle: 'Articulated arms',
-        description: 'Makine operatörleri için ergonomik bir yardımcı olan mafsallı kollarım ız, halatlı dengeleyicilerle donatılmış olup sütun, kolon veya tavana monte edilebilir.',
-        link: '/kategoriler/manipulatorler/manipulatorler/mafsalli-kollar',
-        productId: 'mafsalli-kollar',
-        specs: {
-            load: '160 kg',
-            lift: '2000 mm',
-            reach: '4000 mm'
-        }
-    },
-    {
-        id: 2,
-        title: 'Paralelogram Manipülatörler',
-        subtitle: 'Parallelogram manipulators',
-        description: 'Pnömatik vinçler ve paralelogram yapısının birleşimi olan bu seri, yükleri ağırlıksızmış gibi hissettiren ve mükemmel dengeleme sağlayan bir çözümdür.',
-        link: '/kategoriler/manipulatorler/manipulatorler/paralelogram-manipulatorler',
-        productId: 'paralelogram-manipulatorler',
-        specs: {
-            load: '350 kg',
-            lift: '1600 mm',
-            reach: '3500 mm'
-        }
-    },
-    {
-        id: 3,
-        title: 'Kaldırma Eksenleri',
-        subtitle: 'Lifting axes',
-        description: '1000 kg\'a kadar kaldırma kapasitesine sahip kaldırma eksenlerimiz, rijit ve eksantrik yüklemeler için idealdir. Zincirli vinç sistemleriyle entegre edilebilir.',
-        link: '/kategoriler/manipulatorler/manipulatorler/kaldirma-eksenleri',
-        productId: 'kaldirma-eksenleri',
-        specs: {
-            load: '1000 kg',
-            lift: '1200 mm',
-            torque: '2500 Nm'
-        }
-    },
-    {
-        id: 4,
-        title: 'Teleskopik Kaldırma Cihazları',
-        subtitle: 'Telescopic lifting devices',
-        description: 'Teleskopik kaldırma cihazları, iç veya dış hareketli zincir mekanizmasına sahip elektrikli vinçler yardımıyla dikey hareket sağlar.',
-        link: '/kategoriler/manipulatorler/manipulatorler/teleskopik-kaldirma',
-        productId: 'teleskopik-kaldirma',
-        specs: {
-            load: '1500 kg',
-            lift: '2000 mm',
-            torque: '5000 Nm'
-        }
-    },
-    {
-        id: 5,
-        title: 'İstifleme Vinçleri',
-        subtitle: 'Stacker crane',
-        description: 'Tavan veya zemin montajlı seçenekleri bulunan istifleme vinçlerimiz, ulaşılması zor noktalara erişim ve geniş hareket aralığı gerektiren işlemler için tasarlanmıştır.',
-        link: '/kategoriler/manipulatorler/manipulatorler/istifleme-vincleri',
-        productId: 'istifleme-vincleri',
-        specs: {
-            load: '500 kg',
-            lift: '3000 mm',
-            torque: '2500 Nm'
-        }
-    },
-    {
-        id: 6,
-        title: 'Zemin Kılavuzlu Taşıma Cihazları',
-        subtitle: 'Floor-guided handling devices',
-        description: 'Zemin kılavuzlu taşıma cihazlarımız, yüksek kaldırma kapasitesi sunan özel mobil çözümlerdir. Esneklik gerektiren zorlu taşıma operasyonları için idealdir.',
-        link: '/kategoriler/manipulatorler/manipulatorler/zemin-kilavuzlu-tasima',
-        productId: 'zemin-kilavuzlu-tasima',
-        specs: {
-            load: '200 kg',
-            lift: '800 mm',
-            torque: '1500 Nm'
-        }
-    }
-]
+const products = zascheProducts.filter(p => p.categoryId === 'manipulatorler');
 
 export default function ZascheManipulatorlerPage() {
+    useEffect(() => {
+        applyZascheSEO(buildZascheSEO('category_manipulatorler'))
+    }, [])
+
     return (
         <div className="bg-white min-h-screen font-sans text-gray-900">
             <ZascheHeader backgroundImage="/ZASCHE_Panorama_03_header.jpg" logo={zashceLogo} />
@@ -193,23 +120,26 @@ export default function ZascheManipulatorlerPage() {
                             viewport={{ once: true }}
                             transition={{ duration: 0.8 }}
                         >
-                            <iframe
+                            <video
                                 width="100%"
                                 height="100%"
-                                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                                title="Zasche Manipulator Video"
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
+                                autoPlay
+                                muted
+                                loop
+                                playsInline
+                                controls
                                 className="absolute inset-0 w-full h-full object-cover"
-                            ></iframe>
+                            >
+                                <source src="/zasche_videos/maniplatorler.mp4" type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
                         </motion.div>
                     </div>
                 </div>
             </section>
 
             {/* Sub-products Grid */}
-            <section className="py-24 px-4 bg-gray-50">
+            <section id="products" className="py-24 px-4 bg-gray-50">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl font-bold text-gray-900 mb-4">Ürün Çeşitleri</h2>
@@ -220,14 +150,15 @@ export default function ZascheManipulatorlerPage() {
                         {products.map((product) => (
                             <Link
                                 key={product.id}
-                                to={product.link}
+                                to={product.link || '#'}
                                 className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col"
                             >
                                 <div className="aspect-[4/3] bg-white relative overflow-hidden p-4">
                                     <img
-                                        src={zascheProducts.find(p => p.id === product.productId)?.gallery.thumbnails[0] || `https://placehold.co/800x600/e2e8f0/1e293b?text=${encodeURIComponent(product.title)}`}
+                                        src={product.gallery.thumbnails[0] || `https://placehold.co/800x600/e2e8f0/1e293b?text=${encodeURIComponent(product.title)}`}
                                         alt={product.title}
                                         className="w-full h-full object-contain transition-transform duration-700"
+                                        loading="lazy"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                 </div>
@@ -239,31 +170,33 @@ export default function ZascheManipulatorlerPage() {
                                         {product.subtitle}
                                     </h4>
                                     <p className="text-gray-600 leading-relaxed mb-6 flex-1">
-                                        {product.description}
+                                        {product.heroDescription}
                                     </p>
 
                                     <div className="space-y-3 border-t border-gray-100 pt-6">
-                                        <div className="flex items-center gap-3 text-gray-700">
-                                            <Weight className="w-5 h-5 text-primary" />
-                                            <span className="font-medium">max. {product.specs.load}</span>
-                                        </div>
-                                        <div className="flex items-center gap-3 text-gray-700">
-                                            <MoveVertical className="w-5 h-5 text-primary" />
-                                            <span className="font-medium">max. {product.specs.lift}</span>
-                                        </div>
-                                        <div className="flex items-center gap-3 text-gray-700">
-                                            {product.specs.reach ? (
-                                                <>
-                                                    <Radius className="w-5 h-5 text-primary" />
-                                                    <span className="font-medium">max. {product.specs.reach}</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <RotateCw className="w-5 h-5 text-primary" />
-                                                    <span className="font-medium">max. {product.specs.torque}</span>
-                                                </>
-                                            )}
-                                        </div>
+                                        {product.specs?.load && (
+                                            <div className="flex items-center gap-3 text-gray-700">
+                                                <Weight className="w-5 h-5 text-primary" />
+                                                <span className="font-medium">max. {product.specs.load}</span>
+                                            </div>
+                                        )}
+                                        {product.specs?.lift && (
+                                            <div className="flex items-center gap-3 text-gray-700">
+                                                <MoveVertical className="w-5 h-5 text-primary" />
+                                                <span className="font-medium">max. {product.specs.lift}</span>
+                                            </div>
+                                        )}
+                                        {product.specs?.reach ? (
+                                            <div className="flex items-center gap-3 text-gray-700">
+                                                <Radius className="w-5 h-5 text-primary" />
+                                                <span className="font-medium">max. {product.specs.reach}</span>
+                                            </div>
+                                        ) : product.specs?.torque ? (
+                                            <div className="flex items-center gap-3 text-gray-700">
+                                                <RotateCw className="w-5 h-5 text-primary" />
+                                                <span className="font-medium">max. {product.specs.torque}</span>
+                                            </div>
+                                        ) : null}
                                     </div>
 
                                     <div className="mt-6 pt-6 border-t border-gray-100 text-center">
@@ -292,17 +225,17 @@ export default function ZascheManipulatorlerPage() {
                             {
                                 title: 'Kaldırma Ekipmanları',
                                 link: '/kategoriler/manipulatorler/kaldirma-ekipmanlari-halatli-dengeleyiciler',
-                                image: 'https://placehold.co/1920x1080/1a1a1a/ffffff?text=Kaldirma+Ekipmanlari'
+                                image: '/kaldirma_sistemleri.jpg'
                             },
                             {
                                 title: 'Asma Vinç Sistemleri',
                                 link: '/kategoriler/manipulatorler/asma-vinc-sistemleri',
-                                image: 'https://placehold.co/1920x1080/1a1a1a/ffffff?text=Asma+Vinc+Sistemleri'
+                                image: '/asmavincsistemleri.jpg'
                             },
                             {
                                 title: 'Özel Ekipmanlar',
                                 link: '/kategoriler/manipulatorler/ozel-ekipmanlar',
-                                image: 'https://placehold.co/1920x1080/1a1a1a/ffffff?text=Ozel+Ekipmanlar'
+                                image: '/ozelcozumler.jpg'
                             }
                         ].map((category, index) => (
                             <Link
@@ -316,6 +249,7 @@ export default function ZascheManipulatorlerPage() {
                                         src={category.image}
                                         alt={category.title}
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        loading="lazy"
                                     />
                                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
                                 </div>

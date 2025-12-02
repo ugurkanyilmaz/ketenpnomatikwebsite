@@ -5,7 +5,14 @@ import ZascheHeader from '../../components/ZascheHeader'
 import zashceLogo from './zashceLogo.svg'
 import { zascheProducts } from '../../data/zascheProducts'
 
+import { buildZascheSEO, applyZascheSEO } from '../../utils/zasche_seo'
+import { useEffect } from 'react'
+
 export default function ZascheOzelEkipmanlarPage() {
+    useEffect(() => {
+        applyZascheSEO(buildZascheSEO('category_ozelcozumler'))
+    }, [])
+
     return (
         <div className="bg-white min-h-screen font-sans text-gray-900">
             <ZascheHeader backgroundImage="/ZASCHE_Panorama_03_header.jpg" logo={zashceLogo} />
@@ -88,23 +95,26 @@ export default function ZascheOzelEkipmanlarPage() {
                             viewport={{ once: true }}
                             transition={{ duration: 0.8 }}
                         >
-                            <iframe
+                            <video
                                 width="100%"
                                 height="100%"
-                                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                                title="Zasche Special Equipment Video"
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
+                                autoPlay
+                                muted
+                                loop
+                                playsInline
+                                controls
                                 className="absolute inset-0 w-full h-full object-cover"
-                            ></iframe>
+                            >
+                                <source src="/zasche_videos/ozelcozumler.mp4" type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
                         </motion.div>
                     </div>
                 </div>
             </section>
 
             {/* Sub-products Grid */}
-            <section className="py-24 px-4 bg-gray-50">
+            <section id="products" className="py-24 px-4 bg-gray-50">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl font-bold text-gray-900 mb-4">Ürün Çeşitleri</h2>
@@ -114,19 +124,14 @@ export default function ZascheOzelEkipmanlarPage() {
                     <div className="flex flex-wrap justify-center gap-8">
                         {[
                             {
+                                id: 'semi-auto',
                                 title: 'Yarı Otomasyon',
                                 subtitle: 'Semi-automation',
-                                desc: 'İlk bakışta tersine gibi görünse de, bazı üreticiler tam otomasyon yerine yarı otomatik çözümlerden daha fazla fayda sağlayabilir. Yarı otomasyonda süreç kararlılığı, hassas pozisyonlama ve yüksek hareket hızları gibi otomasyon avantajlarını insan operatörün beceri ve sezgisiyle birleştiririz.',
-                                specs: {}
-                            },
-                            {
-                                title: 'Takım Taşıma / Takım Panelleri',
-                                subtitle: 'Tool handling / tool panels',
-                                desc: 'Ergonomik ve verimli bir çalışma alanı, takım stoğunuzu minimuma indirir. Takım panellerimizle ekipmanlar düzenli tutulur, takılma ve düşme riskleri azaltılır ve verim artar.',
-                                specs: { load: '150 kg', lift: '4000 mm' },
-                                link: '/kategoriler/manipulatorler/ozel-ekipmanlar/takim-tasima-panelleri',
-                                productId: 'takim-tasima-panelleri'
-                            }
+                                heroDescription: 'İlk bakışta tersine gibi görünse de, bazı üreticiler tam otomasyon yerine yarı otomatik çözümlerden daha fazla fayda sağlayabilir. Yarı otomasyonda süreç kararlılığı, hassas pozisyonlama ve yüksek hareket hızları gibi otomasyon avantajlarını insan operatörün beceri ve sezgisiyle birleştiririz.',
+                                specs: {},
+                                gallery: { thumbnails: [] }
+                            } as unknown as import('../../data/zascheProducts').ZascheProduct,
+                            ...zascheProducts.filter(p => p.categoryId === 'ozelcozumler')
                         ].map((item, index) => (
                             <motion.div
                                 key={index}
@@ -146,9 +151,10 @@ export default function ZascheOzelEkipmanlarPage() {
                                 )}
                                 <div className="aspect-[4/3] bg-white relative overflow-hidden p-4">
                                     <img
-                                        src={zascheProducts.find(p => p.id === item.productId)?.gallery.thumbnails[0] || `https://placehold.co/800x600/e2e8f0/1e293b?text=${encodeURIComponent(item.title)}`}
+                                        src={item.gallery?.thumbnails?.[0] || `https://placehold.co/800x600/e2e8f0/1e293b?text=${encodeURIComponent(item.title)}`}
                                         alt={item.title}
                                         className="w-full h-full object-contain transition-transform duration-700"
+                                        loading="lazy"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                 </div>
@@ -159,7 +165,7 @@ export default function ZascheOzelEkipmanlarPage() {
                                     {item.subtitle && (
                                         <h4 className="text-lg font-medium text-gray-500 mb-4">{item.subtitle}</h4>
                                     )}
-                                    <p className="text-gray-600 leading-relaxed mb-6 flex-1">{item.desc}</p>
+                                    <p className="text-gray-600 leading-relaxed mb-6 flex-1">{item.heroDescription}</p>
 
                                     <div className="space-y-3 border-t border-gray-100 pt-6">
                                         {item.specs?.load && (
@@ -202,17 +208,17 @@ export default function ZascheOzelEkipmanlarPage() {
                             {
                                 title: 'Manipülatörler',
                                 link: '/kategoriler/manipulatorler/manipulatorler',
-                                image: 'https://placehold.co/1920x1080/1a1a1a/ffffff?text=Manipulatorler'
+                                image: '/maniplatorler.jpg'
                             },
                             {
                                 title: 'Kaldırma Ekipmanları',
                                 link: '/kategoriler/manipulatorler/kaldirma-ekipmanlari-halatli-dengeleyiciler',
-                                image: 'https://placehold.co/1920x1080/1a1a1a/ffffff?text=Kaldirma+Ekipmanlari'
+                                image: '/kaldirma_sistemleri.jpg'
                             },
                             {
                                 title: 'Asma Vinç Sistemleri',
                                 link: '/kategoriler/manipulatorler/asma-vinc-sistemleri',
-                                image: 'https://placehold.co/1920x1080/1a1a1a/ffffff?text=Asma+Vinc+Sistemleri'
+                                image: '/asmavincsistemleri.jpg'
                             }
                         ].map((category, index) => (
                             <Link
@@ -226,6 +232,7 @@ export default function ZascheOzelEkipmanlarPage() {
                                         src={category.image}
                                         alt={category.title}
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        loading="lazy"
                                     />
                                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
                                 </div>

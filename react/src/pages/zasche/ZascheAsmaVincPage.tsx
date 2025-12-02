@@ -3,8 +3,14 @@ import { Link } from 'react-router-dom'
 import ZascheHeader from '../../components/ZascheHeader'
 import zashceLogo from './zashceLogo.svg'
 import { zascheProducts } from '../../data/zascheProducts'
+import { buildZascheSEO, applyZascheSEO } from '../../utils/zasche_seo'
+import { useEffect } from 'react'
 
 export default function ZascheAsmaVincPage() {
+    useEffect(() => {
+        applyZascheSEO(buildZascheSEO('category_asmavinc'))
+    }, [])
+
     return (
         <div className="bg-white min-h-screen font-sans text-gray-900">
             <ZascheHeader backgroundImage="/ZASCHE_Panorama_03_header.jpg" logo={zashceLogo} />
@@ -87,23 +93,26 @@ export default function ZascheAsmaVincPage() {
                             viewport={{ once: true }}
                             transition={{ duration: 0.8 }}
                         >
-                            <iframe
+                            <video
                                 width="100%"
                                 height="100%"
-                                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                                title="Zasche Crane Systems Video"
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
+                                autoPlay
+                                muted
+                                loop
+                                playsInline
+                                controls
                                 className="absolute inset-0 w-full h-full object-cover"
-                            ></iframe>
+                            >
+                                <source src="/zasche_videos/asma.mp4" type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
                         </motion.div>
                     </div>
                 </div>
             </section>
 
             {/* Sub-products Grid */}
-            <section className="py-24 px-4 bg-gray-50">
+            <section id="products" className="py-24 px-4 bg-gray-50">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl font-bold text-gray-900 mb-4">Ürün Çeşitleri</h2>
@@ -111,31 +120,9 @@ export default function ZascheAsmaVincPage() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {[
-                            {
-                                title: 'Çelik Üstyapı / Vinç Destek Yapısı',
-                                subtitle: 'Steel superstructure / crane supporting structure',
-                                desc: 'Kendi uzman mühendislerimiz ve sertifikalı kaynak ekibimiz, asma vinç sistemlerini çalıştırmak için özel çelik üstyapılar tasarlayıp kurabilir.',
-                                link: '/kategoriler/manipulatorler/manipulatorler/celik-ustyapi-vinc-destek-yapisi',
-                                productId: 'celik-ustyapi-vinc-destek-yapisi'
-                            },
-                            {
-                                title: 'Hafif Vinç Sistemleri',
-                                subtitle: 'Light crane systems',
-                                desc: 'Gerektiğinde, tek veya çift kirişli hafif vinç sistemleri, manipülatörler ve kaldırma ekipmanları gibi bileşenlerimizle kombine edilebilir.',
-                                link: '/kategoriler/manipulatorler/manipulatorler/hafif-vinc-sistemleri',
-                                productId: 'hafif-vinc-sistemleri'
-                            },
-                            {
-                                title: 'Pergel Vinçler',
-                                subtitle: 'Slewing cranes',
-                                desc: 'Duvara veya zemine monte pergel vinçler, halat dengeleyiciler veya zincirli vinçlerle birleştirilerek basit taşıma operasyonlarını yönetebilir.',
-                                link: '/kategoriler/manipulatorler/manipulatorler/pergel-vincler',
-                                productId: 'pergel-vincler'
-                            }
-                        ].map((item, index) => (
+                        {zascheProducts.filter(p => p.categoryId === 'asmavinc').map((product, index) => (
                             <Link
-                                to={item.link}
+                                to={product.link || '#'}
                                 key={index}
                                 onClick={() => window.scrollTo(0, 0)}
                                 className="block h-full"
@@ -150,21 +137,22 @@ export default function ZascheAsmaVincPage() {
                                 >
                                     <div className="aspect-[4/3] bg-white relative overflow-hidden p-4">
                                         <img
-                                            src={zascheProducts.find(p => p.id === item.productId)?.gallery.thumbnails[0] || `https://placehold.co/800x600/e2e8f0/1e293b?text=${encodeURIComponent(item.title)}`}
-                                            alt={item.title}
+                                            src={product.gallery.thumbnails[0] || `https://placehold.co/800x600/e2e8f0/1e293b?text=${encodeURIComponent(product.title)}`}
+                                            alt={product.title}
                                             className="w-full h-full object-contain transition-transform duration-700"
+                                            loading="lazy"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                     </div>
                                     <div className="p-8 flex flex-col flex-grow">
                                         <h3 className="text-2xl font-bold text-gray-900 mb-1 group-hover:text-[#ff8c42] transition-colors">
-                                            {item.title}
+                                            {product.title}
                                         </h3>
                                         <span className="text-sm font-medium text-gray-500 mb-4 block uppercase tracking-wider">
-                                            {item.subtitle}
+                                            {product.subtitle}
                                         </span>
                                         <p className="text-gray-600 leading-relaxed mb-6 flex-grow">
-                                            {item.desc}
+                                            {product.heroDescription}
                                         </p>
                                         <div
                                             className="inline-flex items-center justify-center w-full py-3 px-6 bg-gray-100 text-gray-900 font-bold rounded-xl group-hover:bg-[#ff8c42] group-hover:text-white transition-all duration-300 group/btn"
@@ -193,17 +181,17 @@ export default function ZascheAsmaVincPage() {
                             {
                                 title: 'Manipülatörler',
                                 link: '/kategoriler/manipulatorler/manipulatorler',
-                                image: 'https://placehold.co/1920x1080/1a1a1a/ffffff?text=Manipulatorler'
+                                image: '/maniplatorler.jpg'
                             },
                             {
                                 title: 'Kaldırma Ekipmanları',
                                 link: '/kategoriler/manipulatorler/kaldirma-ekipmanlari-halatli-dengeleyiciler',
-                                image: 'https://placehold.co/1920x1080/1a1a1a/ffffff?text=Kaldirma+Ekipmanlari'
+                                image: '/kaldirma_sistemleri.jpg'
                             },
                             {
                                 title: 'Özel Ekipmanlar',
                                 link: '/kategoriler/manipulatorler/ozel-ekipmanlar',
-                                image: 'https://placehold.co/1920x1080/1a1a1a/ffffff?text=Ozel+Ekipmanlar'
+                                image: '/ozelcozumler.jpg'
                             }
                         ].map((category, index) => (
                             <Link
@@ -217,6 +205,7 @@ export default function ZascheAsmaVincPage() {
                                         src={category.image}
                                         alt={category.title}
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        loading="lazy"
                                     />
                                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
                                 </div>

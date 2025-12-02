@@ -15,11 +15,13 @@ export default function Hero() {
   const { image: hero1 } = useSiteImage('home_hero_1')
   const { image: hero2 } = useSiteImage('home_hero_2')
   const { image: hero3 } = useSiteImage('home_hero_3')
+  const { image: hero4 } = useSiteImage('home_hero_4')
 
   const slidesAll: Slide[] = []
   if (hero1?.image_path) slidesAll.push({ image: hero1.image_path, title: 'Keten Pnömatik', subtitle: 'Endüstriyel pnömatik çözümler ve ekipmanlar', ctaPrimary: { label: 'Ürünleri Keşfet', href: '/kategoriler' }, ctaSecondary: { label: 'Demo Talep Et', href: '/demo-talebi' }, alt: hero1?.alt_text || 'Keten Pnömatik Ana Görsel' })
   if (hero2?.image_path) slidesAll.push({ image: hero2.image_path, title: 'Endüstriyel Seri', subtitle: 'Ağır hizmet için yüksek dayanım ve verimlilik', ctaPrimary: { label: 'Endüstriyel Seriye Git', href: '/kategoriler/endustriyel' }, ctaSecondary: { label: 'Teknik Servis', href: '/teknik-servis' }, alt: hero2?.alt_text || 'Endüstriyel Seri' })
   if (hero3?.image_path) slidesAll.push({ image: hero3.image_path, title: 'Profesyonel Seri', subtitle: 'Usta kullanıcılar için hafif ve güçlü çözümler', ctaPrimary: { label: 'Profesyonel Seriye Git', href: '/kategoriler/profesyonel' }, ctaSecondary: { label: 'Demo Talep Et', href: '/demo-talebi' }, alt: hero3?.alt_text || 'Profesyonel Seri' })
+  if (hero4?.image_path) slidesAll.push({ image: hero4.image_path, title: 'Manipülatörler', subtitle: 'Ergonomik taşıma ve kaldırma çözümleri', ctaPrimary: { label: 'Manipülatörleri Keşfet', href: '/kategoriler/manipulatorler' }, ctaSecondary: { label: 'Demo Talep Et', href: '/demo-talebi' }, alt: hero4?.alt_text || 'Manipülatörler' })
 
   const slides = slidesAll
 
@@ -58,21 +60,19 @@ export default function Hero() {
         {slides.map((slide, i) => (
           <div
             key={slide.image}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              i === index ? 'opacity-100' : 'opacity-0'
-            }`}
+            className={`absolute inset-0 transition-opacity duration-1000 ${i === index ? 'opacity-100' : 'opacity-0'
+              }`}
           >
             <img
               src={slide.image}
               alt={slide.alt}
-              className={`w-full h-full object-cover ${
-                i === index ? 'animate-ken-burns' : ''
-              }`}
+              className={`w-full h-full object-cover ${i === index ? 'animate-ken-burns' : ''
+                }`}
               loading={i === 0 ? 'eager' : 'lazy'}
             />
           </div>
         ))}
-        
+
         {/* Gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-r from-gray-900/80 via-gray-900/50 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 via-transparent to-transparent" />
@@ -125,12 +125,12 @@ export default function Hero() {
             </div>
 
             {/* CTA Buttons - Animated */}
-            <div 
+            <div
               className="flex flex-col sm:flex-row gap-4 animate-fade-in-up"
               style={{ animationDelay: '0.3s' }}
             >
-              <a 
-                className="btn btn-primary btn-lg gap-3 shadow-2xl hover:shadow-primary/50 hover:scale-105 transition-all duration-300 group border-none text-base md:text-lg" 
+              <a
+                className="btn btn-primary btn-lg gap-3 shadow-2xl hover:shadow-primary/50 hover:scale-105 transition-all duration-300 group border-none text-base md:text-lg"
                 href={slides[index].ctaPrimary.href}
               >
                 {slides[index].ctaPrimary.label}
@@ -138,8 +138,8 @@ export default function Hero() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </a>
-              <a 
-                className="btn btn-lg gap-3 bg-white/10 backdrop-blur-md border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 transition-all duration-300 text-base md:text-lg" 
+              <a
+                className="btn btn-lg gap-3 bg-white/10 backdrop-blur-md border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 transition-all duration-300 text-base md:text-lg"
                 href={slides[index].ctaSecondary.href}
               >
                 {slides[index].ctaSecondary.label}
@@ -159,11 +159,10 @@ export default function Hero() {
             <button
               key={i}
               onClick={() => { setIndex(i); setPaused(true); setTimeout(() => setPaused(false), 3000) }}
-              className={`transition-all duration-500 rounded-full ${
-                i === index 
-                  ? 'w-12 h-3 bg-white shadow-lg' 
-                  : 'w-3 h-3 bg-white/40 hover:bg-white/60'
-              }`}
+              className={`transition-all duration-500 rounded-full ${i === index
+                ? 'w-12 h-3 bg-white shadow-lg'
+                : 'w-3 h-3 bg-white/40 hover:bg-white/60'
+                }`}
               aria-label={`Slayt ${i + 1}`}
             />
           ))}

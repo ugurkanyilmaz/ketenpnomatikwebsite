@@ -1,15 +1,36 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import panoramaImage from './ZASCHE_Panorama_03.jpg'
 import zashceLogo from './zashceLogo.svg'
 import ZascheHeader from '../../components/ZascheHeader'
 import { sectors } from '../../data/sectoredata'
+import { buildZascheSEO, applyZascheSEO } from '../../utils/zasche_seo'
 
 export default function ManiplatorlerPage() {
+    useEffect(() => {
+        applyZascheSEO(buildZascheSEO('manipulatorler_home'))
+    }, [])
+
+    const [selectedSector, setSelectedSector] = useState<typeof sectors[0] | null>(null)
     const [hoveredSector, setHoveredSector] = useState<number | null>(null)
+    const location = useLocation()
+
+    useEffect(() => {
+        if (location.hash === '#products') {
+            const element = document.getElementById('products')
+            if (element) {
+                setTimeout(() => {
+                    element.scrollIntoView({ behavior: 'smooth' })
+                }, 100)
+            }
+        }
+    }, [location])
 
     const marketIcons = ['🚗', '⚡', '🏗️', '🧪', '🖨️', '⚙️', '📦', '🔧', '🪵', '🔩', '🧵', '🔬']
+
+    // Helper to check if mobile
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
 
     return (
         <div className="bg-base-100">
@@ -76,7 +97,7 @@ export default function ManiplatorlerPage() {
                         >
                             <div className="rounded-xl overflow-hidden shadow-xl">
                                 <img
-                                    src="https://placehold.co/800x600/1a56db/white?text=Manipulator"
+                                    src="/mannedir.jpg"
                                     alt="Manipülatör Sistemi"
                                     className="w-full h-full object-cover"
                                     loading="lazy"
@@ -192,11 +213,12 @@ export default function ManiplatorlerPage() {
                         >
                             <div className="aspect-[4/3] bg-gray-200 relative overflow-hidden">
                                 <img
-                                    src="https://placehold.co/1920x1080/1a1a1a/ffffff?text=Manipulatorler"
+                                    src="/maniplatorler.jpg"
                                     alt="Manipülatörler"
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    loading="lazy"
                                 />
-                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
+
                             </div>
                             <div className="p-6">
                                 <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#ff8c42] transition-colors">
@@ -220,11 +242,11 @@ export default function ManiplatorlerPage() {
                         >
                             <div className="aspect-[4/3] bg-gray-200 relative overflow-hidden">
                                 <img
-                                    src="https://placehold.co/1920x1080/1a1a1a/ffffff?text=Kaldirma+Ekipmanlari"
+                                    src="/kaldirma_sistemleri.jpg"
                                     alt="Kaldırma Ekipmanları"
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
-                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
+
                             </div>
                             <div className="p-6">
                                 <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#ff8c42] transition-colors">
@@ -248,11 +270,11 @@ export default function ManiplatorlerPage() {
                         >
                             <div className="aspect-[4/3] bg-gray-200 relative overflow-hidden">
                                 <img
-                                    src="https://placehold.co/1920x1080/1a1a1a/ffffff?text=Asma+Vinc+Sistemleri"
+                                    src="/asmavincsistemleri.jpg"
                                     alt="Asma Vinç Sistemleri"
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
-                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
+
                             </div>
                             <div className="p-6">
                                 <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#ff8c42] transition-colors">
@@ -276,11 +298,11 @@ export default function ManiplatorlerPage() {
                         >
                             <div className="aspect-[4/3] bg-gray-200 relative overflow-hidden">
                                 <img
-                                    src="https://placehold.co/1920x1080/1a1a1a/ffffff?text=Ozel+Ekipmanlar"
+                                    src="/ozelcozumler.jpg"
                                     alt="Özel Ekipmanlar"
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
-                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
+
                             </div>
                             <div className="p-6">
                                 <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#ff8c42] transition-colors">
@@ -323,14 +345,15 @@ export default function ManiplatorlerPage() {
                         {sectors.map((sector, index) => (
                             <div key={sector.title} className="relative">
                                 <motion.div
-                                    className="card bg-white shadow-md hover:shadow-xl transition-all duration-300 border border-base-200 relative"
+                                    className="card bg-white shadow-md hover:shadow-xl transition-all duration-300 border border-base-200 relative cursor-pointer"
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: index * 0.05, duration: 0.4 }}
                                     whileHover={{ y: -5 }}
-                                    onMouseEnter={() => setHoveredSector(index)}
-                                    onMouseLeave={() => setHoveredSector(null)}
+                                    onMouseEnter={() => !isMobile && setHoveredSector(index)}
+                                    onMouseLeave={() => !isMobile && setHoveredSector(null)}
+                                    onClick={() => setSelectedSector(sector)}
                                 >
                                     <div className="card-body items-center text-center p-6">
                                         <div className="text-4xl mb-3">{marketIcons[index]}</div>
@@ -340,9 +363,9 @@ export default function ManiplatorlerPage() {
                                     </div>
                                 </motion.div>
 
-                                {/* Hover Tooltip Bubble - Outside the animated card */}
+                                {/* Hover Tooltip Bubble - Desktop Only */}
                                 <AnimatePresence>
-                                    {hoveredSector === index && (
+                                    {hoveredSector === index && !isMobile && (
                                         <motion.div
                                             initial={{ opacity: 0, scale: 0.9, y: index < 4 ? -10 : 10 }}
                                             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -359,6 +382,7 @@ export default function ManiplatorlerPage() {
                                                         src={sector.image}
                                                         alt={sector.title}
                                                         className="w-full h-full object-cover"
+                                                        loading="lazy"
                                                     />
                                                     <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 to-transparent" />
                                                     <h4 className="absolute bottom-3 left-4 text-white font-bold text-lg">
@@ -393,6 +417,48 @@ export default function ManiplatorlerPage() {
                     </div>
                 </div>
             </motion.section>
+
+            {/* Mobile Modal for Sector Details */}
+            <AnimatePresence>
+                {selectedSector && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedSector(null)}>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <button
+                                className="absolute top-3 right-3 z-10 p-2 bg-black/20 hover:bg-black/40 rounded-full text-white transition-colors"
+                                onClick={() => setSelectedSector(null)}
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+
+                            <div className="h-48 relative">
+                                <img
+                                    src={selectedSector.image}
+                                    alt={selectedSector.title}
+                                    className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                                <h3 className="absolute bottom-4 left-4 text-2xl font-bold text-white">
+                                    {selectedSector.title}
+                                </h3>
+                            </div>
+
+                            <div className="p-6">
+                                <p className="text-gray-600 leading-relaxed">
+                                    {selectedSector.description}
+                                </p>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     )
 }

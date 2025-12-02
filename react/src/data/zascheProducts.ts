@@ -40,12 +40,37 @@ export interface ZascheProduct {
         title: string;
         description: string;
     }[];
+    subtitle?: string;
+    specs?: {
+        load?: string;
+        lift?: string;
+        reach?: string;
+        torque?: string;
+    };
+    categoryId?: string;
+    link?: string;
+    seo?: {
+        title: string;
+        description: string;
+        keywords: string[];
+        schemaDescription: string;
+    };
 }
 
 export const zascheProducts: ZascheProduct[] = [
     {
         id: "elektrikli-halatli-dengeleyici",
         title: "Elektrikli Halatlı Dengeleyiciler",
+        subtitle: "Electric rope balancers",
+        categoryId: "kaldirma",
+        link: "/kategoriler/manipulatorler/kaldirma-ekipmanlari-halatli-dengeleyiciler/elektrikli-halatli-dengeleyici",
+        specs: { load: "100 kg", lift: "2000 mm" },
+        seo: {
+            title: "Zasche Elektrikli Halatlı Dengeleyici | Havasız Hassas Kaldırma",
+            description: "Basınçlı hava gerektirmeyen Zasche elektrikli halatlı dengeleyiciler ile 100 kg'a kadar yükleri sessiz ve hassas taşıyın. Pnömatik altyapısı olmayan tesisler için ideal.",
+            keywords: ["elektrikli halatlı dengeleyici", "rope balancer", "z-be", "havasız kaldırma", "endüstriyel manipülatör", "zasche türkiye"],
+            schemaDescription: "Z-BE serisi, 100 kg kapasiteli ve 2000 mm stroklu elektrikli halatlı dengeleyicidir. Basınçlı hava gerektirmez, sessiz çalışır ve operatörün doğal el hareketleriyle yükü yönlendirmesini sağlayan sensör teknolojisine sahiptir."
+        },
         heroImage: "https://placehold.co/1920x1080/1a1a1a/ffffff?text=Elektrikli+Halatli+Dengeleyiciler",
         heroDescription: "Basınçlı hava gerektirmeyen, yüksek hassasiyetli ve sessiz kaldırma çözümü.",
         mainDescription: {
@@ -105,6 +130,16 @@ export const zascheProducts: ZascheProduct[] = [
     {
         id: "kaldirma-eksenleri",
         title: "Kaldırma Eksenleri",
+        subtitle: "Lifting axes",
+        categoryId: "manipulatorler",
+        link: "/kategoriler/manipulatorler/manipulatorler/kaldirma-eksenleri",
+        specs: { load: "1000 kg", lift: "1200 mm", torque: "2500 Nm" },
+        seo: {
+            title: "Zasche Kaldırma Eksenleri | 1000 kg Ağır Yük Manipülatörü",
+            description: "Rijit ve merkez dışı (off-center) yüklemeler için Zasche kaldırma eksenleri. 1000 kg kapasite, 2500 Nm tork direnci ve hassas lineer hareket kabiliyeti.",
+            keywords: ["kaldırma eksenleri", "lifting axes", "rijit manipülatör", "ağır yük taşıma", "z-lp", "off-center yükleme", "dikey hareket ekseni"],
+            schemaDescription: "1000 kg'a kadar yükleri taşıyabilen Zasche kaldırma eksenleri, yüksek tork (2500 Nm) gerektiren eksantrik yüklemeler için tasarlanmıştır. Pnömatik tahrikli, sertleştirilmiş bilyalı kılavuzlu ve düşük bakım gerektiren endüstriyel kaldırma çözümüdür."
+        },
         heroImage: "https://placehold.co/1920x1080/1a1a1a/ffffff?text=Kaldirma+Eksenleri",
         heroDescription: "Rijit ve merkez dışı yüklemeler için yüksek kapasiteli dikey hareket.",
         mainDescription: {
@@ -173,6 +208,16 @@ export const zascheProducts: ZascheProduct[] = [
     {
         id: "mafsalli-kollar",
         title: "Mafsallı Kollar",
+        subtitle: "Articulated arms",
+        categoryId: "manipulatorler",
+        link: "/kategoriler/manipulatorler/manipulatorler/mafsalli-kollar",
+        specs: { load: "160 kg", lift: "2000 mm", reach: "4000 mm" },
+        seo: {
+            title: "Zasche Mafsallı Kollar | Geniş Erişimli Ergonomik Manipülatör",
+            description: "4000 mm erişim yarıçapına sahip Zasche mafsallı kollar ile ergonomik taşıma. Sütun veya tavana monte seçenekleriyle montaj hatlarında maksimum verimlilik.",
+            keywords: ["mafsallı kol", "articulated arm", "endüstriyel manipülatör kolu", "zasche z-kme", "ergonomik taşıma kolu", "pivot kol"],
+            schemaDescription: "Zasche mafsallı kollar, 160 kg yük kapasitesi ve 4 metrelik erişim mesafesi sunar. Halatlı dengeleyicilerle entegre edilebilen, düşük sürtünmeli eklemleri sayesinde operatör yorgunluğunu azaltan ergonomik taşıma sistemidir."
+        },
         heroImage: "https://placehold.co/1920x1080/1a1a1a/ffffff?text=Mafsalli+Kollar",
         heroDescription: "Ergonomik kaldırma yardımcıları, geniş erişim alanı.",
         mainDescription: {
@@ -249,6 +294,16 @@ export const zascheProducts: ZascheProduct[] = [
     {
         id: "elektrikli-halatli-vinc",
         title: "Z-RE Elektrikli Halatlı Dengeleyici",
+        subtitle: "Electric ropehoist (Z-RE / Z-BE)",
+        categoryId: "kaldirma",
+        link: "/kategoriler/manipulatorler/kaldirma-ekipmanlari-halatli-dengeleyiciler/elektrikli-halatli-vinc",
+        specs: { load: "100 kg", lift: "2000 mm" },
+        seo: {
+            title: "Zasche Z-RE Elektrikli Halatlı Vinç | Yüksek Hızlı Pick & Place",
+            description: "32 m/dk hızla çalışan Zasche Z-RE elektrikli halatlı dengeleyici. Al-bırak (pick & place) operasyonları için 230V tak-çalıştır özellikli hızlı kaldırma çözümü.",
+            keywords: ["elektrikli halatlı vinç", "z-re", "hızlı manipülatör", "pick and place vinç", "230v vinç", "ergonomik kaldırma"],
+            schemaDescription: "Z-RE serisi, hız ve ergonomiyi birleştiren elektrikli halatlı dengeleyicidir. 32 m/dk kaldırma hızı ile sınıfının en hızlısıdır. 230V besleme ile çalışır, hassas montaj için hızı 1 m/dk altına düşürülebilir."
+        },
         heroImage: "https://placehold.co/1920x1080/1a1a1a/ffffff?text=Elektrikli+Halatli+Dengeleyici",
         heroDescription: "Hız ve ergonominin buluştuğu nokta: Yorulmadan, hızlı yük taşıma.",
         mainDescription: {
@@ -307,6 +362,16 @@ export const zascheProducts: ZascheProduct[] = [
     {
         id: "istifleme-vincleri",
         title: "İstifleme Vinçleri",
+        subtitle: "Stacker crane",
+        categoryId: "manipulatorler",
+        link: "/kategoriler/manipulatorler/manipulatorler/istifleme-vincleri",
+        specs: { load: "500 kg", lift: "3000 mm", torque: "2500 Nm" },
+        seo: {
+            title: "Zasche İstifleme Vinçleri | Dar Alanlar İçin Teleskopik İstifleme",
+            description: "Normal erişimin ötesine geçen Zasche istifleme vinçleri ile 500 kg'a kadar yükleri güvenle istifleyin. Merkez dışı yükler ve zorlu depo alanları için özel çözüm.",
+            keywords: ["istifleme vinci", "stacker crane", "teleskopik istifleme", "depo vinci", "z-se", "z-sp", "endüstriyel istifleme"],
+            schemaDescription: "Zorlu ve merkez dışı noktalara erişim için tasarlanmış Zasche istifleme vinçleri. 3000 mm strok ve 500 kg kapasiteye sahiptir. Operatör kontrol ünitesi her yükseklikte erişilebilir konumdadır."
+        },
         heroImage: "https://placehold.co/1920x1080/1a1a1a/ffffff?text=Istifleme+Vincleri",
         heroDescription: "Zorlu ve merkez dışı noktalara erişim için özel tasarım istifleme çözümleri.",
         mainDescription: {
@@ -367,6 +432,16 @@ export const zascheProducts: ZascheProduct[] = [
     {
         id: "paralelogram-manipulatorler",
         title: "Paralelogram Manipülatörler",
+        subtitle: "Parallelogram manipulators",
+        categoryId: "manipulatorler",
+        link: "/kategoriler/manipulatorler/manipulatorler/paralelogram-manipulatorler",
+        specs: { load: "350 kg", lift: "1600 mm", reach: "3500 mm" },
+        seo: {
+            title: "Zasche Paralelogram Manipülatör | Burulmasız Rijit Taşıma",
+            description: "Yerçekimsiz taşıma hissi veren Zasche paralelogram manipülatörler. Burulma kuvvetlerini (tork) sönümleyen yapısı ile otomotiv ve ağır sanayi için ideal.",
+            keywords: ["paralelogram manipülatör", "endüstriyel manipülatör", "tork kolu", "rijit kaldırma", "zasche z-ap", "ağırlıksız taşıma"],
+            schemaDescription: "Burulma kuvvetlerini dengeleyerek yükü sabitleyen pnömatik paralelogram manipülatör. 350 kg kapasite ve 3500 mm erişim mesafesi sunar. Parçanın dönmesi veya eğilmesi gereken montaj işlemleri için rijit yapıdadır."
+        },
         heroImage: "https://placehold.co/1920x1080/1a1a1a/ffffff?text=Paralelogram+Manipulatorler",
         heroDescription: "Burulma kuvvetlerini dengeleyen, yüksek hassasiyetli kaldırma çözümleri.",
         mainDescription: {
@@ -435,6 +510,16 @@ export const zascheProducts: ZascheProduct[] = [
     {
         id: "pnomatik-halatli-dengeleyici",
         title: "Pnömatik Halatlı Dengeleyiciler",
+        subtitle: "Pneumatic rope balancers",
+        categoryId: "kaldirma",
+        link: "/kategoriler/manipulatorler/kaldirma-ekipmanlari-halatli-dengeleyiciler/pnomatik-halatli-dengeleyici",
+        specs: { load: "100 kg", lift: "2000 mm" },
+        seo: {
+            title: "Zasche Pnömatik Halatlı Dengeleyici | Ağırlıksız Montaj",
+            description: "Zasche pnömatik halatlı dengeleyiciler ile yükleri \"ağırlıksız\" hissedin. Hassas parça montajı için hava tahrikli, yumuşak ve güvenli konumlandırma.",
+            keywords: ["pnömatik dengeleyici", "pneumatic balancer", "havalı balansör", "montaj manipülatörü", "z-bp", "hassas parça taşıma"],
+            schemaDescription: "Basınçlı hava ile çalışan ve yükü havada asılı (floating) tutabilen Zasche pnömatik dengeleyici. 100 kg kapasiteye kadar hassas montaj ve birleştirme işlemleri için operatöre 'ağırlıksızlık' hissi verir."
+        },
         heroImage: "https://placehold.co/1920x1080/1a1a1a/ffffff?text=Pnomatik+Halatli+Dengeleyiciler",
         heroDescription: "Hassas konumlandırma ve montaj işlemleri için esnek ve hızlı çözüm.",
         mainDescription: {
@@ -504,6 +589,16 @@ export const zascheProducts: ZascheProduct[] = [
     {
         id: "teleskopik-kaldirma",
         title: "Teleskopik Kaldırma Sistemleri",
+        subtitle: "Telescopic lifting devices",
+        categoryId: "manipulatorler",
+        link: "/kategoriler/manipulatorler/manipulatorler/teleskopik-kaldirma",
+        specs: { load: "1500 kg", lift: "2000 mm", torque: "5000 Nm" },
+        seo: {
+            title: "Zasche Teleskopik Kaldırma | Düşük Tavan (Low Headroom) Çözümü",
+            description: "Tavan yüksekliği az olan tesisler için Zasche teleskopik kaldırma sistemleri. 1500 kg kapasite ve 5000 Nm tork dayanımı ile kompakt ve güçlü.",
+            keywords: ["teleskopik kaldırma", "telescopic lifter", "düşük tavan vinci", "low headroom crane", "z-tr", "z-tv", "sanayi tipi teleskop"],
+            schemaDescription: "Düşük tavanlı (low headroom) alanlar için geliştirilmiş, iç içe geçen teleskopik profillere sahip kaldırma sistemi. 1500 kg'a kadar yük kaldırabilir ve yüksek tork (5000 Nm) gerektiren işlemler için rijit yapı sunar."
+        },
         heroImage: "https://placehold.co/1920x1080/1a1a1a/ffffff?text=Teleskopik+Kaldirma+Sistemleri",
         heroDescription: "Düşük tavanlı alanlar ve yüksek tork gereksinimleri için ideal çözüm.",
         mainDescription: {
@@ -566,6 +661,16 @@ export const zascheProducts: ZascheProduct[] = [
     {
         id: "zemin-kilavuzlu-tasima",
         title: "Zeminde Hareketli Sistemler",
+        subtitle: "Floor-guided handling devices",
+        categoryId: "manipulatorler",
+        link: "/kategoriler/manipulatorler/manipulatorler/zemin-kilavuzlu-tasima",
+        specs: { load: "200 kg", lift: "800 mm", torque: "1500 Nm" },
+        seo: {
+            title: "Zasche Zeminde Hareketli Manipülatör | Seyyar & Bağımsız Vinç",
+            description: "Tavana veya kolona montaj gerektirmeyen, zeminde özgürce hareket eden Zasche taşıma sistemleri. Akülü veya hidrolik seçeneklerle tam mobilite.",
+            keywords: ["zeminde hareketli vinç", "mobil manipülatör", "seyyar vinç", "floor guided handling", "bağımsız taşıma sistemi"],
+            schemaDescription: "Sabit bir yapıya montaj gerektirmeyen, zemin üzerinde serbestçe hareket ettirilebilen mobil manipülatör sistemi. Akülü, hidrolik veya pnömatik tahrik seçenekleriyle fabrika içinde istenilen noktada kullanılabilir."
+        },
         heroImage: "https://placehold.co/1920x1080/1a1a1a/ffffff?text=Zeminde+Hareketli+Sistemler",
         heroDescription: "Sabitleme gerektirmeyen, yüksek kapasiteli mobil taşıma çözümleri.",
         mainDescription: {
@@ -625,6 +730,16 @@ export const zascheProducts: ZascheProduct[] = [
     {
         id: "celik-ustyapi-vinc-destek-yapisi",
         title: "Çelik Üstyapı / Vinç Destek Yapısı",
+        subtitle: "Steel superstructure / crane supporting structure",
+        categoryId: "asmavinc",
+        link: "/kategoriler/manipulatorler/manipulatorler/celik-ustyapi-vinc-destek-yapisi",
+        specs: {},
+        seo: {
+            title: "Zasche Çelik Vinç Konstrüksiyonu | Sertifikalı Destek Yapıları",
+            description: "Zasche vinç sistemleriniz için özel statik hesaplamalı çelik üstyapı ve destek direkleri. Tesisinize uygun, sertifikalı kaynaklı profesyonel kurulum.",
+            keywords: ["vinç çelik konstrüksiyon", "vinç direği", "crane superstructure", "vinç yolu", "çelik destek yapısı", "statik hesaplama"],
+            schemaDescription: "Asma vinç ve manipülatör sistemlerinin kurulumu için gerekli olan, özel statik hesaplamalarla tasarlanmış çelik konstrüksiyon ve destek yapıları. Bağımsız (free-standing) veya binaya entegre çözümler."
+        },
         heroImage: "https://placehold.co/1920x1080/1a1a1a/ffffff?text=Celik+Ustyapi",
         heroDescription: "Asma vinç sistemlerini çalıştırmak için özel çelik üstyapılar.",
         mainDescription: {
@@ -677,6 +792,16 @@ export const zascheProducts: ZascheProduct[] = [
     {
         id: "hafif-vinc-sistemleri",
         title: "Hafif Vinç Sistemleri",
+        subtitle: "Light crane systems",
+        categoryId: "asmavinc",
+        link: "/kategoriler/manipulatorler/manipulatorler/hafif-vinc-sistemleri",
+        specs: {},
+        seo: {
+            title: "Zasche Hafif Vinç Sistemleri | Alüminyum & Çelik Profil Raylar",
+            description: "Modüler Zasche hafif vinç sistemleri ile tesisinizi donatın. Düşük sürtünmeli alüminyum veya çelik profiller ile ergonomik ve esnek tavan vinçleri.",
+            keywords: ["hafif vinç sistemi", "light crane system", "alüminyum vinç rayı", "modüler vinç", "tavan vinci", "monoray sistem"],
+            schemaDescription: "2000 kg kapasiteye kadar yükler için alüminyum veya çelik profillerden oluşan modüler hafif vinç sistemi. Düşük sürtünme katsayısı sayesinde yükler manuel olarak çok az kuvvetle hareket ettirilebilir."
+        },
         heroImage: "https://placehold.co/1920x1080/1a1a1a/ffffff?text=Hafif+Vinc+Sistemleri",
         heroDescription: "Modüler ve esnek taşıma çözümleri.",
         mainDescription: {
@@ -733,6 +858,16 @@ export const zascheProducts: ZascheProduct[] = [
     {
         id: "pergel-vincler",
         title: "Pergel Vinçler",
+        subtitle: "Slewing cranes",
+        categoryId: "asmavinc",
+        link: "/kategoriler/manipulatorler/manipulatorler/pergel-vincler",
+        specs: {},
+        seo: {
+            title: "Zasche Endüstriyel Pergel Vinçler | Duvar ve Sütun Tipi",
+            description: "360° dönme açısına sahip Zasche pergel vinçler ile iş istasyonlarında verimliliği artırın. Duvara veya zemine monte seçenekleriyle ekonomik taşıma.",
+            keywords: ["pergel vinç", "slewing crane", "sütunlu vinç", "duvar tipi vinç", "pergel vinç fiyatları", "bölgesel vinç"],
+            schemaDescription: "Belirli bir çalışma hücresinde 80 kg'dan 1000 kg'a kadar yükleri taşımak için kullanılan döner kollu vinç sistemi. 270° veya 360° dönme açısı seçenekleri ve manuel ya da elektrikli dönüş opsiyonları mevcuttur."
+        },
         heroImage: "https://placehold.co/1920x1080/1a1a1a/ffffff?text=Pergel+Vincler",
         heroDescription: "Basit ve etkili bölgesel taşıma çözümü.",
         mainDescription: {
@@ -787,9 +922,18 @@ export const zascheProducts: ZascheProduct[] = [
         ]
     },
     {
-
         id: "takim-tasima-panelleri",
         title: "Takım Taşıma / Takım Panelleri",
+        subtitle: "Tool handling / tool panels",
+        categoryId: "ozelcozumler",
+        link: "/kategoriler/manipulatorler/ozel-ekipmanlar/takim-tasima-panelleri",
+        specs: { load: "150 kg", lift: "4000 mm" },
+        seo: {
+            title: "Zasche Takım Taşıma Panelleri | Ergonomik Ekipman Organizasyonu",
+            description: "Üretim hattındaki alet karmaşasına son. Zasche takım taşıma panelleri ve arabaları ile ekipmanlarınız düzenli, operatörleriniz verimli olsun.",
+            keywords: ["takım taşıma paneli", "tool panel", "takım arabası", "5s ekipmanları", "ergonomik takım asıcı", "atölye düzeni"],
+            schemaDescription: "Montaj hatlarında el aletlerinin düzenli ve ergonomik bir şekilde taşınmasını sağlayan raylı veya sabit paneller. Kablo karmaşasını önler, iş güvenliğini artırır ve 5S uygulamaları için idealdir."
+        },
         heroImage: "https://placehold.co/1920x1080/1a1a1a/ffffff?text=Takim+Tasima+Panelleri",
         heroDescription: "Ergonomik ve verimli çalışma alanları için takım organizasyon çözümleri.",
         mainDescription: {
