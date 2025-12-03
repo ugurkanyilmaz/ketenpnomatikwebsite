@@ -18,6 +18,12 @@ interface PageOpts {
     image?: string
     video?: string
     path?: string
+    products?: Array<{
+        name: string
+        url: string
+        image: string
+        description?: string
+    }>
 }
 
 // --- Core SEO Builder ---
@@ -28,7 +34,8 @@ function buildBase(
     keywords: string,
     path: string,
     image: string = DEFAULT_IMAGE,
-    video?: string
+    video?: string,
+    products?: PageOpts['products']
 ) {
     const canonical = `${SITE_DOMAIN}${path}`
     const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`
@@ -83,6 +90,21 @@ function buildBase(
                 'itemListElement': buildBreadcrumbs(path, title)
             }
         ]
+    }
+
+    // Add ItemList if products are present
+    if (products && products.length > 0) {
+        structuredData['@graph'].push({
+            '@type': 'ItemList',
+            'itemListElement': products.map((prod, index) => ({
+                '@type': 'ListItem',
+                'position': index + 1,
+                'url': prod.url.startsWith('http') ? prod.url : `${SITE_DOMAIN}${prod.url}`,
+                'name': prod.name,
+                'image': prod.image.startsWith('http') ? prod.image : `${SITE_DOMAIN}${prod.image}`,
+                ...(prod.description && { 'description': prod.description })
+            }))
+        })
     }
 
     // Add VideoObject if video is present
@@ -141,7 +163,8 @@ export function buildZascheSEO(key: ZaschePageKey, opts?: PageOpts) {
                 opts?.keywords || 'zasche manipülatör, endüstriyel manipülatör, yük taşıma sistemleri, ergonomik kaldırma, ağırlıksız taşıma, pnömatik manipülatör, elektrikli manipülatör, vakumlu kaldırıcı',
                 path,
                 opts?.image || '/maniplatorler.jpg',
-                opts?.video || '/zasche_videos/maniplatorler.mp4'
+                opts?.video || '/zasche_videos/maniplatorler.mp4',
+                opts?.products
             )
 
         case 'category_manipulatorler':
@@ -151,7 +174,8 @@ export function buildZascheSEO(key: ZaschePageKey, opts?: PageOpts) {
                 opts?.keywords || 'manipülatör kol, pnömatik kol, endüstriyel robot kol, taşıma manipülatörü, montaj manipülatörü, zasche türkiye, yük dengeleyici',
                 path,
                 opts?.image || '/maniplatorler.jpg',
-                opts?.video || '/zasche_videos/maniplatorler.mp4'
+                opts?.video || '/zasche_videos/maniplatorler.mp4',
+                opts?.products
             )
 
         case 'category_kaldirma':
@@ -161,7 +185,8 @@ export function buildZascheSEO(key: ZaschePageKey, opts?: PageOpts) {
                 opts?.keywords || 'kaldırma ekipmanları, halatlı dengeleyici, yük dengeleyici, balancer, endüstriyel kaldırma, hassas yük taşıma, zasche lifting',
                 path,
                 opts?.image || '/kaldirma_sistemleri.jpg',
-                opts?.video || '/zasche_videos/kaldirma_ekipmanlari.mp4'
+                opts?.video || '/zasche_videos/kaldirma_ekipmanlari.mp4',
+                opts?.products
             )
 
         case 'category_asmavinc':
@@ -171,7 +196,8 @@ export function buildZascheSEO(key: ZaschePageKey, opts?: PageOpts) {
                 opts?.keywords || 'asma vinç, tavan vinci, hafif vinç sistemi, alüminyum ray sistemi, modüler vinç, kbk sistem, endüstriyel ray, zasche crane',
                 path,
                 opts?.image || '/asmavincsistemleri.jpg',
-                opts?.video || '/zasche_videos/asma.mp4'
+                opts?.video || '/zasche_videos/asma.mp4',
+                opts?.products
             )
 
         case 'category_ozelcozumler':
@@ -181,7 +207,8 @@ export function buildZascheSEO(key: ZaschePageKey, opts?: PageOpts) {
                 opts?.keywords || 'özel manipülatör, özel tutucu, gripper tasarımı, özel kaldırma aparatı, sektörel çözümler, mühendislik çözümleri, zasche custom',
                 path,
                 opts?.image || '/ozelcozumler.jpg',
-                opts?.video || '/zasche_videos/ozelcozumler.mp4'
+                opts?.video || '/zasche_videos/ozelcozumler.mp4',
+                opts?.products
             )
 
         default:
@@ -189,7 +216,10 @@ export function buildZascheSEO(key: ZaschePageKey, opts?: PageOpts) {
                 'ZASCHE Endüstriyel Çözümler',
                 'Zasche endüstriyel manipülatör ve kaldırma sistemleri.',
                 'zasche, manipülatör, kaldırma',
-                path
+                path,
+                undefined,
+                undefined,
+                opts?.products
             )
     }
 }

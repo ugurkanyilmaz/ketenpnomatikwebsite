@@ -8,7 +8,14 @@ import { useEffect } from 'react'
 
 export default function ZascheAsmaVincPage() {
     useEffect(() => {
-        applyZascheSEO(buildZascheSEO('category_asmavinc'))
+        const products = zascheProducts.filter(p => p.categoryId === 'asmavinc')
+        const seoProducts = products.map(p => ({
+            name: p.title,
+            url: p.link || '',
+            image: p.gallery.thumbnails[0] || '',
+            description: p.heroDescription
+        }))
+        applyZascheSEO(buildZascheSEO('category_asmavinc', { products: seoProducts }))
     }, [])
 
     return (

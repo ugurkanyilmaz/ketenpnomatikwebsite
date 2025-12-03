@@ -20,6 +20,10 @@ export function buildZascheProductSEO(productId: string) {
         : `${SITE_DOMAIN}/urun/${productId}`
 
     const imageUrl = normalizeImageUrl(product.gallery.main)
+    const allImages = [
+        imageUrl,
+        ...product.gallery.thumbnails.map(url => normalizeImageUrl(url))
+    ].filter((v, i, a) => a.indexOf(v) === i) // Unique images
 
     // Category Mapping for Breadcrumbs
     const categoryMap: Record<string, { name: string, url: string }> = {
@@ -66,7 +70,7 @@ export function buildZascheProductSEO(productId: string) {
         "@context": "https://schema.org/",
         "@type": "Product",
         "name": title,
-        "image": imageUrl,
+        "image": allImages,
         "description": product.seo?.schemaDescription || description,
         "brand": {
             "@type": "Brand",

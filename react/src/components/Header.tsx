@@ -162,46 +162,46 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
       />
 
       <header className={`${sticky ? 'sticky top-0' : 'relative'} z-40 bg-[#1a1a1a] border-b border-gray-700 shadow-lg`}>
-        <div className="max-w-7xl mx-auto px-4 pl-2 md:pl-4 lg:pl-6">
+        <div className="max-w-7xl mx-auto px-2 md:px-4 lg:px-6">
           <div className="flex items-center justify-between h-16 flex-nowrap">
             {/* 28.yıl badge (md+ far-left of logo) */}
             <div className="flex items-center flex-shrink-0">
               {/* Badge moved into normal flow so header reserves space and prevents overlap */}
               {/* show only on large screens; nudge further left and add separation from logo */}
-              <div className="hidden lg:inline-flex items-center mr-4 lg:-ml-20 xl:-ml-24 pointer-events-none">
+              <div className="hidden xl:inline-flex items-center mr-4 lg:-ml-20 xl:-ml-24 pointer-events-none">
                 <img src="/28.yil.png" alt="28. Yıl" className="h-8 md:h-10 lg:h-12 w-auto object-contain" />
               </div>
               {/* Logo - nudged left to sit closer to absolute badge */}
               <ScrollToTopLink to="/" aria-label="Keten Pnömatik" className="flex items-center gap-2 ml-0">
                 <img src="/ketenlogoson.fw_.png" alt="Keten Pnömatik" className="h-8 md:h-10 w-auto" />
               </ScrollToTopLink>
-              {/* Mobile: show 28.yıl badge to the right of the logo */}
-              <div className="inline-flex lg:hidden items-center ml-2 pointer-events-none">
-                <img src="/28.yil.png" alt="28. Yıl" className="h-10 sm:h-12 w-auto object-contain" />
+              {/* Mobile/Tablet: show 28.yıl badge to the right of the logo if space permits, or hide on very tight screens */}
+              <div className="inline-flex xl:hidden items-center ml-2 pointer-events-none">
+                <img src="/28.yil.png" alt="28. Yıl" className="h-8 sm:h-10 md:h-12 w-auto object-contain" />
               </div>
             </div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-1 mx-6">
-              <ScrollToTopLink to="/" className="px-4 py-2 text-gray-100 hover:bg-gray-800 hover:text-white rounded-lg transition-colors whitespace-nowrap">
+            {/* Desktop Navigation - Compact on LG, Normal on XL */}
+            <nav className="hidden lg:flex items-center gap-1 mx-2 xl:mx-6">
+              <ScrollToTopLink to="/" className="px-2 xl:px-4 py-2 text-sm xl:text-base text-gray-100 hover:bg-gray-800 hover:text-white rounded-lg transition-colors whitespace-nowrap">
                 Ana Sayfa
               </ScrollToTopLink>
-              <ScrollToTopLink to="/hakkimizda" className="px-4 py-2 text-gray-100 hover:bg-gray-800 hover:text-white rounded-lg transition-colors whitespace-nowrap">
+              <ScrollToTopLink to="/hakkimizda" className="px-2 xl:px-4 py-2 text-sm xl:text-base text-gray-100 hover:bg-gray-800 hover:text-white rounded-lg transition-colors whitespace-nowrap">
                 Hakkımızda
               </ScrollToTopLink>
-              <ScrollToTopLink to="/kategoriler" className="px-4 py-2 text-gray-100 hover:bg-gray-800 hover:text-white rounded-lg transition-colors whitespace-nowrap">
+              <ScrollToTopLink to="/kategoriler" className="px-2 xl:px-4 py-2 text-sm xl:text-base text-gray-100 hover:bg-gray-800 hover:text-white rounded-lg transition-colors whitespace-nowrap">
                 Ürünlerimiz
               </ScrollToTopLink>
-              <ScrollToTopLink to="/iletisim" className="px-4 py-2 text-gray-100 hover:bg-gray-800 hover:text-white rounded-lg transition-colors whitespace-nowrap">
+              <ScrollToTopLink to="/iletisim" className="px-2 xl:px-4 py-2 text-sm xl:text-base text-gray-100 hover:bg-gray-800 hover:text-white rounded-lg transition-colors whitespace-nowrap">
                 İletişim
               </ScrollToTopLink>
-              <ScrollToTopLink to="/teknik-servis" className="px-4 py-2 text-gray-100 hover:bg-gray-800 hover:text-white rounded-lg transition-colors whitespace-nowrap">
+              <ScrollToTopLink to="/teknik-servis" className="px-2 xl:px-4 py-2 text-sm xl:text-base text-gray-100 hover:bg-gray-800 hover:text-white rounded-lg transition-colors whitespace-nowrap">
                 Teknik Servis
               </ScrollToTopLink>
             </nav>
             {/* Right Side Actions */}
             <div className="flex items-center gap-2 md:gap-3">
-              {/* Desktop Search */}
+              {/* Desktop Search - Compact on LG */}
               <div className="hidden md:block relative">
                 <SearchInput />
               </div>
@@ -209,15 +209,16 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
               {/* Demo Button - Show on mobile too */}
               <ScrollToTopLink
                 to="/demo-talebi"
-                className="inline-flex btn btn-primary btn-sm md:btn-md rounded-full"
+                className="inline-flex btn btn-primary btn-sm md:btn-md rounded-full whitespace-nowrap px-3 md:px-4"
               >
-                Demo Talebi
+                <span className="hidden md:inline">Demo Talebi</span>
+                <span className="md:hidden">Demo</span>
               </ScrollToTopLink>
 
               {/* SSS - Desktop only */}
               <ScrollToTopLink
                 to="/sss"
-                className="hidden lg:inline-flex btn btn-ghost btn-sm md:btn-md rounded-full text-gray-100 hover:bg-gray-800 hover:text-white"
+                className="hidden xl:inline-flex btn btn-ghost btn-sm md:btn-md rounded-full text-gray-100 hover:bg-gray-800 hover:text-white"
               >
                 SSS
               </ScrollToTopLink>
@@ -344,7 +345,7 @@ function SearchInput() {
         onFocus={() => { if (suggestions.length) setOpen(true) }}
         type="text"
         placeholder="Ara: darbeli tabanca..."
-        className="input input-sm md:input-md input-bordered w-48 lg:w-64 rounded-full bg-gray-800 text-gray-100 border-gray-600 placeholder:text-gray-400 focus:border-primary focus:ring-1 focus:ring-primary"
+        className="input input-sm md:input-md input-bordered w-32 lg:w-40 xl:w-64 rounded-full bg-gray-800 text-gray-100 border-gray-600 placeholder:text-gray-400 focus:border-primary focus:ring-1 focus:ring-primary"
         aria-autocomplete="list"
         aria-controls="header-search-list"
         aria-expanded={open}

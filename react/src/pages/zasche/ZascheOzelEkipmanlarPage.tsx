@@ -10,7 +10,14 @@ import { useEffect } from 'react'
 
 export default function ZascheOzelEkipmanlarPage() {
     useEffect(() => {
-        applyZascheSEO(buildZascheSEO('category_ozelcozumler'))
+        const products = zascheProducts.filter(p => p.categoryId === 'ozelcozumler')
+        const seoProducts = products.map(p => ({
+            name: p.title,
+            url: p.link || '',
+            image: p.gallery.thumbnails[0] || '',
+            description: p.heroDescription
+        }))
+        applyZascheSEO(buildZascheSEO('category_ozelcozumler', { products: seoProducts }))
     }, [])
 
     return (

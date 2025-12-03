@@ -8,7 +8,14 @@ import { useEffect } from 'react'
 
 export default function ZascheKaldirmaEkipmanlariPage() {
     useEffect(() => {
-        applyZascheSEO(buildZascheSEO('category_kaldirma'))
+        const products = zascheProducts.filter(p => p.categoryId === 'kaldirma')
+        const seoProducts = products.map(p => ({
+            name: p.title,
+            url: p.link || '',
+            image: p.gallery.thumbnails[0] || '',
+            description: p.heroDescription
+        }))
+        applyZascheSEO(buildZascheSEO('category_kaldirma', { products: seoProducts }))
     }, [])
 
     return (

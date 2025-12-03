@@ -37,21 +37,21 @@ export default function ManiplatorlerPage() {
             {/* ZASCHE Header */}
             <ZascheHeader backgroundImage={panoramaImage} logo={zashceLogo} />
 
-            {/* Hero Section with Panoramic Image */}
+            {/* Hero Section - Desktop Full Width, Mobile Compact Card */}
             <motion.section
-                className="relative w-full overflow-hidden"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8 }}
             >
-                <div className="relative w-full" style={{ height: '400px' }}>
+                {/* Desktop: Full Width Hero */}
+                <div className="hidden md:block relative w-full h-[400px]">
                     <img
                         src={panoramaImage}
                         alt="Manipülatörler - ZASCHE Panorama"
                         className="w-full h-full object-cover object-center"
                         loading="eager"
                     />
-                    {/* Overlay gradient for text readability */}
+                    {/* Overlay gradient */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
 
                     {/* Hero Text */}
@@ -73,6 +73,35 @@ export default function ManiplatorlerPage() {
                             >
                                 Endüstriyel otomasyon için güçlü ve hassas çözümler
                             </motion.p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Mobile: Compact Card Style */}
+                <div className="md:hidden bg-gradient-to-br from-gray-900 to-gray-800 py-6">
+                    <div className="px-4 space-y-4">
+                        {/* Image Card with proper aspect ratio */}
+                        <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                            <div className="relative aspect-[16/9]">
+                                <img
+                                    src={panoramaImage}
+                                    alt="Manipülatörler - ZASCHE Panorama"
+                                    className="w-full h-full object-cover object-center"
+                                    loading="eager"
+                                />
+                                {/* Subtle gradient */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                            </div>
+                        </div>
+
+                        {/* Content */}
+                        <div className="space-y-3">
+                            <h1 className="text-3xl font-bold text-white leading-tight">
+                                Manipülatörler
+                            </h1>
+                            <p className="text-base text-white/90">
+                                Endüstriyel otomasyon için güçlü ve hassas çözümler
+                            </p>
                         </div>
                     </div>
                 </div>

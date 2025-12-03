@@ -11,7 +11,13 @@ const products = zascheProducts.filter(p => p.categoryId === 'manipulatorler');
 
 export default function ZascheManipulatorlerPage() {
     useEffect(() => {
-        applyZascheSEO(buildZascheSEO('category_manipulatorler'))
+        const seoProducts = products.map(p => ({
+            name: p.title,
+            url: p.link || '',
+            image: p.gallery.thumbnails[0] || '',
+            description: p.heroDescription
+        }))
+        applyZascheSEO(buildZascheSEO('category_manipulatorler', { products: seoProducts }))
     }, [])
 
     return (
