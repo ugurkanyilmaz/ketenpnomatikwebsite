@@ -5,10 +5,10 @@ import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { useEffect, Suspense, lazy } from 'react'
 import { sendPageView } from './utils/google_codes'
 import { AuthProvider } from './utils/auth'
-import RequireAuth from './pages/admin/RequireAuth'
-import AdminLogin from './pages/admin/Login'
-import HomePage from './pages/home_page'
-import Categories_page from './pages/categories_page'
+const RequireAuth = lazy(() => import('./pages/admin/RequireAuth'))
+const AdminLogin = lazy(() => import('./pages/admin/Login'))
+const HomePage = lazy(() => import('./pages/home_page'))
+const Categories_page = lazy(() => import('./pages/categories_page'))
 
 // Lazy load Zasche pages
 const ManiplatorlerPage = lazy(() => import('./pages/zasche/ManiplatorlerPage'))
@@ -18,38 +18,39 @@ const ZascheAsmaVincPage = lazy(() => import('./pages/zasche/ZascheAsmaVincPage'
 const ZascheOzelEkipmanlarPage = lazy(() => import('./pages/zasche/ZascheOzelEkipmanlarPage'))
 const ZascheProductDetail = lazy(() => import('./pages/zasche/ZascheProductDetail'))
 
-import Subcategories from './pages/subcategories'
-import Series from './pages/series'
-import Article from './pages/article'
-import ProductDetails from './pages/product_details'
-import ContactPage from './pages/ContactPage'
-import DemoRequestPage from './pages/DemoRequestPage'
-import TechnicalServicePage from './pages/TechnicalServicePage'
-import Urunler from './pages/urunler'
+const Subcategories = lazy(() => import('./pages/subcategories'))
+const Series = lazy(() => import('./pages/series'))
+const Article = lazy(() => import('./pages/article'))
+const ProductDetails = lazy(() => import('./pages/product_details'))
+const ContactPage = lazy(() => import('./pages/ContactPage'))
+const DemoRequestPage = lazy(() => import('./pages/DemoRequestPage'))
+const TechnicalServicePage = lazy(() => import('./pages/TechnicalServicePage'))
+const Urunler = lazy(() => import('./pages/urunler'))
 // About page removed; using Distributorluk as Hakkımızda
-import FAQ from './pages/FAQ'
-import Hakkimizda from './pages/Hakkimizda'
-import DistributorlukIndex from './pages/distributorluk/Index'
-import Kolver from './pages/distributorluk/Kolver'
-import Hiyoki from './pages/distributorluk/Hiyoki'
-import Apac from './pages/distributorluk/Apac'
-import Hawanox from './pages/distributorluk/Hawanox'
-import Asa from './pages/distributorluk/Asa'
-import DeltaRegis from './pages/distributorluk/DeltaRegis'
-import Blog from './pages/Blog'
-import BlogDetail from './pages/BlogDetail'
-import NotFound from './pages/NotFound'
+const FAQ = lazy(() => import('./pages/FAQ'))
+const Hakkimizda = lazy(() => import('./pages/Hakkimizda'))
+const DistributorlukIndex = lazy(() => import('./pages/distributorluk/Index'))
+const Kolver = lazy(() => import('./pages/distributorluk/Kolver'))
+const Hiyoki = lazy(() => import('./pages/distributorluk/Hiyoki'))
+const Apac = lazy(() => import('./pages/distributorluk/Apac'))
+const Hawanox = lazy(() => import('./pages/distributorluk/Hawanox'))
+const Asa = lazy(() => import('./pages/distributorluk/Asa'))
+const DeltaRegis = lazy(() => import('./pages/distributorluk/DeltaRegis'))
+const Blog = lazy(() => import('./pages/Blog'))
+const BlogDetail = lazy(() => import('./pages/BlogDetail'))
+const NotFound = lazy(() => import('./pages/NotFound'))
 
 
 // Admin Pages
-import AdminLayout from './pages/admin/AdminLayout'
-import Dashboard from './pages/admin/Dashboard'
-import CategoryManagement from './pages/admin/CategoryManagement'
-import CategoryPhotos from './pages/admin/CategoryPhotos'
-import SiteImagesAdmin from './pages/admin/SiteImagesAdmin'
-import ProductManagement from './pages/admin/ProductManagement'
-import BlogManagement from './pages/admin/BlogManagement'
-import DemoRequestsAdmin from './pages/admin/DemoRequests'
+// Admin Pages
+const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'))
+const Dashboard = lazy(() => import('./pages/admin/Dashboard'))
+const CategoryManagement = lazy(() => import('./pages/admin/CategoryManagement'))
+const CategoryPhotos = lazy(() => import('./pages/admin/CategoryPhotos'))
+const SiteImagesAdmin = lazy(() => import('./pages/admin/SiteImagesAdmin'))
+const ProductManagement = lazy(() => import('./pages/admin/ProductManagement'))
+const BlogManagement = lazy(() => import('./pages/admin/BlogManagement'))
+const DemoRequestsAdmin = lazy(() => import('./pages/admin/DemoRequests'))
 
 
 function App() {

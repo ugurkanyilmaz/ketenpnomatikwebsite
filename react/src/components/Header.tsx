@@ -133,7 +133,7 @@ function MobileMenu() {
           </nav>
 
           <div className="mt-8 space-y-3">
-            <SearchInput />
+            <SearchInput instanceId="mobile-search" />
             <a
               href="/demo-talebi"
               className="btn btn-primary w-full"
@@ -203,7 +203,7 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
             <div className="flex items-center gap-2 md:gap-3">
               {/* Desktop Search - Compact on LG */}
               <div className="hidden md:block relative">
-                <SearchInput />
+                <SearchInput instanceId="desktop-search" />
               </div>
 
               {/* Demo Button - Show on mobile too */}
@@ -233,7 +233,7 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
   )
 }
 
-function SearchInput() {
+function SearchInput({ instanceId = 'search' }: { instanceId?: string }) {
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(false)
   const [suggestions, setSuggestions] = useState<Array<{ type: 'product' | 'article'; title: string; href: string }>>([])
@@ -347,18 +347,18 @@ function SearchInput() {
         placeholder="Ara: darbeli tabanca..."
         className="input input-sm md:input-md input-bordered w-32 lg:w-40 xl:w-64 rounded-full bg-gray-800 text-gray-100 border-gray-600 placeholder:text-gray-400 focus:border-primary focus:ring-1 focus:ring-primary"
         aria-autocomplete="list"
-        aria-controls="header-search-list"
+        aria-controls={`${instanceId}-list`}
         aria-expanded={open}
-        aria-activedescendant={highlight >= 0 ? `search-suggestion-${highlight}` : undefined}
+        aria-activedescendant={highlight >= 0 ? `${instanceId}-option-${highlight}` : undefined}
       />
 
       {open && (
         <div className="absolute right-0 mt-2 w-80 bg-white text-black rounded shadow-lg z-50">
           {loading && <div className="p-3 text-sm text-gray-600">Aranıyor...</div>}
           {!loading && suggestions.length === 0 && <div className="p-3 text-sm text-gray-600">Sonuç yok</div>}
-          <ul id="header-search-list" role="listbox" className="max-h-64 overflow-auto">
+          <ul id={`${instanceId}-list`} role="listbox" className="max-h-64 overflow-auto">
             {suggestions.map((s, idx) => (
-              <li key={idx} role="option" id={`search-suggestion-${idx}`} aria-selected={highlight === idx}>
+              <li key={`${s.type}-${s.href}-${idx}`} role="option" id={`${instanceId}-option-${idx}`} aria-selected={highlight === idx}>
                 <a
                   href={s.href}
                   className={`block px-3 py-2 ${highlight === idx ? 'bg-slate-100' : 'hover:bg-slate-100'}`}

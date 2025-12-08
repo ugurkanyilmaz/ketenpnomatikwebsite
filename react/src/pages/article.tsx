@@ -232,7 +232,7 @@ export default function Article() {
 
   useEffect(() => {
     if (!tier || !categoryId) return
-    
+
     fetchArticleRows({ parent: tier, child: categoryId })
       .then((res) => {
         console.log('[Article] Related series fetched:', res)
@@ -270,7 +270,7 @@ export default function Article() {
       s = s.replace(/^(https?:\/\/)+/i, (m) => m.replace(/(https?:\/\/)+/i, '$1'))
 
       // If it looks like a protocol-relative path
-  if (s.startsWith('//')) s = 'https:' + s
+      if (s.startsWith('//')) s = 'https:' + s
 
       // If still doesn't start with http and starts with '/', prefix canonical host
       if (!/^https?:\/\//i.test(s) && s.startsWith('/')) {
@@ -330,7 +330,7 @@ export default function Article() {
     applyArticleSEOWithProducts(seoData, products)
   }, [cat, products, tier, categoryId, seriesId])
 
-  
+
 
   // Build exact feature label columns for desktop table.
   // For each product.featureN that contains a colon, we take the exact left-hand side
@@ -363,7 +363,7 @@ export default function Article() {
   }, [products])
 
   // (usable areas are derived inline where needed via getUniqueCategoriesFromAreas)
-  
+
   // --- NEW: client-side mobile detection ---
   const [isMobile, setIsMobile] = useState<boolean>(false)
   useEffect(() => {
@@ -455,15 +455,15 @@ export default function Article() {
                     if (!raw) continue
                     const v = String(raw).trim()
                     if (v === '' || v.toUpperCase() === 'NULL') continue
-                    
+
                     const lowerV = v.toLowerCase()
                     if (lowerV.includes('tork')) {
                       const parts = v.split(':')
                       const valuePart = parts.length > 1 ? parts[1] : v
-                      
+
                       // Remove common units and clean the string
                       const cleanValue = valuePart.replace(/\s*(nm|NM|Nm)\s*/gi, ' ').trim()
-                      
+
                       // Match range patterns like: "1,0 - 3.58", "0,2 – 1.22", "1.080 - 2.000"
                       const rangeMatch = cleanValue.match(/(\d+[.,]?\d*)\s*[-–—]\s*(\d+[.,]?\d*)/)
                       if (rangeMatch) {
@@ -471,22 +471,22 @@ export default function Article() {
                         const num = parseFloat(numStr)
                         if (!isNaN(num)) return num
                       }
-                      
+
                       // Try to extract any number (including decimals with comma or dot, and thousands with dot)
                       // Match patterns like: 1.080, 1,086, 105, 2.714, etc.
                       const singleMatch = cleanValue.match(/(\d+(?:[.,]\d+)*)/)
                       if (singleMatch) {
                         // Handle both European (1.080,5) and standard (1,080.5) formats
                         let numStr = singleMatch[1]
-                        
+
                         // If there's a dot followed by 3 digits, it's likely a thousands separator
                         if (/\d+\.\d{3}/.test(numStr)) {
                           numStr = numStr.replace('.', '') // Remove thousands separator
                         }
-                        
+
                         // Replace comma with dot for decimal point
                         numStr = numStr.replace(',', '.')
-                        
+
                         const num = parseFloat(numStr)
                         if (!isNaN(num)) return num
                       }
@@ -499,11 +499,11 @@ export default function Article() {
                 const sortedProducts = [...products].sort((a, b) => {
                   const torqueA = extractTorqueValue(a)
                   const torqueB = extractTorqueValue(b)
-                  
+
                   if (torqueA === null && torqueB === null) return 0
                   if (torqueA === null) return 1
                   if (torqueB === null) return -1
-                  
+
                   return torqueA - torqueB
                 })
 
@@ -679,28 +679,28 @@ export default function Article() {
           </ul>
         </div>
 
-    {/* Use the shared HeroBanner for article header */}
-    <div className="max-w-4xl mx-auto mb-6 sm:mb-10">
-      <div>
-        <img
-          src={getImgOrFallback(cat.main_image, `https://picsum.photos/seed/${seriesId}/600/450`) }
-          alt={`${cat.title} - Kategori Görseli`}
-          title={cat.title}
-          className="w-full h-auto rounded-box shadow object-cover"
-          loading="lazy"
-          onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${seriesId}/600/450` }}
-          style={{ maxHeight: 450, width: '100%', objectFit: 'cover' }}
-        />
-        <div className="-mt-20 relative">
-          <div className="bg-black/60 backdrop-blur-sm rounded-t-3xl p-6 text-white max-w-3xl mx-auto">
-            <h1 className="text-2xl md:text-3xl font-bold">{cat.title}</h1>
-            <p className="mt-2 text-sm md:text-base text-white/90">{cat.title_subtext || 'Kategori detayları'}</p>
+        {/* Use the shared HeroBanner for article header */}
+        <div className="max-w-4xl mx-auto mb-6 sm:mb-10">
+          <div>
+            <img
+              src={getImgOrFallback(cat.main_image, `https://picsum.photos/seed/${seriesId}/600/450`)}
+              alt={`${cat.title} - Kategori Görseli`}
+              title={cat.title}
+              className="w-full h-auto rounded-box shadow object-cover"
+              loading="lazy"
+              onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${seriesId}/600/450` }}
+              style={{ maxHeight: 450, width: '100%', objectFit: 'cover' }}
+            />
+            <div className="-mt-20 relative">
+              <div className="bg-black/60 backdrop-blur-sm rounded-t-3xl p-6 text-white max-w-3xl mx-auto">
+                <h1 className="text-2xl md:text-3xl font-bold">{cat.title}</h1>
+                <p className="mt-2 text-sm md:text-base text-white/90">{cat.title_subtext || 'Kategori detayları'}</p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-  <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           <main className="lg:col-span-3">
             <article className="prose max-w-none px-2 sm:px-0">
               <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">{cat.title} Hakkında:</h2>
@@ -710,25 +710,25 @@ export default function Article() {
             </article>
 
             <div className="mt-6 sm:mt-8 grid md:grid-cols-2 gap-4 sm:gap-6 items-start px-2 sm:px-0">
-                {/* Simplified image container: make image larger and fill the box (responsive) */}
-                {/* Secondary image box: show on mobile or when cat.img1 exists; hide on desktop when missing */}
-                {(isMobile || (cat?.img1 && String(cat.img1).trim() !== '' && String(cat.img1).toUpperCase() !== 'NULL')) && (
-                  <div className="w-full px-2 sm:px-0">
-                    <div className="w-full max-w-[420px] mx-auto">
-                      <img
-                        src={getImgOrFallback(cat?.img1, `https://picsum.photos/seed/${seriesId}-hero/420/315`) }
-                        alt={`${cat.title} - Ürün Detay Görseli`}
-                        title={cat.title}
-                        className="w-full h-auto object-cover rounded-box shadow"
-                        loading="lazy"
-                        style={{ display: 'block', maxWidth: '100%' }}
-                        onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${seriesId}-hero/420/315` }}
-                      />
-                    </div>
+              {/* Simplified image container: make image larger and fill the box (responsive) */}
+              {/* Secondary image box: show on mobile or when cat.img1 exists; hide on desktop when missing */}
+              {(isMobile || (cat?.img1 && String(cat.img1).trim() !== '' && String(cat.img1).toUpperCase() !== 'NULL')) && (
+                <div className="w-full px-2 sm:px-0">
+                  <div className="w-full max-w-[420px] mx-auto">
+                    <img
+                      src={getImgOrFallback(cat?.img1, `https://picsum.photos/seed/${seriesId}-hero/420/315`)}
+                      alt={`${cat.title} - Ürün Detay Görseli`}
+                      title={cat.title}
+                      className="w-auto mx-auto h-auto object-cover rounded-box shadow max-w-full"
+                      loading="lazy"
+                      style={{ display: 'block' }}
+                      onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${seriesId}-hero/420/315` }}
+                    />
                   </div>
-                )}
+                </div>
+              )}
 
-                <div className="flex flex-col items-stretch gap-2 sm:gap-3 w-full">
+              <div className="flex flex-col items-stretch gap-2 sm:gap-3 w-full">
                 <div className="w-full py-0.5 sm:py-1">
                   <svg className="w-full h-4 sm:h-6 md:h-8" viewBox="0 0 100 10" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0 10 C20 0 40 0 60 10 C80 20 100 10 100 10 L100 0 L0 0 Z" fill="#f97316" />
@@ -764,16 +764,16 @@ export default function Article() {
             <div className="mt-8 sm:mt-10 grid lg:grid-cols-3 gap-4 sm:gap-6 px-2 sm:px-0">
               <div className="lg:col-span-2">
                 {cat?.info && (
-                <div className="card bg-base-200 shadow mb-4 sm:mb-6">
-                  <div className="card-body p-4 sm:p-6">
-                    <h3 className="card-title text-base sm:text-lg">Seri Bilgileri</h3>
-                    <ul className="list-disc pl-4 sm:pl-5 mt-2 text-xs sm:text-sm text-black/80">
-                      {cat.info.split('\n').filter((line: string) => line.trim()).map((line: string, idx: number) => (
-                        <li key={idx}>{line.trim()}</li>
-                      ))}
-                    </ul>
+                  <div className="card bg-base-200 shadow mb-4 sm:mb-6">
+                    <div className="card-body p-4 sm:p-6">
+                      <h3 className="card-title text-base sm:text-lg">Seri Bilgileri</h3>
+                      <ul className="list-disc pl-4 sm:pl-5 mt-2 text-xs sm:text-sm text-black/80">
+                        {cat.info.split('\n').filter((line: string) => line.trim()).map((line: string, idx: number) => (
+                          <li key={idx}>{line.trim()}</li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
-                </div>
                 )}
 
                 <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Teknik Özellikler</h2>
@@ -787,127 +787,169 @@ export default function Article() {
                     <div className="w-full table-wrapper">
                       <table className={`w-full text-sm article-table-responsive`} style={{ tableLayout: 'fixed' }}>
                         <thead>
-                  <tr className="bg-neutral text-neutral-content">
-                    <th className="font-bold px-2 py-3 text-left" style={{ minWidth: '60px' }}>Görsel</th>
-                    <th className="font-bold px-2 py-3 text-left" style={{ minWidth: '120px' }}>Model (SKU)</th>
-                                  {desktopFeatureColumns.map((label, colIdx) => (
-                                    <th key={colIdx} className="font-bold px-2 py-3 text-left">{label}</th>
-                                  ))}
-                                <th className="px-2 py-3"></th>
-                              </tr>
-                            </thead>
-                            <tbody className="bg-base-100">
-                              {(() => {
-                                // Helper function to extract torque value
-                                const extractTorqueValue = (product: Product): number | null => {
-                                  for (let i = 1; i <= 11; i++) {
-                                    const raw = product[`feature${i}` as keyof Product] as unknown as string
-                                    if (!raw) continue
-                                    const v = String(raw).trim()
-                                    if (v === '' || v.toUpperCase() === 'NULL') continue
-                                    
-                                    const lowerV = v.toLowerCase()
-                                    if (lowerV.includes('tork')) {
-                                      const parts = v.split(':')
-                                      const valuePart = parts.length > 1 ? parts[1] : v
-                                      
-                                      // Remove common units and clean the string
-                                      const cleanValue = valuePart.replace(/\s*(nm|NM|Nm)\s*/gi, ' ').trim()
-                                      
-                                      // Match range patterns like: "1,0 - 3.58", "0,2 – 1.22", "1.080 - 2.000"
-                                      const rangeMatch = cleanValue.match(/(\d+[.,]?\d*)\s*[-–—]\s*(\d+[.,]?\d*)/)
-                                      if (rangeMatch) {
-                                        const numStr = rangeMatch[1].replace(',', '.')
-                                        const num = parseFloat(numStr)
-                                        if (!isNaN(num)) return num
-                                      }
-                                      
-                                      // Try to extract any number (including decimals with comma or dot, and thousands with dot)
-                                      // Match patterns like: 1.080, 1,086, 105, 2.714, etc.
-                                      const singleMatch = cleanValue.match(/(\d+(?:[.,]\d+)*)/)
-                                      if (singleMatch) {
-                                        // Handle both European (1.080,5) and standard (1,080.5) formats
-                                        let numStr = singleMatch[1]
-                                        
-                                        // If there's a dot followed by 3 digits, it's likely a thousands separator
-                                        if (/\d+\.\d{3}/.test(numStr)) {
-                                          numStr = numStr.replace('.', '') // Remove thousands separator
-                                        }
-                                        
-                                        // Replace comma with dot for decimal point
-                                        numStr = numStr.replace(',', '.')
-                                        
-                                        const num = parseFloat(numStr)
-                                        if (!isNaN(num)) return num
-                                      }
-                                    }
-                                  }
-                                  return null
-                                }
+                          <tr className="bg-neutral text-neutral-content">
+                            <th className="font-bold px-2 py-3 text-left" style={{ minWidth: '60px' }}>Görsel</th>
+                            <th className="font-bold px-2 py-3 text-left" style={{ minWidth: '120px' }}>Model (SKU)</th>
+                            {desktopFeatureColumns.map((label, colIdx) => (
+                              <th key={colIdx} className="font-bold px-2 py-3 text-left">{label}</th>
+                            ))}
+                            <th className="px-2 py-3"></th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-base-100">
+                          {(() => {
+                            // Helper function to extract torque value
+                            const extractTorqueValue = (product: Product): number | null => {
+                              for (let i = 1; i <= 11; i++) {
+                                const raw = product[`feature${i}` as keyof Product] as unknown as string
+                                if (!raw) continue
+                                const v = String(raw).trim()
+                                if (v === '' || v.toUpperCase() === 'NULL') continue
 
-                                // Sort products by torque value
-                                const sortedProducts = [...products].sort((a, b) => {
+                                const lowerV = v.toLowerCase()
+                                if (lowerV.includes('tork')) {
+                                  const parts = v.split(':')
+                                  const valuePart = parts.length > 1 ? parts[1] : v
+
+                                  // Remove common units and clean the string
+                                  const cleanValue = valuePart.replace(/\s*(nm|NM|Nm)\s*/gi, ' ').trim()
+
+                                  // Match range patterns like: "1,0 - 3.58", "0,2 – 1.22", "1.080 - 2.000"
+                                  const rangeMatch = cleanValue.match(/(\d+[.,]?\d*)\s*[-–—]\s*(\d+[.,]?\d*)/)
+                                  if (rangeMatch) {
+                                    const numStr = rangeMatch[1].replace(',', '.')
+                                    const num = parseFloat(numStr)
+                                    if (!isNaN(num)) return num
+                                  }
+
+                                  // Try to extract any number (including decimals with comma or dot, and thousands with dot)
+                                  // Match patterns like: 1.080, 1,086, 105, 2.714, etc.
+                                  const singleMatch = cleanValue.match(/(\d+(?:[.,]\d+)*)/)
+                                  if (singleMatch) {
+                                    // Handle both European (1.080,5) and standard (1,080.5) formats
+                                    let numStr = singleMatch[1]
+
+                                    // If there's a dot followed by 3 digits, it's likely a thousands separator
+                                    if (/\d+\.\d{3}/.test(numStr)) {
+                                      numStr = numStr.replace('.', '') // Remove thousands separator
+                                    }
+
+                                    // Replace comma with dot for decimal point
+                                    numStr = numStr.replace(',', '.')
+
+                                    const num = parseFloat(numStr)
+                                    if (!isNaN(num)) return num
+                                  }
+                                }
+                              }
+                              return null
+                            }
+
+                            const getGroup = (sku: string) => {
+                              const s = sku.toUpperCase();
+                              if (s.includes('PS')) return 'Bas-Çalıştır (Push-to-Start)';
+                              return 'Levye Tetik (Lever Start)';
+                            };
+
+                            // Group products
+                            const groupedProducts = (() => {
+                              const groups: Record<string, Product[]> = {
+                                'Bas-Çalıştır (Push-to-Start)': [],
+                                'Levye Tetik (Lever Start)': []
+                              };
+
+                              products.forEach(p => {
+                                const g = getGroup(p.sku);
+                                if (!groups[g]) groups[g] = [];
+                                groups[g].push(p);
+                              });
+
+                              // Sort within groups
+                              Object.keys(groups).forEach(key => {
+                                groups[key].sort((a, b) => {
                                   const torqueA = extractTorqueValue(a)
                                   const torqueB = extractTorqueValue(b)
-                                  
+
                                   if (torqueA === null && torqueB === null) return 0
                                   if (torqueA === null) return 1
                                   if (torqueB === null) return -1
-                                  
-                                  return torqueA - torqueB
-                                })
 
-                                return sortedProducts.map((product, idx) => (
-                                  <tr
-                                    key={product.id}
-                                    className={`hover:bg-primary/5 transition-colors border-b border-base-200 ${idx % 2 === 0 ? 'bg-base-50' : 'bg-white'} cursor-pointer`}
-                                    role="button"
-                                    tabIndex={0}
-                                    onClick={() => navigate(`/urun/${product.sku}`)}
-                                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/urun/${product.sku}`) }}
-                                  >
-                                    <td className="px-2 py-2 align-top">
-                                      <img
-                                        src={getImgOrFallback(product.main_img, `https://picsum.photos/seed/${encodeURIComponent(product.sku)}/80/60`) }
-                                        alt={product.sku}
-                                        className="w-20 h-14 object-contain rounded"
-                                        loading="lazy"
-                                        onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${encodeURIComponent(product.sku)}/80/60` }}
-                                        style={{ maxWidth: '100%', height: 'auto' }}
-                                      />
-                                    </td>
-                                    <td className="font-semibold px-2 py-3 text-primary truncate max-w-[160px]">{product.sku}</td>
-                                    {desktopFeatureColumns.map((label, colIdx) => {
-                                      // find the first feature in this product whose LHS label matches this column label
-                                      let cellVal = ''
-                                      for (let i = 1; i <= 11; i++) {
-                                        const raw = product[`feature${i}` as keyof Product] as unknown as string || ''
-                                        if (!raw) continue
-                                        const v = String(raw).trim()
-                                        if (v === '' || v.toUpperCase() === 'NULL') continue
-                                        const parts = v.split(':')
-                                        const lhs = parts.length > 1 ? parts[0].trim() : `Özellik ${i}`
-                                        if (lhs === label) {
-                                          cellVal = parts.length > 1 ? parts.slice(1).join(':').trim() : ''
-                                          break
-                                        }
-                                      }
-                                      return (
-                                        <td key={colIdx} className="px-2 py-3 text-base-content/80 break-words">{cellVal || '-'}</td>
-                                      )
-                                    })}
-                                    <td className="px-2 py-3">
-                                      <Link to={`/urun/${product.sku}`} onClick={(e) => e.stopPropagation()} className="btn btn-primary btn-xs whitespace-nowrap shadow-sm hover:shadow-md transition-shadow">
-                                        Detay
-                                      </Link>
+                                  return torqueA - torqueB
+                                });
+                              });
+
+                              return groups;
+                            })();
+
+                            // Order of groups to render
+                            const groupOrder = ['Bas-Çalıştır (Push-to-Start)', 'Levye Tetik (Lever Start)'];
+
+                            return groupOrder.map(groupName => {
+                              if (groupedProducts[groupName].length === 0) return null;
+
+                              return (
+                                <>
+                                  {/* Group Header */}
+                                  <tr key={`group-${groupName}`} className="bg-base-200">
+                                    <td colSpan={3 + desktopFeatureColumns.length} className="px-3 py-2 font-bold text-gray-700 border-b border-base-300">
+                                      {groupName}
                                     </td>
                                   </tr>
-                                ))
-                              })()}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
+
+                                  {/* Products in this group */}
+                                  {groupedProducts[groupName].map((product, idx) => (
+                                    <tr
+                                      key={product.id}
+                                      className={`hover:bg-primary/5 transition-colors border-b border-base-200 ${idx % 2 === 0 ? 'bg-base-50' : 'bg-white'} cursor-pointer`}
+                                      role="button"
+                                      tabIndex={0}
+                                      onClick={() => navigate(`/urun/${product.sku}`)}
+                                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/urun/${product.sku}`) }}
+                                    >
+                                      <td className="px-2 py-2 align-top">
+                                        <img
+                                          src={getImgOrFallback(product.main_img, `https://picsum.photos/seed/${encodeURIComponent(product.sku)}/80/60`)}
+                                          alt={product.sku}
+                                          className="w-20 h-14 object-contain rounded"
+                                          loading="lazy"
+                                          onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${encodeURIComponent(product.sku)}/80/60` }}
+                                          style={{ maxWidth: '100%', height: 'auto' }}
+                                        />
+                                      </td>
+                                      <td className="font-semibold px-2 py-3 text-primary truncate max-w-[160px]">{product.sku}</td>
+                                      {desktopFeatureColumns.map((label, colIdx) => {
+                                        let cellVal = ''
+                                        for (let i = 1; i <= 11; i++) {
+                                          const raw = product[`feature${i}` as keyof Product] as unknown as string || ''
+                                          if (!raw) continue
+                                          const v = String(raw).trim()
+                                          if (v === '' || v.toUpperCase() === 'NULL') continue
+                                          const parts = v.split(':')
+                                          const lhs = parts.length > 1 ? parts[0].trim() : `Özellik ${i}`
+                                          if (lhs === label) {
+                                            cellVal = parts.length > 1 ? parts.slice(1).join(':').trim() : ''
+                                            break
+                                          }
+                                        }
+                                        return (
+                                          <td key={colIdx} className="px-2 py-3 text-base-content/80 break-words">{cellVal || '-'}</td>
+                                        )
+                                      })}
+                                      <td className="px-2 py-3">
+                                        <Link to={`/urun/${product.sku}`} onClick={(e) => e.stopPropagation()} className="btn btn-primary btn-xs whitespace-nowrap shadow-sm hover:shadow-md transition-shadow">
+                                          Detay
+                                        </Link>
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </>
+                              );
+                            });
+                          })()}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 ) : (
                   <div className="alert alert-info">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6">
@@ -953,47 +995,47 @@ export default function Article() {
             </div>
 
             {cat?.usable_areas && (() => {
-            const areas = getUniqueCategoriesFromAreas(cat.usable_areas)
-            const containerClass = areas.length === 3
-              ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'
-              : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'
-            return (
-              <>
-                {/* Daha Fazla Bilgi Section - Desktop */}
-                {cat.more && cat.more.trim() !== '' && (
-                  <div className="mt-8 sm:mt-12 px-2 sm:px-0">
-                    <h2 className="text-xl sm:text-2xl font-bold mb-4">Daha Fazla Bilgi</h2>
-                    <div className="card bg-gradient-to-br from-primary/5 to-primary/10 shadow-lg border border-primary/20">
-                      <div className="card-body p-6">
-                        <div className="prose prose-base max-w-none">
-                          <p className="text-base-content/80 whitespace-pre-line leading-relaxed text-justify">
-                            {cat.more}
-                          </p>
+              const areas = getUniqueCategoriesFromAreas(cat.usable_areas)
+              const containerClass = areas.length === 3
+                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'
+                : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'
+              return (
+                <>
+                  {/* Daha Fazla Bilgi Section - Desktop */}
+                  {cat.more && cat.more.trim() !== '' && (
+                    <div className="mt-8 sm:mt-12 px-2 sm:px-0">
+                      <h2 className="text-xl sm:text-2xl font-bold mb-4">Daha Fazla Bilgi</h2>
+                      <div className="card bg-gradient-to-br from-primary/5 to-primary/10 shadow-lg border border-primary/20">
+                        <div className="card-body p-6">
+                          <div className="prose prose-base max-w-none">
+                            <p className="text-base-content/80 whitespace-pre-line leading-relaxed text-justify">
+                              {cat.more}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                <div className="mt-8 sm:mt-12 px-2 sm:px-0">
-                  <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Nerelerde Kullanılır?</h2>
-                  <div className={containerClass}>
-                    {areas.map((area: UsableAreaCategory) => {
-                      const Icon = iconMap[area.icon] ?? null
-                      return (
-                        <div
-                          key={area.id}
-                          className="flex flex-col items-center justify-center text-center p-6 bg-[#f8f7ff] rounded-2xl shadow-sm transition hover:shadow-md"
-                        >
-                          {Icon && <Icon className="w-10 h-10 text-primary mb-2" />}
-                          <div className="font-medium">{area.title}</div>
-                        </div>
-                      )
-                    })}
+                  <div className="mt-8 sm:mt-12 px-2 sm:px-0">
+                    <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Nerelerde Kullanılır?</h2>
+                    <div className={containerClass}>
+                      {areas.map((area: UsableAreaCategory) => {
+                        const Icon = iconMap[area.icon] ?? null
+                        return (
+                          <div
+                            key={area.id}
+                            className="flex flex-col items-center justify-center text-center p-6 bg-[#f8f7ff] rounded-2xl shadow-sm transition hover:shadow-md"
+                          >
+                            {Icon && <Icon className="w-10 h-10 text-primary mb-2" />}
+                            <div className="font-medium">{area.title}</div>
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
-                </div>
-              </>
-            )
+                </>
+              )
             })()}
 
             <div className="mt-8 sm:mt-12 px-2 sm:px-0">
@@ -1055,9 +1097,9 @@ export default function Article() {
                       return (
                         <div key={linkKey} style={{ scrollSnapAlign: 'center', flex: '0 0 auto', minWidth: 220, maxWidth: 320 }}>
                           <Link to={`/kategoriler/${tier}/${categoryId}/${seriesKeyEncoded}`} className="block rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-transform duration-200 transform hover:-translate-y-1" style={{ width: '100%', maxWidth: '100%' }}>
-                                <div style={{ width: '100%', display: 'block' }}>
-                                  <img src={imgUrl} alt={`${series.title} - Seri Görseli`} title={series.title} className="w-full h-auto object-cover" onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${encodeURIComponent(String(imgSeed))}/300/225` }} />
-                                </div>
+                            <div style={{ width: '100%', display: 'block' }}>
+                              <img src={imgUrl} alt={`${series.title} - Seri Görseli`} title={series.title} className="w-full h-auto object-cover" onError={(e) => { e.currentTarget.src = `https://picsum.photos/seed/${encodeURIComponent(String(imgSeed))}/300/225` }} />
+                            </div>
                             <div className="p-3 bg-base-100 text-center">
                               <div className="text-sm font-semibold truncate">{series.title}</div>
                             </div>

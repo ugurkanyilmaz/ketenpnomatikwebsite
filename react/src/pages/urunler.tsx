@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { applyPageSEO } from '../utils/other_seo'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Search, Filter, X, Grid3x3, List, Package } from 'lucide-react'
@@ -33,7 +33,10 @@ export default function Urunler() {
   const [selectedBrand, setSelectedBrand] = useState<string>(searchParams.get('brand') || '')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [showFilters, setShowFilters] = useState(false)
-  
+
+  // Debounce URL updates to prevent history thrashing and crash
+  const updateTimeoutRef = useRef<number | undefined>(undefined)
+
   // Pagination
   const [currentPage, setCurrentPage] = useState<number>(() => {
     const p = parseInt(searchParams.get('page') || '1', 10)
@@ -48,13 +51,16 @@ export default function Urunler() {
   // Keep local searchTerm in sync when URL search params change (e.g. header search navigates here)
   useEffect(() => {
     const q = searchParams.get('q') || ''
-    setSearchTerm(q)
+    // Only update if actually different to avoid loops
+    if (q !== searchTerm) {
+      setSearchTerm(q)
+    }
   }, [searchParams])
 
   // Validate filters when products load
   useEffect(() => {
     if (products.length === 0) return
-    
+
     // Validate child belongs to parent
     if (selectedChild && selectedParent) {
       const validChildren = products.filter(p => p.parent === selectedParent).map(p => p.child)
@@ -63,7 +69,7 @@ export default function Urunler() {
         setSelectedSubchild('')
       }
     }
-    
+
     // Validate subchild belongs to child
     if (selectedSubchild && selectedChild) {
       const validSubchildren = products.filter(p => p.child === selectedChild).map(p => p.subchild)
@@ -71,7 +77,7 @@ export default function Urunler() {
         setSelectedSubchild('')
       }
     }
-    
+
     // Validate brand exists in selected categories
     if (selectedBrand) {
       let brandsSource = products
@@ -92,11 +98,21 @@ export default function Urunler() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [products])
 
-  // When the user changes filter inputs, update the URL and reset to page 1
+  // When the user changes filter inputs, update the URL (debounced) and reset to page 1
   useEffect(() => {
     filterProducts()
-    updateURL()
+
+    // Debounce the URL update
+    if (updateTimeoutRef.current) clearTimeout(updateTimeoutRef.current)
+    updateTimeoutRef.current = window.setTimeout(() => {
+      updateURL()
+    }, 500)
+
     setCurrentPage(1)
+
+    return () => {
+      if (updateTimeoutRef.current) clearTimeout(updateTimeoutRef.current)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, selectedParent, selectedChild, selectedSubchild, selectedBrand])
 
@@ -142,7 +158,7 @@ export default function Urunler() {
     // Search filter
     if (searchTerm) {
       const term = searchTerm.toLowerCase()
-      filtered = filtered.filter(p => 
+      filtered = filtered.filter(p =>
         p.title?.toLowerCase().includes(term) ||
         p.sku?.toLowerCase().includes(term) ||
         p.description?.toLowerCase().includes(term) ||
@@ -194,17 +210,17 @@ export default function Urunler() {
 
   // Get unique values for filters (dynamically based on selections)
   const parents = Array.from(new Set(products.map(p => p.parent).filter(Boolean))).sort()
-  
-  const children = selectedParent 
+
+  const children = selectedParent
     ? Array.from(new Set(products.filter(p => p.parent === selectedParent).map(p => p.child).filter(Boolean))).sort()
     : Array.from(new Set(products.map(p => p.child).filter(Boolean))).sort()
-  
-  const subchildren = selectedChild 
+
+  const subchildren = selectedChild
     ? Array.from(new Set(products.filter(p => p.child === selectedChild).map(p => p.subchild).filter(Boolean))).sort()
     : selectedParent
-    ? Array.from(new Set(products.filter(p => p.parent === selectedParent).map(p => p.subchild).filter(Boolean))).sort()
-    : Array.from(new Set(products.map(p => p.subchild).filter(Boolean))).sort()
-  
+      ? Array.from(new Set(products.filter(p => p.parent === selectedParent).map(p => p.subchild).filter(Boolean))).sort()
+      : Array.from(new Set(products.map(p => p.subchild).filter(Boolean))).sort()
+
   // Brands filtered by selected categories
   let brandsSource = products
   if (selectedParent) brandsSource = brandsSource.filter(p => p.parent === selectedParent)
@@ -221,13 +237,13 @@ export default function Urunler() {
   const hasActiveFilters = searchTerm || selectedParent || selectedChild || selectedSubchild || selectedBrand
 
   return (
-  <section className="bg-base-100 w-full py-8">
+    <section className="bg-base-100 w-full py-8">
       {/* Header */}
       <div className="products-hero text-primary-content">
         <div className="max-w-7xl mx-auto px-4 py-12 hero-content">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Tüm Ürünler</h1>
           <p className="text-lg opacity-90">
-            {loading ? 'Yükleniyor...' : `${filteredProducts.length} ürün bulundu`}
+            {loading ? <span>Yükleniyor...</span> : <span>{filteredProducts.length} ürün bulundu</span>}
           </p>
         </div>
       </div>
@@ -456,7 +472,7 @@ export default function Urunler() {
                 <Package size={64} className="mx-auto text-base-content/20 mb-4" />
                 <h3 className="text-2xl font-bold mb-2">Ürün Bulunamadı</h3>
                 <p className="text-base-content/60 mb-4">
-                  {hasActiveFilters 
+                  {hasActiveFilters
                     ? 'Filtrelere uygun ürün bulunamadı. Filtreleri değiştirmeyi deneyin.'
                     : 'Henüz ürün eklenmemiş.'}
                 </p>
@@ -596,7 +612,7 @@ export default function Urunler() {
                   >
                     «
                   </button>
-                  
+
                   {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
                     let pageNum;
                     if (totalPages <= 5) {
@@ -608,7 +624,7 @@ export default function Urunler() {
                     } else {
                       pageNum = currentPage - 2 + i;
                     }
-                    
+
                     return (
                       <button
                         key={pageNum}
@@ -619,7 +635,7 @@ export default function Urunler() {
                       </button>
                     );
                   })}
-                  
+
                   <button
                     className="join-item btn"
                     disabled={currentPage === totalPages}
